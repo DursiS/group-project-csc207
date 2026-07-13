@@ -10,7 +10,10 @@ public class AnalyzeMoveInteractor{
     void analyze(String fen) throws Exception {
         double eval = this.engine.evaluate(fen);
         String bestMoveMessage = this.engine.bestMoveMessage(fen);
+
         String bestMove = this.engine.bestMove(fen);
-        // Send this information to the presenter somehow
+        String from = bestMove.substring(0, 2);
+        String to = bestMove.substring(2, 4);
+        // Send this information to the presenter somehow or make into a move
     }
 }
