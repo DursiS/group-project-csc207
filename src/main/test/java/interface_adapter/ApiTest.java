@@ -3,8 +3,12 @@ package interface_adapter;
 import java.net.URI;
 import java.net.http.*;
 
+import org.junit.jupiter.api.Test;
+
 public class ApiTest {
-    public static void main(String[] args) throws Exception {
+
+    @Test
+    void test_raw_request() throws Exception{
         String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         String body = "{ \"fen\": \"" + fen + "\" }";
 
@@ -26,6 +30,8 @@ public class ApiTest {
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println(response.body());   // just a raw JSON dict
+        // Just a raw JsonObject to see its formatting
+        System.out.println(response.body());
     }
+
 }
