@@ -1,14 +1,14 @@
 package interface_adapter;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.net.URI;
 import java.net.http.*;
 
-import org.junit.jupiter.api.Test;
+public class ApiDemo {
 
-public class ApiTest {
-
-    @Test
-    void test_raw_request() throws Exception{
+    static JsonObject demo_raw_request() throws Exception{
         String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         String body = "{ \"fen\": \"" + fen + "\" }";
 
@@ -32,6 +32,23 @@ public class ApiTest {
 
         // Just a raw JsonObject to see its formatting
         System.out.println(response.body());
+        return JsonParser.parseString(response.body())
+                .getAsJsonObject();
     }
+
+    static void demo_raw_evaluation() throws Exception{
+        JsonObject response =  demo_raw_request();
+        System.out.println("White Eval: " + response.get("eval"));
+        System.out.println("Black Eval:  " + (-1) * response.get("eval").getAsDouble());
+        System.out.println("White WinChance: " + response.get("winChance"));
+        System.out.println("Black WinChance: " + (-1) * (1 - response.get("winChance").getAsDouble()));
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        ApiDemo.demo_raw_evaluation();
+    }
+
+
 
 }
