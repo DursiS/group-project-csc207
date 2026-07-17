@@ -85,7 +85,7 @@ public class AnalyzeMoveInteractor{
      * @return the FEN string
      */
     private String convertToFen(Board board) {
-        return ""; // Implement after Board is done
+        return ""; // Implement after Board is done.
     }
 
 
