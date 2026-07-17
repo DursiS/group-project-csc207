@@ -22,20 +22,16 @@ public class AnalyzeMoveInteractor{
     public String newTurnAnalysis(Board board) throws Exception{
         String fen = convertToFen(board);
 
-        String result = this.boardEval(fen) + "\n" + this.bestMove(fen);
+        String result_tail = this.boardEval(fen) + "\n" + this.bestMove(fen);
         if (isWhiteTurn(fen)) {
-            result = "White:\n" + result;
-        } else { result = "Black:\n" + result; }
-        return result;
+            return "White:\n" + result_tail;
+        } else { return "Black:\n" + result_tail; }
     }
 
     private boolean isWhiteTurn(String fen) throws Exception{
         JsonObject response = this.ApiInterface.request(fen);
-        if (response.get("turn").getAsString().equals("w")) {
-            return true;
-        } else { return false; }
+        return response.get("turn").getAsString().equals("w");
         }
-
 
     /**
      * Returns the evaluation for whoever's turn it is.
@@ -67,10 +63,8 @@ public class AnalyzeMoveInteractor{
      */
     private String whiteEval(String fen) throws Exception{
         JsonObject response = this.ApiInterface.request(fen);
-        String result = "";
-        result += "White WinChance: " + response.get("winChance") + "\n";
-        result += "White Eval: " + response.get("eval");
-        return result;
+        return "White WinChance: " + response.get("winChance") + "\n"
+                + "White Eval: " + response.get("eval");
     }
 
     /**
@@ -80,10 +74,10 @@ public class AnalyzeMoveInteractor{
      */
     private String blackEval(String fen) throws Exception{
         JsonObject response = this.ApiInterface.request(fen);
-        String result = "";
-        result += "Black WinChance: " + (-1) * (1 - response.get("winChance").getAsDouble()) + "\n";
-        result += "Black Eval: " + (-1) * response.get("eval").getAsDouble();
-        return result;
+        return "Black WinChance: " + (-1) * (
+                1 - response.get("winChance")
+                .getAsDouble()) + "\n"
+                + "Black Eval: " + (-1) * response.get("eval").getAsDouble();
     }
 
     /**
