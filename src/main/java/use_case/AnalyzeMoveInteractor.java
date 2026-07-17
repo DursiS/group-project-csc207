@@ -21,14 +21,21 @@ public class AnalyzeMoveInteractor{
      */
     public String newTurnAnalysis(Board board) throws Exception{
         String fen = convertToFen(board);
-        JsonObject response = this.ApiInterface.request(fen);
 
         String result = this.boardEval(fen) + "\n" + this.bestMove(fen);
-        if (response.get("turn").getAsString().equals("w")) {
+        if (isWhiteTurn(fen)) {
             result = "White:\n" + result;
         } else { result = "Black:\n" + result; }
         return result;
     }
+
+    private boolean isWhiteTurn(String fen) throws Exception{
+        JsonObject response = this.ApiInterface.request(fen);
+        if (response.get("turn").getAsString().equals("w")) {
+            return true;
+        } else { return false; }
+        }
+
 
     /**
      * Returns the evaluation for whoever's turn it is.
@@ -37,7 +44,7 @@ public class AnalyzeMoveInteractor{
      */
     private String boardEval(String fen) throws Exception {
         JsonObject response = this.ApiInterface.request(fen);
-        if (response.get("turn").getAsString().equals("w")){
+        if (isWhiteTurn(fen)){
             return this.whiteEval(fen);
         } else { return this.blackEval(fen); }
 
