@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnalyzeViewModel {
-    List<String> MESSAGE_HISTORY = new ArrayList<String>(); // Dependency Injection for DIP
-    final int FROM = 0;
-    final int TO = 2;
+
+    // Dependency Injection agrees with DIP
+    List<String> MESSAGE_HISTORY = new ArrayList<>();
+    final int DISPLAY_FROM = 0;
+    final int DISPLAY_TO = 2;
+    final int WIDTH = 200;
+    final int HEIGHT = 600;
+    final int TEXT_SIZE = 24;
 
     /**
      * Builds the analysis panel with its label and text field.
@@ -18,8 +23,10 @@ public class AnalyzeViewModel {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
         JLabel displayLabel = new JLabel("Analysis Metrics");
+        displayLabel.setFont(new Font("Arial", Font.PLAIN, TEXT_SIZE));
         panel.add(displayLabel);
 
         JTextField textField = new JTextField(getDisplayText(), 15);
@@ -34,7 +41,7 @@ public class AnalyzeViewModel {
      */
     private String getDisplayText(){
         StringBuilder result = new StringBuilder(); // Builder design pattern
-        for (int i = FROM; i < TO; i++) {
+        for (int i = DISPLAY_FROM; i < DISPLAY_TO; i++) {
             result.append(MESSAGE_HISTORY.get(i));
         }
         return result.toString();
