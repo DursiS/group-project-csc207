@@ -51,7 +51,7 @@ public class AnalyzeViewModel {
      * Adds a message to the history.
      * @param message the message to add
      */
-    private void newMessage(String message) {
+    void addMessage(String message) {
         this.MESSAGE_HISTORY.add(message);
     }
 
