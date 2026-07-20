@@ -12,7 +12,7 @@ public class AnalyzeViewModel {
     // Dependency Injection agrees with DIP
     List<String> MESSAGE_HISTORY = new ArrayList<>();
     private final PropertyChangeSupport support
-            = new PropertyChangeSupport(this)
+            = new PropertyChangeSupport(this);
 
     /**
      * Adds a message to the history,
