@@ -17,9 +17,13 @@ public class AnalyzeMoveInteractorTest {
     @Test
     void nonEmptyNewTurnAnalysis() throws Exception {
         ChessApiAdapter adapter = new ChessApiAdapter();
-        AnalyzeMoveInteractor interactor = new AnalyzeMoveInteractor(adapter);
+        AnalyzePresenter presenter = new AnalyzePresenter();
+        AnalyzeMoveInteractor interactor = new AnalyzeMoveInteractor(
+                adapter,
+                presenter
+        );
 
-        String analysis = interactor.newTurnAnalysis(BOARD);
+        String analysis = interactor.getFinalMessage(START);
 
         System.out.println(analysis);
         assertNotNull(analysis);
