@@ -2,9 +2,11 @@ package entity;
 
 public class Board {
     private int turn;
-    //turn is odd: white's turn, turn is even: black's turn
+    //turn is even: white's turn to move, turn is odd: black's turn to move
     private int[][] squares;
     //squares[y,x] = the square at row y and column x.
+    //row 0 is at black's side (top) and row 7 is at white's side (bottom)
+    //column 0 is at the left and column 7 is at the right
     // condition: squares is an 8*8 array, entries are in the range -10 to 10.
     //0: empty
     //1: white pawn 2: white pawn (moved) 3: white pawn (en passant-able) 4: white rook 5: white rook (moved) 6: white knight 7: white bishop 8: white queen 9: white king 10: white king (moved)
@@ -22,11 +24,12 @@ public class Board {
 
 
 
+
     public int getSquare(int x, int y) {
         return squares[y][x];
     }
     public void setSquare(int x, int y, int value) throws IllegalArgumentException {
-        if( -10 > value || value > 10){
+        if( value < -10 || value > 10){
             throw new IllegalArgumentException();
         }
         squares[y][x] = value;
