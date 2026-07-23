@@ -1,5 +1,13 @@
 package interface_adapter;
 
 public class AnalyzeController {
-    // new turn event, controller calls execution of interactor
+    AnalyzeInputBoundary inputBoundary;
+
+    AnalyzeController(AnalyzeInputBoundary inputBoundary){
+        this.inputBoundary = inputBoundary;
+    }
+
+    public void executeTurnAnalysis() {
+        inputBoundary.executeTurnAnalysis();
+    }
 }

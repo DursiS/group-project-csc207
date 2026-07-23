@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.AnalyzeController;
 import interface_adapter.AnalyzeViewModel;
 
 import javax.swing.*;
@@ -9,17 +10,19 @@ import java.beans.PropertyChangeListener;
 
 public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private final JTextArea textArea = new JTextArea();
+    private final AnalyzeController controller;
     final int WIDTH = 200;
     final int HEIGHT = 600;
     final int TEXT_SIZE = 24;
 
-    public AnalyzeView(AnalyzeViewModel vm) {
+    public AnalyzeView(AnalyzeViewModel vm, AnalyzeController controller) {
+        this.controller = controller;
         vm.addPropertyChangeListener(this); // Subscribing
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         add(new JScrollPane(textArea));
         addDisplayLabel();
-
     }
 
     private void addDisplayLabel() {
@@ -31,6 +34,10 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         SwingUtilities.invokeLater(() -> textArea.setText((String) evt.getNewValue()));
+    }
+
+    public void executeTurnAnalysis(){
+        this.controller.executeTurnAnalysis();
     }
 }
 

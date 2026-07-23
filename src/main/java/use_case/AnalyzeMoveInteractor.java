@@ -2,10 +2,12 @@ package use_case;
 
 import com.google.gson.JsonObject;
 import entity.Board;
+import interface_adapter.AnalyzeController;
+import interface_adapter.AnalyzeInputBoundary;
 
 import java.util.*;
 
-public class AnalyzeMoveInteractor{
+public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     private final ChessApiInterface ApiInterface;
     private final AnalyzeOutputBoundary AnalyzeOutputBoundary;
     private static final Map<Integer, Character> PIECE_TO_FEN = buildPieceToFen();
@@ -232,4 +234,5 @@ public class AnalyzeMoveInteractor{
         int rank = 8 - y;
         return "" + file + rank;
     }
+
 }
