@@ -128,10 +128,17 @@ public class MoveValidator {
                     }else{
                         //allow move if the move captures and square is occupied by an enemy
                         //also allow move if the move isn't required to capture and square is empty
-                        if(moveType.isCanCapture() && board.isSquareEnemy(destination[0], destination[1])
-                        ||(moveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))){
+                        if(moveType.isCanCapture() && board.isSquareEnemy(destination[0], destination[1])){
                             moves.add(new Move(new int[]{x,y}, destination));
-                        }else{
+                            break;
+                            //can't move past an enemy.
+                        }
+                        else if(moveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))
+                        {
+                            moves.add(new Move(new int[]{x,y}, destination));
+                            //can keep moving if the square was empty
+                        }else
+                        {
                             //this case only occurs if the tile is occupied by an ally (move not allowed)
                             break;
                         }
