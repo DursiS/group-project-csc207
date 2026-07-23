@@ -1,5 +1,8 @@
-package entity;
+//this class is a data type, which contains all information about a board state (all pieces and the current turn)
+//it is used by the main game logic, and should be saveable and loadable to the computer memory,
+//and the move validator makes deep copies of the current game board to apply imaginary moves the next turn to see if moves are valid
 
+package entity;
 public class Board {
     private int turn;
     //turn is even: white's turn to move, turn is odd: black's turn to move
@@ -34,8 +37,25 @@ public class Board {
         }
         squares[y][x] = value;
     }
+
+    //these methods are used by the move validator
     public boolean isSquareEmpty(int x, int y){
         return squares[y][x] == 0;
+    }
+    public boolean canPieceMove(int x, int y){//return whether the piece on tile (x,y) can move on current turn
+        return !isSquareEmptyOrEnemy(x,y);
+    }
+    public boolean isSquareEnemy(int x, int y){//return whether the piece on tile (x,y) is an enemy piece of the player whose turn it currently is
+        if(turn %2 ==0){
+            return(squares[y][x] < 0);
+        }
+        return(squares[y][x] > 0);
+    }
+    public boolean isSquareEmptyOrEnemy(int x, int y) {//this method will be called many times...
+        if(turn %2 ==0){
+            return(squares[y][x] <= 0);
+        }
+        return(squares[y][x] >= 0);
     }
 
     //constructor
