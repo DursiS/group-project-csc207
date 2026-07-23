@@ -7,4 +7,17 @@ public class Move {
     private int[] origin;
     private int[] destination;
 
+
+    public int[] getOrigin() {
+        return origin;
+    }
+
+    public int[] getDestination() {
+        return destination;
+    }
+
+    public Move(int[] origin, int[] destination) {
+        this.origin = origin;
+        this.destination = destination;
+    }
 }
