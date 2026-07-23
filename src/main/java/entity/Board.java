@@ -2,6 +2,8 @@
 //it is used by the main game logic, and should be saveable and loadable to the computer memory,
 //and the move validator makes deep copies of the current game board to apply imaginary moves the next turn to see if moves are valid
 
+//it also contains the topology information of the board
+
 package entity;
 public class Board {
     private int turn;
@@ -14,6 +16,19 @@ public class Board {
     //0: empty
     //1: white pawn 2: white pawn (moved) 3: white pawn (en passant-able) 4: white rook 5: white rook (moved) 6: white knight 7: white bishop 8: white queen 9: white king 10: white king (moved)
     //-1: black pawn -2: black pawn (moved) -3: black pawn (en passant-able) -4: black rook -5: black rook (moved) -6: black knight -7: black bishop -8: black queen -9: black king -10: black king (moved)
+
+    //topology information for each edge:
+    //0: impassible wall (chess default), 1: passible and identified with the opposite side, 2: passible and identified with the other side with reversed orientation (this one is less interesting so we don't have to implement it).
+    private int verticalEdgeType;
+    private int horizontalEdgeType;
+
+    public int getVerticalEdgeType() {
+        return verticalEdgeType;
+    }
+
+    public int getHorizontalEdgeType() {
+        return horizontalEdgeType;
+    }
 
     public int getTurn() {
         return turn;
@@ -59,12 +74,14 @@ public class Board {
     }
 
     //constructor
-    public Board(int[][] squares, int turn){
+    public Board(int[][] squares, int turn, int verticalEdgeType, int horizontalEdgeType){
         this.squares = squares;
         this.turn = turn;
+        this.verticalEdgeType = verticalEdgeType;
+        this.horizontalEdgeType = horizontalEdgeType;
     }
-    //constructor with no arguments gives initial chessboard
-    public Board(){
+    //constructor for default chessboard
+    public Board(int verticalEdgeType, int horizontalEdgeType){
         this.squares = new int[][]{
                 {-4,-6,-7,-8,-9,-7,-6,-4},
                 {-1,-1,-1,-1,-1,-1,-1,-1},
@@ -76,6 +93,12 @@ public class Board {
                 {4,6,7,8,9,7,6,4}
         };
         turn = 0;
+        this.verticalEdgeType = verticalEdgeType;
+        this.horizontalEdgeType = horizontalEdgeType;
+    }
+    //constructor for default chessboard with default topology
+    public Board(){
+        this(0, 0);
     }
 
     //creates deep copy of current board (will be used by the valid move checker)
@@ -86,6 +109,6 @@ public class Board {
                 newSquares[i][j] = squares[i][j];
             }
         }
-        return new Board(newSquares, turn);
+        return new Board(newSquares, turn, verticalEdgeType, horizontalEdgeType);
     }
 }
