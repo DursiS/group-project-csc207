@@ -1,4 +1,4 @@
-//this is a data object,
+//this is a data object, for validation purposes only
 //that just stores the information about the types of moves a piece can make. (not an actual move made by a player)
 //it also tracks whether move types are a special move, in which case the movement code will have to activate some special case
 //there is a list of MoveType for each piece,
