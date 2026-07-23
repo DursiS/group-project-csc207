@@ -6,12 +6,12 @@ import java.util.ArrayList;
 
 public class MoveValidator {
     private MoveType[][] moveTypes = new MoveType[11][];
-    private BoardTopology topology;
+    //private BoardTopology topology;
 
     //default constructor creates all movement rules corresponding to each piece type
     //i suppose this could instead be stored in a special data storage object....
-    public MoveValidator(BoardTopology topology){
-        this.topology = topology;
+    public MoveValidator(){
+        //this.topology = topology;
         moveTypes[0] = new MoveType[]{}; //empty tile has no moves
         moveTypes[1] = new MoveType[]{//unmoved pawn
                 new MoveType(new int[]{0,1}, 1, false, true, false, false),
@@ -112,6 +112,8 @@ public class MoveValidator {
 
     //generate moves for a specific piece
     public void addPieceMoves(ArrayList<Move> moves, Board board, int x, int y){
+        int[] edgeTopologies = new int[]{board.getVerticalEdgeType(), board.getHorizontalEdgeType()};
+
         MoveType[] pieceMoveTypes = getMoveTypesOfPiece(board.getSquare(x,y));
         for (int i = 0; i < pieceMoveTypes.length; i++) {
             MoveType moveType = pieceMoveTypes[i];
@@ -119,7 +121,7 @@ public class MoveValidator {
             int[] destination = new int[]{x,y};
             do{
                 if (moveType.isNormalMove()){
-                    destination = applyMovementVector(destination, moveType);
+                    destination = applyMovementVector(destination, moveType, edgeTopologies);
                     //initial validity check:
                     //don't allow move if it results in an invalid location
                     //don't allow move if it loops back to the piece due to an alternate board topology
@@ -149,10 +151,9 @@ public class MoveValidator {
         }
     }
 
-    public int[] applyMovementVector(int[] position, MoveType moveType){
+    public int[] applyMovementVector(int[] position, MoveType moveType, int[] edgeTopologies){
         int[] newPosition = new int[]{position[0]  + moveType.getVector()[0], position[1] + moveType.getVector()[1]};
         //vertical edge type applies to horizontal movement,
-        int[] edgeTopologies = new int[]{topology.getVerticalEdgeType(), topology.getHorizontalEdgeType()};
         for (int i = 0; i < 2; i++) {
             boolean locationWithinBoard  = (newPosition[i] >= 0 && newPosition[i] <= 7);
             if (edgeTopologies[i] == 0 && !locationWithinBoard) {

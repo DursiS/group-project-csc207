@@ -10,7 +10,7 @@ public class MoveValidatorTest {
     @Test
     void basicMoveValidatorTest(){
         Board b = new Board();//default board;
-        MoveValidator v = new MoveValidator(new BoardTopology(0,0));
+        MoveValidator v = new MoveValidator();
 
         ArrayList<Move> moves = v.getAllMoves(b);
         System.out.println(moves.size());
@@ -25,8 +25,8 @@ public class MoveValidatorTest {
         int[][] squares = new int[8][8];
         squares[0][0] = 4;
         squares[0][3] = -4;
-        Board b = new Board(squares, 0);//default board;
-        MoveValidator v = new MoveValidator(new BoardTopology(0,0));
+        Board b = new Board(squares,  0,0,0);//default board;
+        MoveValidator v = new MoveValidator();
 
         ArrayList<Move> moves = v.getAllMoves(b);
         System.out.println(moves.size());
@@ -41,8 +41,8 @@ public class MoveValidatorTest {
         int[][] squares = new int[8][8];
         squares[0][4] = 4;
         squares[0][3] = 4;
-        Board b = new Board(squares, 0);//default board;
-        MoveValidator v = new MoveValidator(new BoardTopology(0,0));
+        Board b = new Board(squares, 0,0,0);//default board;
+        MoveValidator v = new MoveValidator();
 
         ArrayList<Move> moves = v.getAllMoves(b);
         System.out.println(moves.size());
