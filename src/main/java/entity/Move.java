@@ -6,7 +6,7 @@ package entity;
 public class Move {
     private int[] origin;
     private int[] destination;
-
+    //private gameState
 
     public int[] getOrigin() {
         return origin;

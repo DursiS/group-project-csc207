@@ -8,4 +8,7 @@ import entity.MoveValidator;
 
 public class MakeMoveInteractor {
     private MoveValidator validator;
+
+
+
 }
