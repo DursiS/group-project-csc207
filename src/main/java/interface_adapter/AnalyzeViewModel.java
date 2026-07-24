@@ -1,7 +1,5 @@
 package interface_adapter;
 
-import javax.swing.*;
-import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -9,10 +7,8 @@ import java.util.List;
 
 public class AnalyzeViewModel {
 
-    // Dependency Injection agrees with DIP
-    List<String> MESSAGE_HISTORY = new ArrayList<>();
-    private final PropertyChangeSupport support
-            = new PropertyChangeSupport(this);
+    private final List<String> messageHistory = new ArrayList<>();
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     /**
      * Adds a message to the history,
@@ -20,12 +16,15 @@ public class AnalyzeViewModel {
      * @param message the message to add
      */
     public void addMessage(String message) {
-        this.MESSAGE_HISTORY.add(message);
-
-        support.firePropertyChange("analysis", null, message);
+        this.messageHistory.add(message);
+        this.support.firePropertyChange("analysis", null, message);
     }
 
+    /**
+     * Registers a listener for analysis updates.
+     * @param listener the listener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
+        this.support.addPropertyChangeListener(listener);
     }
 }

@@ -1,13 +1,17 @@
 package interface_adapter;
 
 public class AnalyzeController {
-    AnalyzeInputBoundary inputBoundary;
+    private final AnalyzeInputBoundary inputBoundary;
 
-    AnalyzeController(AnalyzeInputBoundary inputBoundary){
+    public AnalyzeController(AnalyzeInputBoundary inputBoundary) {
         this.inputBoundary = inputBoundary;
     }
 
-    public void executeTurnAnalysis() {
-        inputBoundary.executeTurnAnalysis();
+    /**
+     * Triggers the analysis for the current turn.
+     * @throws Exception if the analysis fails
+     */
+    public void executeTurnAnalysis() throws Exception {
+        this.inputBoundary.executeTurnAnalysis();
     }
 }

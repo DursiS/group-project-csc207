@@ -1,118 +1,106 @@
 package use_case;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonObject;
 import entity.Board;
-import interface_adapter.AnalyzeController;
 import interface_adapter.AnalyzeInputBoundary;
 
-import java.util.*;
-
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
-    private final ChessApiInterface ApiInterface;
-    private final AnalyzeOutputBoundary AnalyzeOutputBoundary;
+    private static final String WHITE_FEN_BY_CODE = "0PPPRRNBQKK";
     private static final Map<Integer, Character> PIECE_TO_FEN = buildPieceToFen();
+    private static final int BOARD_SIZE = 8;
+    private static final int LAST_INDEX = BOARD_SIZE - 1;
+    private static final int KING_FILE = 4;
+    private static final int KING = 9;
+    private static final int ROOK = 4;
+    private static final int EN_PASSANT_PAWN = 3;
+
+    private final ChessApiInterface apiInterface;
+    private final AnalyzeOutputBoundary analyzeOutputBoundary;
+
+    /**
+     * Constructs the interactor with its dependencies.
+     * @param apiInterface the chess API to use
+     * @param analyzeOutputBoundary the output boundary to present results
+     */
+    public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
+                                 AnalyzeOutputBoundary analyzeOutputBoundary) {
+        this.apiInterface = apiInterface;
+        this.analyzeOutputBoundary = analyzeOutputBoundary;
+    }
 
     /**
      * Builds the piece-code to FEN-character lookup map.
      * @return the piece-to-FEN map
      */
-    // Builder Design Pattern into a method for encapsulation
     private static Map<Integer, Character> buildPieceToFen() {
-        Map<Integer, Character> map = new HashMap<>();
-
-        map.put(0, '0');    // empty-square
-
-        // White Pieces
-        map.put( 1, 'P');   // pawn
-        map.put( 2, 'P');   // pawn, moved
-        map.put( 3, 'P');   // pawn, en-passant
-        map.put( 4, 'R');   // rook
-        map.put( 5, 'R');   // rook, moved
-        map.put( 6, 'N');   // knight
-        map.put( 7, 'B');   // bishop
-        map.put( 8, 'Q');   // queen
-        map.put( 9, 'K');   // king
-        map.put(10, 'K');   // king, moved
-
-        // Black Pieces (lowercase and negative)
-        map.put(-1, 'p');
-        map.put(-2, 'p');
-        map.put(-3, 'p');
-        map.put(-4, 'r');
-        map.put(-5, 'r');
-        map.put(-6, 'n');
-        map.put(-7, 'b');
-        map.put(-8, 'q');
-        map.put(-9, 'k');
-        map.put(-10, 'k');
-
+        final Map<Integer, Character> map = new HashMap<>();
+        for (int code = 0; code < WHITE_FEN_BY_CODE.length(); code++) {
+            final char white = WHITE_FEN_BY_CODE.charAt(code);
+            map.put(code, white);
+            if (code > 0) {
+                map.put(-code, Character.toLowerCase(white));
+            }
+        }
         return map;
-    }
-
-    /**
-     * Constructs the interactor with the chess API dependency.
-     * @param ApiInterface the chess API to use
-     */
-    public AnalyzeMoveInteractor(ChessApiInterface ApiInterface,
-                                 AnalyzeOutputBoundary analyzeOutputBoundary) {
-        // Dependency-injections with interfaces (DIP)
-        this.ApiInterface = ApiInterface;
-        this.AnalyzeOutputBoundary = analyzeOutputBoundary;
-    }
-
-    /**
-     * Analyzes the current turn and returns the eval and best move as text.
-     * @param board the current board
-     */
-    public void executeTurnAnalysis(Board board) throws Exception{
-        String fen = convertToFen(board);
-        this.AnalyzeOutputBoundary.addMessage(getFinalMessage(fen));
     }
 
     /**
      * Builds the full analysis message for the given position.
      * @param fen the position as a FEN string
      * @return the analysis text
+     * @throws Exception if the request fails
      */
-    public String getFinalMessage(String fen) throws Exception{
-        String result_tail = this.boardEval(fen) + "\n" + this.bestMove(fen);
+    public String getAnalysisMessage(String fen) throws Exception {
+        final String resultTail = this.boardEval(fen) + "\n" + this.bestMove(fen);
+        final String header;
         if (isWhiteTurn(fen)) {
-            return "== White's Metrics: == \n" + result_tail;
-        } else {
-            return "== Black's Metrics: == \n" + result_tail;
+            header = "== White's Metrics: == \n";
         }
+        else {
+            header = "== Black's Metrics: == \n";
+        }
+        return header + resultTail;
     }
 
     /**
      * Checks whether it is White's turn.
      * @param fen the position as a FEN string
      * @return true if it is White's turn
+     * @throws Exception if the request fails
      */
-    private boolean isWhiteTurn(String fen) throws Exception{
-        JsonObject response = this.ApiInterface.request(fen);
-        return response.get("turn").getAsString().equals("w");
-        }
+    private boolean isWhiteTurn(String fen) throws Exception {
+        final JsonObject response = this.apiInterface.request(fen);
+        return "w".equals(response.get("turn").getAsString());
+    }
 
     /**
      * Returns the evaluation for whoever's turn it is.
      * @param fen the position as a FEN string
      * @return the eval text
+     * @throws Exception if the request fails
      */
     private String boardEval(String fen) throws Exception {
-        JsonObject response = this.ApiInterface.request(fen);
-        if (isWhiteTurn(fen)){
-            return this.whiteEval(fen);
-        } else { return this.blackEval(fen); }
-
+        final String result;
+        if (isWhiteTurn(fen)) {
+            result = this.whiteEval(fen);
+        }
+        else {
+            result = this.blackEval(fen);
+        }
+        return result;
     }
 
     /**
      * Returns the best move for the given position as "from -> to".
      * @param fen the position as a FEN string
      * @return the best move text
+     * @throws Exception if the request fails
      */
     private String bestMove(String fen) throws Exception {
-        JsonObject response = this.ApiInterface.request(fen);
+        final JsonObject response = this.apiInterface.request(fen);
         return response.get("from").getAsString() + " -> " + response.get("to").getAsString();
     }
 
@@ -120,9 +108,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Returns White's win chance and evaluation.
      * @param fen the position as a FEN string
      * @return the white eval text
+     * @throws Exception if the request fails
      */
-    private String whiteEval(String fen) throws Exception{
-        JsonObject response = this.ApiInterface.request(fen);
+    private String whiteEval(String fen) throws Exception {
+        final JsonObject response = this.apiInterface.request(fen);
         return "White WinChance: " + response.get("winChance") + "% \n"
                 + "White Eval: " + response.get("eval");
     }
@@ -131,12 +120,11 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Returns Black's win chance and evaluation.
      * @param fen the position as a FEN string
      * @return the black eval text
+     * @throws Exception if the request fails
      */
-    private String blackEval(String fen) throws Exception{
-        JsonObject response = this.ApiInterface.request(fen);
-        return "Black WinChance: " + (-1) * (
-                1 - response.get("winChance")
-                .getAsDouble()) + "% \n"
+    private String blackEval(String fen) throws Exception {
+        final JsonObject response = this.apiInterface.request(fen);
+        return "Black WinChance: " + (-1) * (1 - response.get("winChance").getAsDouble()) + "% \n"
                 + "Black Eval: " + (-1) * response.get("eval").getAsDouble();
     }
 
@@ -146,9 +134,8 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @return the FEN string
      */
     public String convertToFen(Board board) {
-        // Example: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        return buildFenGrid(board) +
-                buildFenTail(board);
+        return buildFenGrid(board)
+                + buildFenTail(board);
     }
 
     /**
@@ -157,18 +144,30 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @return the FEN tail string
      */
     private String buildFenTail(Board board) {
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
 
-        if ((board.getTurn() % 2) == 0){ result.append(" w "); }
-        else { result.append(" b "); }
-
-        if (board.getSquare(4, 7) == 9) {
-            if (board.getSquare(7, 7) == 4) result.append('K');
-            if (board.getSquare(0, 7) == 4) result.append('Q');
+        if (board.getTurn() % 2 == 0) {
+            result.append(" w ");
         }
-        if (board.getSquare(4, 0) == -9) {
-            if (board.getSquare(7, 0) == -4) result.append('k');
-            if (board.getSquare(0, 0) == -4) result.append('q');
+        else {
+            result.append(" b ");
+        }
+
+        if (board.getSquare(KING_FILE, LAST_INDEX) == KING) {
+            if (board.getSquare(LAST_INDEX, LAST_INDEX) == ROOK) {
+                result.append('K');
+            }
+            if (board.getSquare(0, LAST_INDEX) == ROOK) {
+                result.append('Q');
+            }
+        }
+        if (board.getSquare(KING_FILE, 0) == -KING) {
+            if (board.getSquare(LAST_INDEX, 0) == -ROOK) {
+                result.append('k');
+            }
+            if (board.getSquare(0, 0) == -ROOK) {
+                result.append('q');
+            }
         }
 
         result.append(' ')
@@ -183,22 +182,28 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @return the FEN grid string
      */
     private static String buildFenGrid(Board board) {
-        StringBuilder result = new StringBuilder();
-        for (int row = 0; row < 8; row ++){
+        final StringBuilder result = new StringBuilder();
+        for (int row = 0; row < BOARD_SIZE; row++) {
             int emptyCount = 0;
-            for (int col = 0; col < 8; col ++){
-                char piece = PIECE_TO_FEN.get(board.getSquare(col, row));
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                final char piece = PIECE_TO_FEN.get(board.getSquare(col, row));
                 if (piece == '0') {
-                    emptyCount += 1;
-                } else {
-                    if (emptyCount > 0) { result.append(emptyCount); emptyCount = 0; }
+                    emptyCount++;
+                }
+                else {
+                    if (emptyCount > 0) {
+                        result.append(emptyCount);
+                        emptyCount = 0;
+                    }
                     result.append(piece);
                 }
             }
-            if (emptyCount > 0) { result.append(emptyCount); }
-
-            if (!(row == 7)) {
-                result.append("/");}
+            if (emptyCount > 0) {
+                result.append(emptyCount);
+            }
+            if (row != LAST_INDEX) {
+                result.append("/");
+            }
         }
         return result.toString();
     }
@@ -209,30 +214,42 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @return the target square in algebraic notation, or "-"
      */
     private String enPassantSquare(Board board) {
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 8; x++) {
-                int code = board.getSquare(x, y);
-                if (code == 3) {
-                    return enPassantSquareAlgebra(x, y + 1);
+        String square = "-";
+        for (int y = 0; y < BOARD_SIZE; y++) {
+            for (int x = 0; x < BOARD_SIZE; x++) {
+                final int code = board.getSquare(x, y);
+                if (code == EN_PASSANT_PAWN) {
+                    square = enPassantSquareAlgebra(x, y + 1);
                 }
-                if (code == -3) {
-                    return enPassantSquareAlgebra(x, y - 1);
+                else if (code == -EN_PASSANT_PAWN) {
+                    square = enPassantSquareAlgebra(x, y - 1);
                 }
             }
         }
-        return "-";
+        return square;
     }
 
     /**
      * Converts board coordinates into algebraic notation.
-     * @param x the file index (0-7)
-     * @param y the rank index (0-7)
+     * @param fileIndex the file index (0-7)
+     * @param rankIndex the rank index (0-7)
      * @return the square in algebraic notation, e.g. "e3"
      */
-    private String enPassantSquareAlgebra(int x, int y) {
-        char file = (char) ('a' + x);
-        int rank = 8 - y;
+    private String enPassantSquareAlgebra(int fileIndex, int rankIndex) {
+        final char file = (char) ('a' + fileIndex);
+        final int rank = BOARD_SIZE - rankIndex;
         return "" + file + rank;
     }
 
+    private Board getRecentBoard() {
+        // Access GameState.board from some DAI we inject in
+        return new Board();
+    }
+
+    @Override
+    public void executeTurnAnalysis() throws Exception {
+        final Board board = getRecentBoard();
+        final String fen = convertToFen(board);
+        this.analyzeOutputBoundary.addMessage(getAnalysisMessage(fen));
+    }
 }
