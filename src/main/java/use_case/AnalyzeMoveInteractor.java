@@ -8,6 +8,8 @@ import entity.Board;
 import interface_adapter.AnalyzeInputBoundary;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
+
+    // To avoid "magic" numbers or strings
     private static final String WHITE_FEN_BY_CODE = "0PPPRRNBQKK";
     private static final Map<Integer, Character> PIECE_TO_FEN = buildPieceToFen();
     private static final int BOARD_SIZE = 8;
@@ -16,23 +18,38 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     private static final int KING = 9;
     private static final int ROOK = 4;
     private static final int EN_PASSANT_PAWN = 3;
+    private static final double NUM_TO_ROUND = 100.0;
 
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
+    private final GameStateDataAccessInterface gameStateDataAccess;
 
     /**
-     * Constructs the interactor with its dependencies.
+     * Constructs the interactor with a default empty-board data source.
      * @param apiInterface the chess API to use
      * @param analyzeOutputBoundary the output boundary to present results
      */
     public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
                                  AnalyzeOutputBoundary analyzeOutputBoundary) {
-        this.apiInterface = apiInterface;
-        this.analyzeOutputBoundary = analyzeOutputBoundary;
+        this(apiInterface, analyzeOutputBoundary, Board::new);
     }
 
     /**
-     * Builds the piece-code to FEN-character lookup map.
+     * Constructs the interactor with its dependencies.
+     * @param apiInterface the chess API to use
+     * @param analyzeOutputBoundary the output boundary to present results
+     * @param gameStateDataAccess the source of the current board
+     */
+    public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
+                                 AnalyzeOutputBoundary analyzeOutputBoundary,
+                                 GameStateDataAccessInterface gameStateDataAccess) {
+        this.apiInterface = apiInterface;
+        this.analyzeOutputBoundary = analyzeOutputBoundary;
+        this.gameStateDataAccess = gameStateDataAccess;
+    }
+
+    /**
+     * Builds the piece code to FEN-character lookup map for translation.
      * @return the piece-to-FEN map
      */
     private static Map<Integer, Character> buildPieceToFen() {
@@ -66,14 +83,28 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     }
 
     /**
-     * Checks whether it is White's turn.
+     * Checks whether it is White's turn, read from the fen.
      * @param fen the position as a FEN string
      * @return true if it is White's turn
-     * @throws Exception if the request fails
      */
-    private boolean isWhiteTurn(String fen) throws Exception {
+    private boolean isWhiteTurn(String fen) {
+        return "w".equals(fen.split(" ")[1]);
+    }
+
+    /**
+     * Sends a request and fails fast if the API rejects the position.
+     * @param fen the position as a FEN string
+     * @return the API response
+     * @throws Exception if the request fails
+     * @throws IllegalStateException if the API rejects the position
+     */
+    private JsonObject requestOrThrow(String fen) throws Exception {
         final JsonObject response = this.apiInterface.request(fen);
-        return "w".equals(response.get("turn").getAsString());
+        if (response.has("type") && "error".equals(response.get("type").getAsString())) {
+            throw new IllegalStateException("Chess API rejected the position: "
+                    + response.get("text"));
+        }
+        return response;
     }
 
     /**
@@ -100,7 +131,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @throws Exception if the request fails
      */
     private String bestMove(String fen) throws Exception {
-        final JsonObject response = this.apiInterface.request(fen);
+        final JsonObject response = requestOrThrow(fen);
         return response.get("from").getAsString() + " -> " + response.get("to").getAsString();
     }
 
@@ -111,8 +142,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @throws Exception if the request fails
      */
     private String whiteEval(String fen) throws Exception {
-        final JsonObject response = this.apiInterface.request(fen);
-        return "White WinChance: " + response.get("winChance") + "% \n"
+        final JsonObject response = requestOrThrow(fen);
+        final double winChance = roundTwo(response.get("winChance").getAsDouble());
+        return "White WinChance: " + winChance + "% \n"
                 + "White Eval: " + response.get("eval");
     }
 
@@ -123,9 +155,19 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @throws Exception if the request fails
      */
     private String blackEval(String fen) throws Exception {
-        final JsonObject response = this.apiInterface.request(fen);
-        return "Black WinChance: " + (-1) * (1 - response.get("winChance").getAsDouble()) + "% \n"
+        final JsonObject response = requestOrThrow(fen);
+        final double winChance = roundTwo((-1) * (1 - response.get("winChance").getAsDouble()));
+        return "Black WinChance: " + winChance + "% \n"
                 + "Black Eval: " + (-1) * response.get("eval").getAsDouble();
+    }
+
+    /**
+     * Rounds a value to two decimal places.
+     * @param value the value to round
+     * @return the value rounded to two decimals
+     */
+    private static double roundTwo(double value) {
+        return Math.round(value * NUM_TO_ROUND) / NUM_TO_ROUND;
     }
 
     /**
@@ -139,7 +181,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     }
 
     /**
-     * Builds the FEN suffix: turn, castling, en passant, and counters.
+     * Builds the fen ending portion.
      * @param board the board to convert
      * @return the FEN tail string
      */
@@ -179,7 +221,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     /**
      * Builds the FEN board grid, row by row.
      * @param board the board to convert
-     * @return the FEN grid string
+     * @return the fen grid string
      */
     private static String buildFenGrid(Board board) {
         final StringBuilder result = new StringBuilder();
@@ -211,7 +253,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     /**
      * Finds the en passant target square, if any.
      * @param board the board to check
-     * @return the target square in algebraic notation, or "-"
+     * @return the target square in algebraic notation, or "-" otherwise
      */
     private String enPassantSquare(Board board) {
         String square = "-";
@@ -231,9 +273,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
 
     /**
      * Converts board coordinates into algebraic notation.
-     * @param fileIndex the file index (0-7)
-     * @param rankIndex the rank index (0-7)
-     * @return the square in algebraic notation, e.g. "e3"
+     * @param fileIndex the row index (0-7)
+     * @param rankIndex the column index (0-7)
+     * @return the square in algebraic notation, like "e3"
      */
     private String enPassantSquareAlgebra(int fileIndex, int rankIndex) {
         final char file = (char) ('a' + fileIndex);
@@ -241,14 +283,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         return "" + file + rank;
     }
 
-    private Board getRecentBoard() {
-        // Access GameState.board from some DAI we inject in
-        return new Board();
-    }
-
     @Override
     public void executeTurnAnalysis() throws Exception {
-        final Board board = getRecentBoard();
+        final Board board = this.gameStateDataAccess.getRecentBoard();
         final String fen = convertToFen(board);
         this.analyzeOutputBoundary.addMessage(getAnalysisMessage(fen));
     }
