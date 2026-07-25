@@ -1,5 +1,6 @@
 package app;
 
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.concurrent.CountDownLatch;
@@ -43,8 +44,9 @@ public class AnalyzeEndToEndTest {
 
         // will be the AppBuilder eventually that holds all the views
         final JFrame mainFrame = new JFrame("Analyze View");
+        mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        mainFrame.add(view);
+        mainFrame.add(view, BorderLayout.EAST);
         mainFrame.pack();
         mainFrame.setVisible(true);
         viewModel.addMessage("Initial Message");
@@ -52,6 +54,7 @@ public class AnalyzeEndToEndTest {
         view.executeTurnAnalysis();
 
         // Fix I found to keep the test thread alive until you close the window
+        // makes it not really a normal test, more interactive
         final CountDownLatch closed = new CountDownLatch(1);
         mainFrame.addWindowListener(new WindowAdapter() {
             @Override
