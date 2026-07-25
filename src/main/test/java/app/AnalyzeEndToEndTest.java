@@ -19,9 +19,8 @@ import view.AnalyzeView;
 
 public class AnalyzeEndToEndTest {
 
-    @Test
-    void executeTurnAnalysisPresentsOnTheView() throws Exception {
-        // random board
+    public static void main(String[] args) throws Exception {
+        // needed to put it in main, because test threading exists early
         Board board = new Board(new int[][]{
                 {-4,-6,-7,-8,-9,-7,-6,-4},
                 {-1,-1,-1, 0,-1,-1,-1,-1},
@@ -52,16 +51,5 @@ public class AnalyzeEndToEndTest {
         viewModel.addMessage("Initial Message");
 
         view.executeTurnAnalysis();
-
-        // Fix I found to keep the test thread alive until you close the window
-        // makes it not really a normal test, more interactive
-        final CountDownLatch closed = new CountDownLatch(1);
-        mainFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent event) {
-                closed.countDown();
-            }
-        });
-        closed.await();
     }
 }

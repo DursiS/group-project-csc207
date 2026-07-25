@@ -9,6 +9,9 @@ import use_case.AnalyzeMoveInteractor;
 import use_case.ChessApiInterface;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AnalyzeMoveInteractorTest {
 
@@ -41,8 +44,9 @@ public class AnalyzeMoveInteractorTest {
     }
 
     @Test
-    void nonEmptyNewTurnAnalysis() throws Exception {
+    void integratedNonEmptyNewTurnAnalysis() throws Exception {
         String analysis = interactor.getAnalysisMessage(START_FEN);
+        // calls real api to get this message, crosses a boundary = integration
 
         System.out.println(analysis);
         assertNotNull(analysis);
@@ -50,7 +54,7 @@ public class AnalyzeMoveInteractorTest {
     }
 
     @Test
-    void convertFen() {
+    void convertsToFen() {
         String convertedStartFen = interactor.convertToFen(BOARD);
         assertEquals(START_FEN, convertedStartFen);
 
@@ -59,32 +63,30 @@ public class AnalyzeMoveInteractorTest {
         assertEquals(OTHER_FEN, convertedRandomFen);
     }
 
-    private static class MockChessApiInterface implements ChessApiInterface {
+    private JsonObject mockRequest(String fen){
+        JsonObject response = new JsonObject();
 
-        @Override
-        public JsonObject request(String fen){
-            JsonObject response = new JsonObject();
-
-            // random (but valid) info
-            response.addProperty("eval", 0.42);
-            response.addProperty("winChance", 45.14);
-            response.addProperty("from", "g8");
-            response.addProperty("to", "f6");
-            response.addProperty("move", "g8f6");
-            response.addProperty("text", "Move: Ng8 -> f6");
-            return response;
-        }
+        // fixed random (but valid) info
+        response.addProperty("eval", 0.42);
+        response.addProperty("winChance", 45.14);
+        response.addProperty("from", "g8");
+        response.addProperty("to", "f6");
+        response.addProperty("move", "g8f6");
+        response.addProperty("text", "Move: Ng8 -> f6");
+        return response;
     }
 
+
     @Test
-    void mockApiInterfaceNonEmptyAnalysis() throws Exception{
-        MockChessApiInterface adapter = new MockChessApiInterface(); // Mock
-        AnalyzePresenter presenter = new AnalyzePresenter();
-        AnalyzeMoveInteractor mockInteractor = new AnalyzeMoveInteractor(adapter
-                , presenter);
+    void mockExecuteTurnAnalysis() throws Exception {
+        ChessApiInterface adapter = mock(ChessApiInterface.class);
 
-        String analysis = mockInteractor.getAnalysisMessage(START_FEN);
+        when(adapter.request(anyString())).thenReturn(mockRequest(START_FEN));
 
+        AnalyzePresenter presenter = mock(AnalyzePresenter.class);
+        AnalyzeMoveInteractor mockedInteractor = new AnalyzeMoveInteractor(adapter, presenter);
+
+        String analysis = mockedInteractor.getAnalysisMessage(START_FEN);
         System.out.println(analysis);
         assertNotNull(analysis);
         assertFalse(analysis.isBlank());
