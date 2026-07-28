@@ -97,17 +97,52 @@ public class MoveValidator {
     //it generates all moves for every piece belonging to the player who's currently is (in board).
     //it's necessary to see if the player is currently in checkmate (no valid moves)
     //this method might be computationally difficult so we might want to do it differently....
-    public ArrayList<Move> getAllMoves(Board board){
+    public ArrayList<Move> getAllValidMoves(Board board){
         ArrayList<Move> moves = new ArrayList<Move>();
+        //add moves for each piece
+        addAllMoves(moves, board);
+
+        //remove invalid moves that leave the king vulnerable
+        for (int i = moves.size()-1; i >=0; i--) {
+            Board imaginaryBoard = board.Copy();
+            ApplyMove(imaginaryBoard, moves.get(i));
+            //if there are performance issues, this can easily be optimized slightly
+            ArrayList<Move> enemyImaginaryMoves = new ArrayList<>();
+            addAllMoves(enemyImaginaryMoves, imaginaryBoard);
+            boolean invalid = false;
+            //this is kind of cheating, but the only moves that could theoretically endanger the king are normal moves that have destination at the king...
+            for (int j = 0; j < enemyImaginaryMoves.size(); j++) {
+                if(isNonTurnPlayersKing(imaginaryBoard, enemyImaginaryMoves.get(j).getDestination())){
+                    invalid = true;
+                    break;
+                }
+            }
+            if(invalid){
+                moves.remove(i);
+            }
+        }
+
+        return moves;
+    }
+
+    private Boolean isNonTurnPlayersKing(Board b, int[] location){
+        //on white's turn, return if it is targeting the enemy (black) king
+        if (b.getTurn()%2 == 0){
+            return(b.getSquare(location) == -9 || b.getSquare(location) == -10);
+        }
+        //on black's turn, return if it is targeting the enemy (white) king
+        return(b.getSquare(location) == 9 || b.getSquare(location) == 10);
+    }
+
+    public void addAllMoves(ArrayList<Move> moves, Board b){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                if(board.canPieceMove(x,y)){
+                if(b.canPieceMove(x,y)){
                     //adds all valid moves for this piece.
-                    addPieceMoves(moves, board, x, y);
+                    addPieceMoves(moves, b, x, y);
                 }
             }
         }
-        return moves;
     }
 
     //generate moves for a specific piece
@@ -124,7 +159,8 @@ public class MoveValidator {
                     destination = applyMovementVector(destination, moveType, edgeTopologies);
                     //initial validity check:
                     //don't allow move if it results in an invalid location
-                    //don't allow move if it loops back to the piece due to an alternate board topology
+                    //don't allow move if it loops back to the piece's original location due to an alternate board topology
+                    //(this is allowed in some implementations of chess but we disable it for simplicity.)
                     if(destination == null || (destination[0] ==x && destination[1] == y)){
                         break;
                     }else{
@@ -138,6 +174,7 @@ public class MoveValidator {
                         else if(moveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))
                         {
                             moves.add(new Move(new int[]{x,y}, destination));
+
                             //can keep moving if the square was empty
                         }else
                         {
@@ -150,6 +187,11 @@ public class MoveValidator {
             }while(repeats <= moveType.getMaxRepeats()) ;
         }
     }
+
+    //public boolean checkIllegalMove(Board b, Move m){
+        //just use a checkmate method that should maybe exist anyway?
+        //Board b2 = ApplyMove(b, m);
+    //}
 
     public int[] applyMovementVector(int[] position, MoveType moveType, int[] edgeTopologies){
         int[] newPosition = new int[]{position[0]  + moveType.getVector()[0], position[1] + moveType.getVector()[1]};
@@ -167,5 +209,20 @@ public class MoveValidator {
         return newPosition;
     }
 
+    public void ApplyMove(Board b, Move m){
+        //System.out.println( b.toString());
+        //System.out.println(m.toString());
+        if(!b.canPieceMove(m.getOrigin()[0], m.getOrigin()[1])){
+            throw new IllegalArgumentException();
+        }
+        if(m.getIsNormalMove()){
+            b.setSquare(m.getDestination(), b.getSquare(m.getOrigin()));
+            b.setSquare(m.getOrigin(), 0);
+        }
+        //todo add en passant.
+
+        //todo add castle.
+        b.incrementTurn();
+    }
 
 }

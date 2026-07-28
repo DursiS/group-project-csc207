@@ -1,6 +1,5 @@
 package entity;
 
-import entity.Board;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +11,7 @@ public class MoveValidatorTest {
         Board b = new Board();//default board;
         MoveValidator v = new MoveValidator();
 
-        ArrayList<Move> moves = v.getAllMoves(b);
+        ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
         for (int i = 0; i < moves.size(); i++) {
             System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
@@ -28,7 +27,7 @@ public class MoveValidatorTest {
         Board b = new Board(squares,  0,0,0);//default board;
         MoveValidator v = new MoveValidator();
 
-        ArrayList<Move> moves = v.getAllMoves(b);
+        ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
         for (int i = 0; i < moves.size(); i++) {
             System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
@@ -44,12 +43,36 @@ public class MoveValidatorTest {
         Board b = new Board(squares, 0,0,0);//default board;
         MoveValidator v = new MoveValidator();
 
-        ArrayList<Move> moves = v.getAllMoves(b);
+        ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
         for (int i = 0; i < moves.size(); i++) {
             System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
         }
         assertEquals(moves.size(), 20);
+    }
+
+    @Test
+    void kingVulnerabilityDisallowanceMoveValidatorTest(){
+        //create board where white is in check and it's white's turn to move
+        int[][] squares = new int[8][8];
+        squares[0][0] = 9;
+        squares[7][0] = -4;
+        squares[7][7] = 4;
+        squares[4][7] = 4;
+
+        Board b = new Board(squares, 0,0,0);//default board;
+        MoveValidator v = new MoveValidator();
+
+        ArrayList<Move> moves = v.getAllValidMoves(b);
+        System.out.println(moves.size());
+        for (int i = 0; i < moves.size(); i++) {
+            System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
+        }
+        //there should be 4 allowed move:
+        //1,2: move king out of the way of the enemy rook
+        //3: obstruct king with rook
+        //4: capture enemy rook
+        assertEquals(moves.size(), 4);
     }
 
 
