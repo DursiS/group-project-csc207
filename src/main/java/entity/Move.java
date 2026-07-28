@@ -6,6 +6,7 @@ package entity;
 public class Move {
     private int[] origin;
     private int[] destination;
+    private Boolean isNormalMove;
     //private gameState
 
     public int[] getOrigin() {
@@ -16,8 +17,18 @@ public class Move {
         return destination;
     }
 
+    public Boolean getIsNormalMove() {
+        return isNormalMove;
+    }
+
     public Move(int[] origin, int[] destination) {
         this.origin = origin;
         this.destination = destination;
+        this.isNormalMove = true;
+    }
+
+    //for debugging
+    public String toString(){
+        return "(" + origin[0] + "," + origin[1] + ") -> (" + destination[0] + "," + destination[1] + ")";
     }
 }
