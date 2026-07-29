@@ -1,5 +1,6 @@
 package use_case;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,9 +69,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Builds the full analysis message for the given position.
      * @param fen the position as a FEN string
      * @return the analysis text
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    public String getAnalysisMessage(String fen) throws Exception {
+    public String getAnalysisMessage(String fen) throws IOException {
         final String resultTail = this.boardEval(fen) + "\n" + this.bestMove(fen);
         final String header;
         if (isWhiteTurn(fen)) {
@@ -95,10 +96,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Sends a request and fails fast if the API rejects the position.
      * @param fen the position as a FEN string
      * @return the API response
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      * @throws IllegalStateException if the API rejects the position
      */
-    private JsonObject requestOrThrow(String fen) throws Exception {
+    private JsonObject requestOrThrow(String fen) throws IOException {
         final JsonObject response = this.apiInterface.request(fen);
         if (response.has("type") && "error".equals(response.get("type").getAsString())) {
             throw new IllegalStateException("Chess API rejected the position: "
@@ -111,9 +112,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Returns the evaluation for whoever's turn it is.
      * @param fen the position as a FEN string
      * @return the eval text
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    private String boardEval(String fen) throws Exception {
+    private String boardEval(String fen) throws IOException {
         final String result;
         if (isWhiteTurn(fen)) {
             result = this.whiteEval(fen);
@@ -128,9 +129,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Returns the best move for the given position as "from -> to".
      * @param fen the position as a FEN string
      * @return the best move text
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    private String bestMove(String fen) throws Exception {
+    private String bestMove(String fen) throws IOException {
         final JsonObject response = requestOrThrow(fen);
         return response.get("from").getAsString() + " -> " + response.get("to").getAsString();
     }
@@ -139,9 +140,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Returns White's win chance and evaluation.
      * @param fen the position as a FEN string
      * @return the white eval text
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    private String whiteEval(String fen) throws Exception {
+    private String whiteEval(String fen) throws IOException {
         final JsonObject response = requestOrThrow(fen);
         final double winChance = roundTwo(response.get("winChance").getAsDouble());
         return "White WinChance: " + winChance + "% \n"
@@ -152,9 +153,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Returns Black's win chance and evaluation.
      * @param fen the position as a FEN string
      * @return the black eval text
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    private String blackEval(String fen) throws Exception {
+    private String blackEval(String fen) throws IOException {
         final JsonObject response = requestOrThrow(fen);
         final double winChance = roundTwo((-1) * (1 - response.get("winChance").getAsDouble()));
         return "Black WinChance: " + winChance + "% \n"
@@ -284,7 +285,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     }
 
     @Override
-    public void executeTurnAnalysis() throws Exception {
+    public void executeTurnAnalysis() throws IOException {
         final Board board = this.gameStateDataAccess.getRecentBoard();
         final String fen = convertToFen(board);
         this.analyzeOutputBoundary.addMessage(getAnalysisMessage(fen));

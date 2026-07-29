@@ -1,19 +1,21 @@
 package interface_adapter;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.net.URI;
-import java.net.http.*;
-
 public class ApiDemo {
 
-    static JsonObject demo_raw_request() throws Exception{
-        String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        String body = "{ \"fen\": \"" + fen + "\" }";
+    static JsonObject demoRawRequest() throws Exception {
+        final String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        final String body = "{ \"fen\": \"" + fen + "\" }";
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        final HttpClient client = HttpClient.newHttpClient();
+        final HttpRequest request = HttpRequest.newBuilder()
 
                 // Set the api url to request from
                 .uri(URI.create("https://chess-api.com/v1"))
@@ -27,7 +29,7 @@ public class ApiDemo {
                 // Construct a HttpRequest
                 .build();
 
-        HttpResponse<String> response =
+        final HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
         // Just a raw JsonObject to see its formatting
@@ -36,19 +38,21 @@ public class ApiDemo {
                 .getAsJsonObject();
     }
 
-    static void demo_raw_evaluation() throws Exception{
-        JsonObject response =  demo_raw_request();
+    static void demoRawEvaluation() throws Exception {
+        final JsonObject response = demoRawRequest();
         System.out.println("White Eval: " + response.get("eval"));
         System.out.println("Black Eval:  " + (-1) * response.get("eval").getAsDouble());
         System.out.println("White WinChance: " + response.get("winChance"));
         System.out.println("Black WinChance: " + (-1) * (1 - response.get("winChance").getAsDouble()));
-
     }
 
+    /**
+     * Runs the raw API evaluation demo.
+     * @param args the command-line arguments
+     * @throws Exception if the request fails
+     */
+    // -@cs[UncommentedMain] Demo main retained for the lab
     public static void main(String[] args) throws Exception {
-        ApiDemo.demo_raw_evaluation();
+        ApiDemo.demoRawEvaluation();
     }
-
-
-
 }

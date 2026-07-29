@@ -1,5 +1,6 @@
 package interface_adapter;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -10,8 +11,9 @@ import com.google.gson.JsonParser;
 import use_case.ChessApiInterface;
 
 public class ChessApiAdapter implements ChessApiInterface {
-    private HttpResponse<String> ping(String fen) throws Exception {
+    private HttpResponse<String> ping(String fen) throws IOException {
         final String body = "{ \"fen\": \"" + fen + "\" }";
+        // perfect body formatting
 
         final HttpClient client = HttpClient.newHttpClient();
         final HttpRequest request = HttpRequest.newBuilder()
@@ -19,16 +21,23 @@ public class ChessApiAdapter implements ChessApiInterface {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        try {
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+        catch (InterruptedException ex) {
+            // closes the thread
+            Thread.currentThread().interrupt();
+            throw new IOException("The API request was interrupted", ex);
+        }
     }
 
     /**
      * Requests analysis for the given position.
      * @param fen the position as a FEN string
      * @return the API response as a JSON object
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    public JsonObject request(String fen) throws Exception {
+    public JsonObject request(String fen) throws IOException {
         final HttpResponse<String> response = this.ping(fen);
         return JsonParser.parseString(response.body())
                 .getAsJsonObject();

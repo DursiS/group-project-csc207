@@ -1,10 +1,12 @@
 package interface_adapter;
 
+import java.io.IOException;
+
 public interface AnalyzeInputBoundary {
 
     /**
      * Runs the analysis for the current turn.
-     * @throws Exception if the analysis fails
+     * @throws IOException if the analysis fails
      */
-    void executeTurnAnalysis() throws Exception;
+    void executeTurnAnalysis() throws IOException;
 }

@@ -1,5 +1,7 @@
 package interface_adapter;
 
+import java.io.IOException;
+
 public class AnalyzeController {
     private final AnalyzeInputBoundary inputBoundary;
 
@@ -9,9 +11,9 @@ public class AnalyzeController {
 
     /**
      * Triggers the analysis for the current turn.
-     * @throws Exception if the analysis fails
+     * @throws IOException if the analysis fails
      */
-    public void executeTurnAnalysis() throws Exception {
+    public void executeTurnAnalysis() throws IOException {
         this.inputBoundary.executeTurnAnalysis();
     }
 }

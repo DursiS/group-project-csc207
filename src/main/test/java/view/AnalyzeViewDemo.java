@@ -25,6 +25,10 @@ public class AnalyzeViewDemo {
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-        viewModel.addMessage("Hello World");
+        // Only displays the most recent, good
+        viewModel.addMessage("Demo Message #1");
+        viewModel.addMessage("Demo Message #2");
+        viewModel.addMessage("Demo Message #3");
+
     }
 }

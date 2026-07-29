@@ -1,5 +1,7 @@
 package use_case;
 
+import java.io.IOException;
+
 import com.google.gson.JsonObject;
 
 public interface ChessApiInterface {
@@ -7,7 +9,7 @@ public interface ChessApiInterface {
      * Requests analysis for the given position.
      * @param fen the position as a FEN string
      * @return the API response as a JSON object
-     * @throws Exception if the request fails
+     * @throws IOException if the request fails
      */
-    JsonObject request(String fen) throws Exception;
+    JsonObject request(String fen) throws IOException;
 }

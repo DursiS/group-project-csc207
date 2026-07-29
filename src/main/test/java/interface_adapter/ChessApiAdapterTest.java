@@ -1,10 +1,9 @@
 package interface_adapter;
 
-import com.google.gson.JsonObject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.google.gson.JsonObject;
 
 public class ChessApiAdapterTest {
 
@@ -13,12 +12,12 @@ public class ChessApiAdapterTest {
 
     @Test
     void adapterRequestReturnsNonEmptyJsonObject() throws Exception {
-        JsonObject json = new ChessApiAdapter().request(START);
+        final JsonObject json = new ChessApiAdapter().request(START);
 
         System.out.println(json);
-        assertTrue(json.has("eval"));
-        assertTrue(json.has("move"));
-        assertTrue(json.has("text"));
-        assertInstanceOf(JsonObject.class, json);
+        Assertions.assertTrue(json.has("eval"));
+        Assertions.assertTrue(json.has("move"));
+        Assertions.assertTrue(json.has("text"));
+        Assertions.assertInstanceOf(JsonObject.class, json);
     }
 }

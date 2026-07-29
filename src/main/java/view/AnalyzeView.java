@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -30,8 +31,8 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        add(new JScrollPane(this.textArea));
         addDisplayLabel();
+        add(new JScrollPane(this.textArea));
     }
 
     private void addDisplayLabel() {
@@ -47,11 +48,12 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
 
     /**
      * Triggers the analysis for the current turn.
-     * @throws Exception if the analysis fails
+     * @throws IOException if the analysis fails
      */
-    public void executeTurnAnalysis() throws Exception {
+    public void executeTurnAnalysis() throws IOException {
         this.controller.executeTurnAnalysis();
     }
+
 }
 
 // View Cycle:
