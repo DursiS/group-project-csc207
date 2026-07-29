@@ -133,7 +133,8 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      */
     private String bestMove(String fen) throws IOException {
         final JsonObject response = requestOrThrow(fen);
-        return response.get("from").getAsString() + " -> " + response.get("to").getAsString();
+        return "Best Move: " + response.get("from").getAsString()
+                + " -> " + response.get("to").getAsString();
     }
 
     /**

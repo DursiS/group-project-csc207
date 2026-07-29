@@ -1,22 +1,18 @@
-package app;
+package interface_adapter;
 
 import java.awt.*;
+import java.io.IOException;
 
 import javax.swing.*;
 
 import entity.Board;
-import interface_adapter.AnalyzeController;
-import interface_adapter.AnalyzePresenter;
-import interface_adapter.AnalyzeViewModel;
-import interface_adapter.ChessApiAdapter;
-import org.junit.jupiter.api.Test;
 import use_case.AnalyzeMoveInteractor;
 import use_case.GameStateDataAccessInterface;
 import view.AnalyzeView;
 
 public class AnalyzeEndToEndTest {
 
-    public static void main(String[] args) throws Exception {
+    static void boardToViewModelDemo() throws IOException {
         // needed to put it in main, because test threading exists early
         Board board = new Board(new int[][]{
                 {-4,-6,-7,-8,-9,-7,-6,-4},
@@ -48,5 +44,9 @@ public class AnalyzeEndToEndTest {
         viewModel.addMessage("Initial Message");
 
         view.executeTurnAnalysis();
+    }
+
+    public static void main(String[] args) throws IOException {
+        boardToViewModelDemo();
     }
 }
