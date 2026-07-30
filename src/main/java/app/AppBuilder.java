@@ -42,7 +42,7 @@ public class AppBuilder {
 
     public JFrame build(){
         // 1. Create the window frame
-        final JFrame application = new JFrame("Test garbage");
+        final JFrame application = new JFrame("Chess");
         application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         application.setSize(600,600);
 
