@@ -17,8 +17,8 @@ import interface_adapter.AnalyzeViewModel;
 
 public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private static final int WIDTH = 200;
-    private static final int HEIGHT = 700;
-    private static final int TEXT_SIZE = 24;
+    private static final int HEIGHT = 400;
+    private static final int TEXT_SIZE = 48;
 
     private final JTextArea textArea = new JTextArea();
     private final AnalyzeController controller;

@@ -75,10 +75,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         final String resultTail = this.boardEval(fen) + "\n" + this.bestMove(fen);
         final String header;
         if (isWhiteTurn(fen)) {
-            header = "== White's Metrics: == \n";
+            header = "== WHITE'S TURN == \n\n White's Metrics: \n";
         }
         else {
-            header = "== Black's Metrics: == \n";
+            header = "== BLACK'S TURN == \n\n Black's Metrics: \n";
         }
         return header + resultTail;
     }
