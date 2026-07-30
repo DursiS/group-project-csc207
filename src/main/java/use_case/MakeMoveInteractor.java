@@ -17,11 +17,17 @@
 
 package use_case;
 
+import entity.GameState;
 import entity.MoveValidator;
 
-public class MakeMoveInteractor {
+public class MakeMoveInteractor implements MoveInputBoundary {
     private MoveValidator validator;
+    private GameState gameState;
+    private MoveOutputBoundary moveOutputBoundary;
 
-
-
+    public MakeMoveInteractor(MoveValidator validator, GameState gameState, MoveOutputBoundary moveOutputBoundary) {
+        this.validator = validator;
+        this.gameState = gameState;
+        this.moveOutputBoundary = moveOutputBoundary;
+    }
 }

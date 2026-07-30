@@ -1,4 +1,11 @@
 package interface_adapter;
 
-public class MovePresenter {
+import use_case.MoveOutputBoundary;
+
+public class MovePresenter implements MoveOutputBoundary {
+    private MoveViewModel moveViewModel;
+
+    public MovePresenter(MoveViewModel moveViewModel) {
+        this.moveViewModel = moveViewModel;
+    }
 }
