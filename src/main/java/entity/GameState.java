@@ -39,4 +39,7 @@ public class GameState {
     public int getBlackMilliSec(){return this.blackMilliSec;}
     public String getGameResult(){return this.gameResult;}
 
+    public Board getBoard(){
+        return board;
+    }
 }

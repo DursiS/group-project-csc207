@@ -70,6 +70,7 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
         for (int y = 0; y < EIGHT; y++) {
             for (int x = 0; x < EIGHT; x++) {
                 buttons[y][x].setBackground(vm.getSquareColour(x,y));
+                buttons[y][x].setText(vm.getSquareText(x,y));
             }
         }
     }

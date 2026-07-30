@@ -216,7 +216,25 @@ public class MoveValidator {
             throw new IllegalArgumentException();
         }
         if(m.getIsNormalMove()){
-            b.setSquare(m.getDestination(), b.getSquare(m.getOrigin()));
+            int initialPiece =  b.getSquare(m.getOrigin());
+            int finalPiece = Math.abs((initialPiece));
+
+            if ( Math.abs(initialPiece) == 1){//pawn
+                finalPiece = 2;
+            }
+            if ( Math.abs(initialPiece) == 4){//rook
+                finalPiece = 5;
+            }
+            if ( Math.abs(initialPiece) == 9){//king
+                finalPiece = 10;
+            }
+            if(initialPiece<0){
+                finalPiece  = -finalPiece;
+            }
+
+
+
+            b.setSquare(m.getDestination(), finalPiece);
             b.setSquare(m.getOrigin(), 0);
         }
         //todo add en passant.
