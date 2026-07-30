@@ -26,7 +26,7 @@ public class AppBuilder {
     public AppBuilder addMoveView() {
         moveViewModel = new MoveViewModel();
 
-        gameState = new GameState(new Board(), 0, 0, new BoardStateList(),"idk what this is");
+        gameState = new GameState(new Board(), null, 0, 0, new BoardStateList(),"idk what this is");
         MoveValidator moveValidator = new MoveValidator();
 
         movePresenter = new MovePresenter(moveViewModel);

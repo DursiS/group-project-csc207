@@ -8,9 +8,9 @@ public class GameRecord {
     private ArrayList<GameState> history;
     private final LocalTime time;
 
-    public GameRecord() {
+    public GameRecord(GameState initialGameState) {
         history = new ArrayList<>();
-        history.add(new GameState());
+        history.add(initialGameState);
         time = LocalTime.now();
     }
 
