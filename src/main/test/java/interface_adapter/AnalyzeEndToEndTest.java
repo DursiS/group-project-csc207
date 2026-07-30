@@ -36,6 +36,10 @@ public class AnalyzeEndToEndTest {
 
         // will be the AppBuilder eventually that holds all the views
         final JFrame mainFrame = new JFrame("Analyze View");
+
+        System.out.println(mainFrame.getPreferredSize());
+
+
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         mainFrame.add(view, BorderLayout.EAST);

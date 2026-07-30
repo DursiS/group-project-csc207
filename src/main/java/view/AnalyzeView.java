@@ -1,7 +1,6 @@
 package view;
 
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -18,7 +17,7 @@ import interface_adapter.AnalyzeViewModel;
 
 public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private static final int WIDTH = 200;
-    private static final int HEIGHT = 600;
+    private static final int HEIGHT = 700;
     private static final int TEXT_SIZE = 24;
 
     private final JTextArea textArea = new JTextArea();
@@ -32,6 +31,7 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addDisplayLabel();
+        setBackground(Color.PINK);
         add(new JScrollPane(this.textArea));
     }
 
