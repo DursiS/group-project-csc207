@@ -5,6 +5,7 @@ import entity.GameState;
 import entity.Move;
 import entity.MoveValidator;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class MakeMoveInteractor implements MoveInputBoundary {
@@ -30,6 +31,17 @@ public class MakeMoveInteractor implements MoveInputBoundary {
     public void initializeTurn(){
         moves = validator.getAllValidMoves(gameState.getBoard());
 
+        if(moves.size() == 0){
+            String winner = "";
+            int turn = gameState.getBoard().getTurn();
+            if(turn%2 ==0){
+                winner = "black";
+            }else{
+                winner = "white";
+            }
+            JOptionPane.showMessageDialog(null, "CHECKMATE! " + winner + " WINS!", "CHECKMATE!", JOptionPane.INFORMATION_MESSAGE);
+            //checkmate, game is over, return to menu or something?
+        }
     }
 
     @Override
@@ -52,8 +64,11 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                             m.getOrigin()[1] == selectedSquare[1] &&
                             m.getDestination()[0] == data.getX()&&
                             m.getDestination()[1] == data.getY()){
+
+                        //Move is applied, make board state copy before changing board
+                        gameState.getBoardStateList().addBoardCopy(b);
                         validator.ApplyMove(b, m);
-                        initializeTurn(); //new turn beings (this seems like a weird place to do it though...)
+                        initializeTurn();
                         selectedSquare=null;
                         moved = true;
                         break;
@@ -66,10 +81,10 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             }
         }
 
-        ConcludeMove();
+        ConcludeInteraction();
     }
 
-    private void ConcludeMove(){
+    private void ConcludeInteraction(){
         Board b = gameState.getBoard();
 
 
@@ -102,6 +117,6 @@ public class MakeMoveInteractor implements MoveInputBoundary {
     }
 
     public void UpdateVisuals(){
-        ConcludeMove();
+        ConcludeInteraction();
     }
 }

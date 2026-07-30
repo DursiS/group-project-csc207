@@ -20,13 +20,13 @@ public class AppBuilder {
     private MakeMoveInteractor makeMoveInteractor;
     private MovePresenter movePresenter;
 
-    //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
     private GameState gameState;
 
     public AppBuilder addMoveView() {
         moveViewModel = new MoveViewModel();
 
-        gameState = new GameState(new Board(), 0, 0, new BoardStateList(),"idk what this is");
+        //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
+        gameState = new GameState(new Board(1,0), 0, 0, new BoardStateList(),"idk what this is");
         MoveValidator moveValidator = new MoveValidator();
 
         movePresenter = new MovePresenter(moveViewModel);

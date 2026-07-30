@@ -42,4 +42,7 @@ public class GameState {
     public Board getBoard(){
         return board;
     }
+    public BoardStateList getBoardStateList(){
+        return boardStateList;
+    }
 }
