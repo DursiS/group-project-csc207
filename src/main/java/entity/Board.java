@@ -46,11 +46,17 @@ public class Board {
     public int getSquare(int x, int y) {
         return squares[y][x];
     }
+    public int getSquare(int[] position){
+        return getSquare(position[0], position[1]);
+    }
     public void setSquare(int x, int y, int value) throws IllegalArgumentException {
         if( value < -10 || value > 10){
             throw new IllegalArgumentException();
         }
         squares[y][x] = value;
+    }
+    public void setSquare(int[] position, int value) throws IllegalArgumentException{
+        setSquare(position[0], position[1], value);
     }
 
     //these methods are used by the move validator
@@ -111,4 +117,20 @@ public class Board {
         }
         return new Board(newSquares, turn, verticalEdgeType, horizontalEdgeType);
     }
+
+    //method for debugging
+    public String toString(){
+        String s = "turn: " + turn;
+        for (int y = 0; y < 8; y++) {
+            s+="\n";
+            for (int x = 0; x < 8; x++) {
+                s += getSquare(x,y);
+                if(x<7){
+                    s += ",";
+                }
+            }
+        }
+        return s;
+    }
+
 }

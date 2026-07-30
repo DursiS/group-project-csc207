@@ -1,25 +1,45 @@
 package entity;
 
 public class GameState {
+    //current chess board
+    private Board board;
 
-    private final Board currentBoard;
-//    private Move previousMove;
+    //remaining time for both players in millisecond
+    private int whiteMilliSec;
+    private int blackMilliSec;
 
-    // time remaining in seconds for player 1 and 2
-    private final int timeRemaining1;
-    private final int timeRemaining2;
-    private final int DEFAULT_TIME = 600;
+    //stores previous board states
+    private BoardStateList boardStateList;
 
-    public GameState() {
-        currentBoard = new Board();
-        timeRemaining1 = DEFAULT_TIME;
-        timeRemaining2 = DEFAULT_TIME;
+    //current result for the game
+    private String gameResult;
+
+    //create a game state with infos to save the game
+    public GameState(Board board, int whiteMilliSec, int blackMilliSec,
+                     BoardStateList boardStateList,
+                     String gameResult){
+        if (board == null){
+            throw new IllegalArgumentException("Board can't be null");
+        }
+        if (whiteMilliSec < 0 || blackMilliSec< 0){
+            throw new IllegalArgumentException("remaining time can't be negative");
+        }
+        if (gameResult == null){
+            throw new IllegalArgumentException("Game result can not be empty");
+        }
+        this.board = board.Copy();
+        this.whiteMilliSec = whiteMilliSec;
+        this.blackMilliSec = blackMilliSec;
+        this.boardStateList = boardStateList.Copy();
+        this.gameResult = gameResult;
     }
+    public Board getBoardCopy(){return this.board.Copy();}
+    public BoardStateList getBoardStateListCopy(){return this.boardStateList.Copy();}
+    public int getWhiteMilliSec(){return this.whiteMilliSec;}
+    public int getBlackMilliSec(){return this.blackMilliSec;}
+    public String getGameResult(){return this.gameResult;}
 
-//    public GameState(Board board, Move move, int time1, int time2) {
-//        currentBoard = board;
-//        previousMove = move;
-//        timeRemaining1 = time1;
-//        timeRemaining2 = time2;
-//    }
+    public Board getBoard(){
+        return board;
+    }
 }
