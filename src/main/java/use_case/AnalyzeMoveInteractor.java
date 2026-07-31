@@ -26,27 +26,27 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     private final GameStateDataAccessInterface gameStateDataAccess;
 
     /**
-     * Constructs the interactor with a default empty-board data source.
-     * @param apiInterface the chess API to use
-     * @param analyzeOutputBoundary the output boundary to present results
-     */
-    public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
-                                 AnalyzeOutputBoundary analyzeOutputBoundary) {
-        this(apiInterface, analyzeOutputBoundary, Board::new);
-    }
-
-    /**
      * Constructs the interactor with its dependencies.
+     * Uses dependencies injecting instead of hard dependencies.
      * @param apiInterface the chess API to use
      * @param analyzeOutputBoundary the output boundary to present results
-     * @param gameStateDataAccess the source of the current board
+     * @param gameStateDataAccessInterface the source of the current board
      */
     public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
                                  AnalyzeOutputBoundary analyzeOutputBoundary,
-                                 GameStateDataAccessInterface gameStateDataAccess) {
+                                 GameStateDataAccessInterface gameStateDataAccessInterface) {
+        // Need to make sure the retrieval of recent board states works when
+        // finally implemented.
         this.apiInterface = apiInterface;
         this.analyzeOutputBoundary = analyzeOutputBoundary;
-        this.gameStateDataAccess = gameStateDataAccess;
+        this.gameStateDataAccess = gameStateDataAccessInterface;
+    }
+
+    @Override
+    public void executeTurnAnalysis() throws IOException {
+        final Board board = this.gameStateDataAccess.getRecentBoard();
+        final String fen = convertToFen(board);
+        this.analyzeOutputBoundary.addMessage(getAnalysisMessage(fen));
     }
 
     /**
@@ -75,10 +75,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         final String resultTail = this.boardEval(fen) + "\n" + this.bestMove(fen);
         final String header;
         if (isWhiteTurn(fen)) {
-            header = "== WHITE'S TURN == \n\n White's Metrics: \n";
+            header = "== WHITE'S TURN == \n\nWhite's Metrics: \n";
         }
         else {
-            header = "== BLACK'S TURN == \n\n Black's Metrics: \n";
+            header = "== BLACK'S TURN == \n\nBlack's Metrics: \n";
         }
         return header + resultTail;
     }
@@ -285,10 +285,4 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         return "" + file + rank;
     }
 
-    @Override
-    public void executeTurnAnalysis() throws IOException {
-        final Board board = this.gameStateDataAccess.getRecentBoard();
-        final String fen = convertToFen(board);
-        this.analyzeOutputBoundary.addMessage(getAnalysisMessage(fen));
-    }
 }
