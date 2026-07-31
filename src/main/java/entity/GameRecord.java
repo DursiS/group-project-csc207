@@ -1,17 +1,20 @@
 package entity;
 
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 
 public class GameRecord {
 
     private ArrayList<GameState> history;
-    private final LocalTime time;
+    private final OffsetDateTime timeCreated;
+
+    private boolean isCompleted;
 
     public GameRecord(GameState initialGameState) {
         history = new ArrayList<>();
         history.add(initialGameState);
-        time = LocalTime.now();
+        timeCreated = OffsetDateTime.now();
+        isCompleted = false;
     }
 
     // update the game record by appending a game state
@@ -23,5 +26,13 @@ public class GameRecord {
 
     public ArrayList<GameState> getHistory() {
         return history;
+    }
+
+    public OffsetDateTime getTimeCreated() {
+        return timeCreated;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
     }
 }
