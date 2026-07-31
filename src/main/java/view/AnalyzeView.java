@@ -17,6 +17,8 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private static final int TEXT_SIZE = 16;
     private static final int BUTTON_HEIGHT = 40;
     private static final String FONT = "Arial";
+    private static final Color COLOR = new Color(210, 180, 140);
+    private static final Color TEXT_COLOR = Color.BLACK;
 
     private JTextArea textArea;
     private final AnalyzeController controller;
@@ -31,14 +33,30 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addDisplayLabel();
-        setBackground(Color.PINK);
-        add(new JScrollPane(this.textArea));
+        setBackground(COLOR);
+        final JScrollPane scrollPane = new JScrollPane(this.textArea);
+        scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        add(scrollPane);
         add(getButtonRow());
+    }
+
+    /**
+     * SRP
+     * Triggers the analysis for the current turn.
+     * @throws IOException if the analysis fails
+     */
+    public void executeTurnAnalysis() throws IOException {
+        this.controller.executeTurnAnalysis();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        SwingUtilities.invokeLater(() -> this.textArea.setText((String) evt.getNewValue()));
     }
 
     private JPanel getButtonRow() {
         final JPanel buttonRow = new JPanel(new GridLayout(1, 2));
-        buttonRow.setBackground(Color.PINK);
+        buttonRow.setBackground(COLOR);
         buttonRow.add(getHistoryButton());
         buttonRow.add(getReturnButton());
         buttonRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, BUTTON_HEIGHT));
@@ -51,19 +69,18 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         this.textArea.setLineWrap(true);
         this.textArea.setWrapStyleWord(true);
         this.textArea.setFont(new Font(FONT, Font.PLAIN, TEXT_SIZE));
-        this.textArea.setBackground(Color.PINK);
+        this.textArea.setBackground(COLOR);
     }
 
     private JButton getHistoryButton() {
         final JButton historyButton = new JButton("Message History");
         historyButton.addActionListener(click -> {
-            // switch to one long history message
+            this.controller.executeMessageHistoryDisplay();
         });
-        // button aesthetics
-        historyButton.setBackground(Color.PINK);
+        historyButton.setBackground(COLOR);
         historyButton.setFont(new Font(FONT, Font.PLAIN, TEXT_SIZE));
-        historyButton.setForeground(Color.WHITE);
-        historyButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        historyButton.setForeground(TEXT_COLOR);
+        historyButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         historyButton.setVisible(true);
         return historyButton;
     }
@@ -71,12 +88,12 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private JButton getReturnButton() {
         final JButton returnButton = new JButton("Return");
         returnButton.addActionListener(click -> {
-            // switch to the most recent message of the list
+            this.controller.executeSingleMessageDisplay();
         });
-        returnButton.setBackground(Color.PINK);
+        returnButton.setBackground(COLOR);
         returnButton.setFont(new Font(FONT, Font.PLAIN, TEXT_SIZE));
-        returnButton.setForeground(Color.WHITE);
-        returnButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        returnButton.setForeground(TEXT_COLOR);
+        returnButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         returnButton.setVisible(true);
         return returnButton;
     }
@@ -84,20 +101,8 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private void addDisplayLabel() {
         final JLabel displayLabel = new JLabel("Analysis Metrics");
         displayLabel.setFont(new Font(FONT, Font.PLAIN, TITLE_SIZE));
+        displayLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(displayLabel);
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        SwingUtilities.invokeLater(() -> this.textArea.setText((String) evt.getNewValue()));
-    }
-
-    /**
-     * Triggers the analysis for the current turn.
-     * @throws IOException if the analysis fails
-     */
-    public void executeTurnAnalysis() throws IOException {
-        this.controller.executeTurnAnalysis();
     }
 
 }

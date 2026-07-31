@@ -15,6 +15,16 @@ public class AnalyzePresenter implements AnalyzeOutputBoundary {
 
     @Override
     public void addMessage(String message) {
-        this.viewModel.addMessage(message);
+        this.viewModel.setMessage(message);
+    }
+
+    @Override
+    public void setRecentMessage() {
+        this.viewModel.setRecentMessage();
+    }
+
+    @Override
+    public void setHistoryMessage() {
+        this.viewModel.setHistoryMessage();
     }
 }

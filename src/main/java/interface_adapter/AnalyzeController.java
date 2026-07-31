@@ -16,4 +16,18 @@ public class AnalyzeController {
     public void executeTurnAnalysis() throws IOException {
         this.inputBoundary.executeTurnAnalysis();
     }
+
+    /**
+     * Requests showing only the most recent message.
+     */
+    public void executeSingleMessageDisplay() {
+        this.inputBoundary.executeSingleMessageDisplay();
+    }
+
+    /**
+     * Requests showing the whole message history.
+     */
+    public void executeMessageHistoryDisplay() {
+        this.inputBoundary.executeMessageHistoryDisplay();
+    }
 }

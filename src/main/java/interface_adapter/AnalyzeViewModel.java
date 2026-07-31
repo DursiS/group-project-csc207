@@ -7,17 +7,41 @@ import java.util.List;
 
 public class AnalyzeViewModel {
 
+    private static final String ANALYSIS_PROPERTY = "analysis";
+
     private final List<String> messageHistory = new ArrayList<>();
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     /**
      * Adds a message to the history,
-     * and fires a property change towards AnalyzeView.
+     * and fires a property change towards AnalyzeView to set textArea.
      * @param message the message to add
      */
-    public void addMessage(String message) {
+    public void setMessage(String message) {
         this.messageHistory.add(message);
-        this.support.firePropertyChange("analysis", null, message);
+        this.support.firePropertyChange(ANALYSIS_PROPERTY, null, message);
+    }
+
+    /**
+     * Fires a property change with only the most recent message,
+     * so the view shows the latest analysis.
+     */
+    public void setRecentMessage() {
+        if (!this.messageHistory.isEmpty()) {
+            final String message = this.messageHistory.get(this.messageHistory.size() - 1);
+            this.support.firePropertyChange(ANALYSIS_PROPERTY, null, message);
+        }
+    }
+
+    /**
+     * Fires a property change with the whole history joined together,
+     * so the view shows every past analysis in one message.
+     */
+    public void setHistoryMessage() {
+        if (!this.messageHistory.isEmpty()) {
+            final String message = String.join("\n\n", this.messageHistory);
+            this.support.firePropertyChange(ANALYSIS_PROPERTY, null, message);
+        }
     }
 
     /**
