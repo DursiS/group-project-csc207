@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import interface_adapter.AnalyzeController;
+import interface_adapter.AnalyzeInputBoundary;
 import interface_adapter.AnalyzeViewModel;
 
 public class AnalyzeViewDemo {
@@ -15,7 +16,21 @@ public class AnalyzeViewDemo {
     public static void main(String[] args) {
         final AnalyzeViewModel viewModel = new AnalyzeViewModel();
 
-        final AnalyzeController controller = new AnalyzeController(() -> {});
+        // No-op boundary: this demo only showcases the view, so the buttons do nothing.
+        final AnalyzeInputBoundary noOp = new AnalyzeInputBoundary() {
+            @Override
+            public void executeTurnAnalysis() {
+            }
+
+            @Override
+            public void executeSingleMessageDisplay() {
+            }
+
+            @Override
+            public void executeMessageHistoryDisplay() {
+            }
+        };
+        final AnalyzeController controller = new AnalyzeController(noOp);
 
         final AnalyzeView view = new AnalyzeView(viewModel, controller);
 
@@ -26,9 +41,9 @@ public class AnalyzeViewDemo {
         mainFrame.setVisible(true);
 
         // Only displays the most recent, good
-        viewModel.addMessage("Demo Message #1");
-        viewModel.addMessage("Demo Message #2");
-        viewModel.addMessage("Demo Message #3");
+        viewModel.setMessage("Demo Message #1");
+        viewModel.setMessage("Demo Message #2");
+        viewModel.setMessage("Demo Message #3");
 
     }
 }

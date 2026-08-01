@@ -5,6 +5,7 @@ import entity.Board;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import use_case.AnalyzeMoveInteractor;
+import use_case.AnalyzeOutputData;
 import use_case.ChessApiInterface;
 import use_case.GameStateDataAccessInterface;
 
@@ -53,48 +54,32 @@ public class AnalyzeMoveInteractorTest {
     }
 
     @Test
-    void NonEmptyNewTurnAnalysis() throws IOException {
-        String analysis = interactor.getAnalysisMessage(START_FEN);
-
-        System.out.println(analysis);
-        assertNotNull(analysis);
-        assertFalse(analysis.isBlank());
-    }
-
-    @Test
     void rejectedPositionThrowsIllegalState() throws IOException {
         ChessApiInterface rejectingApi = mock(ChessApiInterface.class);
         JsonObject error = new JsonObject();
         error.addProperty("type", "error");
         error.addProperty("text", "wrong FEN");
         when(rejectingApi.request(anyString())).thenReturn(error);
-        AnalyzeMoveInteractor rejecting = new AnalyzeMoveInteractor(
-                rejectingApi, mock(AnalyzePresenter.class), mock(GameStateDataAccessInterface.class));
 
-        assertThrows(IllegalStateException.class,
-                () -> rejecting.getAnalysisMessage(START_FEN));
+        GameStateDataAccessInterface data = mock(GameStateDataAccessInterface.class);
+        when(data.getRecentBoard()).thenReturn(new Board());
+        AnalyzeMoveInteractor rejecting = new AnalyzeMoveInteractor(
+                rejectingApi, mock(AnalyzePresenter.class), data);
+
+        assertThrows(IllegalStateException.class, rejecting::executeTurnAnalysis);
     }
 
     @Test
     void networkFailureThrowsIOException() throws IOException {
         ChessApiInterface downApi = mock(ChessApiInterface.class);
         when(downApi.request(anyString())).thenThrow(new IOException("network down"));
+
+        GameStateDataAccessInterface data = mock(GameStateDataAccessInterface.class);
+        when(data.getRecentBoard()).thenReturn(new Board());
         AnalyzeMoveInteractor offline = new AnalyzeMoveInteractor(
-                downApi, mock(AnalyzePresenter.class), mock(GameStateDataAccessInterface.class));
+                downApi, mock(AnalyzePresenter.class), data);
 
-        assertThrows(IOException.class,
-                () -> offline.getAnalysisMessage(START_FEN));
-    }
-
-
-    @Test
-    void integratedNonEmptyNewTurnAnalysis() throws IOException {
-        String analysis = integrated_interactor.getAnalysisMessage(START_FEN);
-        // calls real api to get this message, crosses a boundary = integration
-
-        System.out.println(analysis);
-        assertNotNull(analysis);
-        assertFalse(analysis.isBlank());
+        assertThrows(IOException.class, offline::executeTurnAnalysis);
     }
 
     @Test

@@ -34,19 +34,25 @@ public class AnalyzeEndToEndTest {
         AnalyzeController controller = new AnalyzeController(interactor);
         AnalyzeView view = new AnalyzeView(viewModel, controller);
 
-        // will be the AppBuilder eventually that holds all the views
+        // TODO: Replace with AppBuilder when ready
         final JFrame mainFrame = new JFrame("Analyze View");
-
-        System.out.println(mainFrame.getPreferredSize());
-
 
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         mainFrame.add(view, BorderLayout.EAST);
         mainFrame.pack();
         mainFrame.setVisible(true);
-        viewModel.addMessage("Initial Message");
 
+        // TODO: wire in with move signals later instead of manual executions
+        // TODO: test real game data access retrieval
+
+        // first move
+        view.executeTurnAnalysis();
+
+        // second move
+        view.executeTurnAnalysis();
+
+        // third move
         view.executeTurnAnalysis();
     }
 
