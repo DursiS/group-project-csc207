@@ -46,10 +46,13 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     public void executeTurnAnalysis() throws IOException {
         final Board board = this.gameStateDataAccess.getRecentBoard();
         final String fen = convertToFen(board);
+        final JsonObject response = requestOrThrow(fen);
         final AnalyzeOutputData outputData = new AnalyzeOutputData(
-                this.boardEval(fen),
-                this.bestMove(fen),
-                this.isWhiteTurn(fen)
+                response.get("winChance").getAsDouble(),
+                response.get("eval").getAsDouble(),
+                response.get("from").getAsString(),
+                response.get("to").getAsString(),
+                isWhiteTurn(fen)
         );
         this.analyzeOutputBoundary.addMessage(outputData);
     }
@@ -62,6 +65,15 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     @Override
     public void executeMessageHistoryDisplay() {
         this.analyzeOutputBoundary.setHistoryMessage();
+    }
+
+    /**
+     * Checks whether it is White's turn, read from the FEN.
+     * @param fen the position as a FEN string
+     * @return true if it is White's turn
+     */
+    private boolean isWhiteTurn(String fen) {
+        return "w".equals(fen.split(" ")[1]);
     }
 
     /**
@@ -80,17 +92,6 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         return map;
     }
 
-
-
-    /**
-     * Checks whether it is White's turn, read from the fen.
-     * @param fen the position as a FEN string
-     * @return true if it is White's turn
-     */
-    private boolean isWhiteTurn(String fen) {
-        return "w".equals(fen.split(" ")[1]);
-    }
-
     /**
      * Sends a request and fails fast if the API rejects the position.
      * @param fen the position as a FEN string
@@ -105,70 +106,6 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
                     + response.get("text"));
         }
         return response;
-    }
-
-    /**
-     * Returns the evaluation for whoever's turn it is.
-     * @param fen the position as a FEN string
-     * @return the eval text
-     * @throws IOException if the request fails
-     */
-    private String boardEval(String fen) throws IOException {
-        final String result;
-        if (isWhiteTurn(fen)) {
-            result = this.whiteEval(fen);
-        }
-        else {
-            result = this.blackEval(fen);
-        }
-        return result;
-    }
-
-    /**
-     * Returns the best move for the given position as "from -> to".
-     * @param fen the position as a FEN string
-     * @return the best move text
-     * @throws IOException if the request fails
-     */
-    private String bestMove(String fen) throws IOException {
-        final JsonObject response = requestOrThrow(fen);
-        return "Best Move: " + response.get("from").getAsString()
-                + " -> " + response.get("to").getAsString();
-    }
-
-    /**
-     * Returns White's win chance and evaluation.
-     * @param fen the position as a FEN string
-     * @return the white eval text
-     * @throws IOException if the request fails
-     */
-    private String whiteEval(String fen) throws IOException {
-        final JsonObject response = requestOrThrow(fen);
-        final double winChance = roundTwo(response.get("winChance").getAsDouble());
-        return "White WinChance: " + winChance + "% \n"
-                + "White Eval: " + response.get("eval");
-    }
-
-    /**
-     * Returns Black's win chance and evaluation.
-     * @param fen the position as a FEN string
-     * @return the black eval text
-     * @throws IOException if the request fails
-     */
-    private String blackEval(String fen) throws IOException {
-        final JsonObject response = requestOrThrow(fen);
-        final double winChance = roundTwo((-1) * (1 - response.get("winChance").getAsDouble()));
-        return "Black WinChance: " + winChance + "% \n"
-                + "Black Eval: " + (-1) * response.get("eval").getAsDouble();
-    }
-
-    /**
-     * Rounds a value to two decimal places.
-     * @param value the value to round
-     * @return the value rounded to two decimals
-     */
-    private static double roundTwo(double value) {
-        return Math.round(value * NUM_TO_ROUND) / NUM_TO_ROUND;
     }
 
     /**
