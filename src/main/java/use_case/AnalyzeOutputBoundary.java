@@ -3,9 +3,9 @@ package use_case;
 public interface AnalyzeOutputBoundary {
     /**
      * Adds a message to be presented.
-     * @param message the message to add
+     * @param outputData the message to add
      */
-    void addMessage(String message);
+    void addMessage(AnalyzeOutputData outputData);
 
     /**
      * Presents only the most recent message.

@@ -21,7 +21,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     private static final int EN_PASSANT_PAWN = 3;
     private static final double NUM_TO_ROUND = 100.0;
 
-    private final ChessApiInterface apiInterface;
+    private ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
     private final GameStateDataAccessInterface gameStateDataAccess;
 
@@ -35,18 +35,33 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
                                  AnalyzeOutputBoundary analyzeOutputBoundary,
                                  GameStateDataAccessInterface gameStateDataAccessInterface) {
-        // Need to make sure the retrieval of recent board states works when
-        // finally implemented.
+        // TODO: Make sure that data interface is correct when implemented
         this.apiInterface = apiInterface;
         this.analyzeOutputBoundary = analyzeOutputBoundary;
         this.gameStateDataAccess = gameStateDataAccessInterface;
     }
 
+    // SRP
     @Override
     public void executeTurnAnalysis() throws IOException {
         final Board board = this.gameStateDataAccess.getRecentBoard();
         final String fen = convertToFen(board);
-        this.analyzeOutputBoundary.addMessage(getAnalysisMessage(fen));
+        final AnalyzeOutputData outputData = new AnalyzeOutputData(
+                this.boardEval(fen),
+                this.bestMove(fen),
+                this.isWhiteTurn(fen)
+        );
+        this.analyzeOutputBoundary.addMessage(outputData);
+    }
+
+    @Override
+    public void executeSingleMessageDisplay() {
+        this.analyzeOutputBoundary.setRecentMessage();
+    }
+
+    @Override
+    public void executeMessageHistoryDisplay() {
+        this.analyzeOutputBoundary.setHistoryMessage();
     }
 
     /**
@@ -65,23 +80,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         return map;
     }
 
-    /**
-     * Builds the full analysis message for the given position.
-     * @param fen the position as a FEN string
-     * @return the analysis text
-     * @throws IOException if the request fails
-     */
-    public String getAnalysisMessage(String fen) throws IOException {
-        final String resultTail = this.boardEval(fen) + "\n" + this.bestMove(fen);
-        final String header;
-        if (isWhiteTurn(fen)) {
-            header = "== WHITE'S TURN == \n\nWhite's Metrics: \n";
-        }
-        else {
-            header = "== BLACK'S TURN == \n\nBlack's Metrics: \n";
-        }
-        return header + resultTail;
-    }
+
 
     /**
      * Checks whether it is White's turn, read from the fen.
@@ -183,6 +182,38 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     }
 
     /**
+     * Builds the FEN board grid, row by row.
+     * @param board the board to convert
+     * @return the fen grid string
+     */
+    private static String buildFenGrid(Board board) {
+        final StringBuilder result = new StringBuilder();
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            int emptyCount = 0;
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                final char piece = PIECE_TO_FEN.get(board.getSquare(col, row));
+                if (piece == '0') {
+                    emptyCount++;
+                }
+                else {
+                    if (emptyCount > 0) {
+                        result.append(emptyCount);
+                        emptyCount = 0;
+                    }
+                    result.append(piece);
+                }
+            }
+            if (emptyCount > 0) {
+                result.append(emptyCount);
+            }
+            if (row != LAST_INDEX) {
+                result.append("/");
+            }
+        }
+        return result.toString();
+    }
+
+    /**
      * Builds the fen ending portion.
      * @param board the board to convert
      * @return the FEN tail string
@@ -221,38 +252,6 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     }
 
     /**
-     * Builds the FEN board grid, row by row.
-     * @param board the board to convert
-     * @return the fen grid string
-     */
-    private static String buildFenGrid(Board board) {
-        final StringBuilder result = new StringBuilder();
-        for (int row = 0; row < BOARD_SIZE; row++) {
-            int emptyCount = 0;
-            for (int col = 0; col < BOARD_SIZE; col++) {
-                final char piece = PIECE_TO_FEN.get(board.getSquare(col, row));
-                if (piece == '0') {
-                    emptyCount++;
-                }
-                else {
-                    if (emptyCount > 0) {
-                        result.append(emptyCount);
-                        emptyCount = 0;
-                    }
-                    result.append(piece);
-                }
-            }
-            if (emptyCount > 0) {
-                result.append(emptyCount);
-            }
-            if (row != LAST_INDEX) {
-                result.append("/");
-            }
-        }
-        return result.toString();
-    }
-
-    /**
      * Finds the en passant target square, if any.
      * @param board the board to check
      * @return the target square in algebraic notation, or "-" otherwise
@@ -284,5 +283,4 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         final int rank = BOARD_SIZE - rankIndex;
         return "" + file + rank;
     }
-
 }
