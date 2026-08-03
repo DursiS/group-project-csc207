@@ -8,9 +8,6 @@ public class GameState {
     private int whiteMilliSec;
     private int blackMilliSec;
 
-    //previous move
-    private Move move;
-
     //stores previous board states
     private BoardStateList boardStateList;
 
@@ -18,7 +15,7 @@ public class GameState {
     private String gameResult;
 
     //create a game state with infos to save the game
-    public GameState(Board board, Move move, int whiteMilliSec, int blackMilliSec,
+    public GameState(Board board, int whiteMilliSec, int blackMilliSec,
                      BoardStateList boardStateList,
                      String gameResult){
         if (board == null){
@@ -31,7 +28,6 @@ public class GameState {
             throw new IllegalArgumentException("Game result can not be empty");
         }
         this.board = board.Copy();
-        this.move = move;
         this.whiteMilliSec = whiteMilliSec;
         this.blackMilliSec = blackMilliSec;
         this.boardStateList = boardStateList.Copy();
@@ -47,7 +43,4 @@ public class GameState {
         return board;
     }
 
-    public Move getMove(){
-        return move;
-    }
 }
