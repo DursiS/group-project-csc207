@@ -1,7 +1,7 @@
 package entity;
 
 import java.util.UUID;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class GameRecord {
@@ -11,13 +11,15 @@ public class GameRecord {
     private final String timeCreated;
 
     private boolean isCompleted;
-    private String gameResult; // "White Wins", "Black Wins", "Draw", or "In Progress"
+
+    // "Black/White Wins (Checkmate)", "Black/White Wins (Time)", "Draw", or "In Progress"
+    private String gameResult;
 
     public GameRecord(GameState initialGameState) {
         uuid = UUID.randomUUID();
         history = new ArrayList<>();
         history.add(initialGameState);
-        timeCreated = OffsetDateTime.now().toString();
+        timeCreated = LocalDateTime.now().toString();
         isCompleted = false;
         gameResult = "In Progress";
     }

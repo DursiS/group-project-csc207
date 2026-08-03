@@ -23,6 +23,8 @@ public class GameDataAccessObject implements EndGameDataAccess, LeaderBoardGameD
 
     private final Gson gson = new Gson();
 
+    public GameDataAccessObject() {}
+
     @Override
     public void save(GameRecord game) {
         String sql = "INSERT INTO games (id, time_created, is_completed, game_result, history) " +
@@ -35,11 +37,12 @@ public class GameDataAccessObject implements EndGameDataAccess, LeaderBoardGameD
         try (Connection con = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = con.prepareStatement(sql)) {
 
-            pstmt.setString(1, game.getTimeCreated());
-            pstmt.setBoolean(2, game.isCompleted());
-            pstmt.setString(3, game.getGameResult());
+            pstmt.setObject(1, game.getUuid());
+            pstmt.setString(2, game.getTimeCreated());
+            pstmt.setBoolean(3, game.isCompleted());
+            pstmt.setString(4, game.getGameResult());
             String jsonHistory = gson.toJson(game.getHistory());
-            pstmt.setString(4, jsonHistory);
+            pstmt.setString(5, jsonHistory);
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
