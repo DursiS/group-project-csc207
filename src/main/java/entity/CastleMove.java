@@ -6,6 +6,11 @@ public class CastleMove extends Move{
     }
 
     @Override
+    public void ApplyMove(Board b) {
+
+    }
+
+    @Override
     public Boolean getIsNormalMove() {
         return false;
     }

@@ -231,29 +231,22 @@ public class MoveValidator {
                 }
             }
         }
-        if(m.getIsNormalMove()){
-            int initialPiece =  b.getSquare(m.getOrigin());
-            int finalPiece = Math.abs((initialPiece));
 
-            if ( Math.abs(initialPiece) == 1){//pawn
-                finalPiece = 2;
-                if(Math.abs(m.getOrigin()[1] - m.getDestination()[1]) == 2){
-                    finalPiece = 3;
+        m.ApplyMove(b);
+
+        //turn pawns into queens
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                if(b.getSquare(x,y) == 2 && y == 0){
+                    b.setSquare(x,y, 8);
+                }
+                if(b.getSquare(x,y) == -2 && y == 7){
+                    b.setSquare(x,y,-8);
                 }
             }
-            if ( Math.abs(initialPiece) == 4){//rook
-                finalPiece = 5;
-            }
-            if ( Math.abs(initialPiece) == 9){//king
-                finalPiece = 10;
-            }
-            if(initialPiece<0){
-                finalPiece  = -finalPiece;
-            }
-
-            b.setSquare(m.getDestination(), finalPiece);
-            b.setSquare(m.getOrigin(), 0);
         }
+
+
         //todo add en passant.
 
         //todo add castle.

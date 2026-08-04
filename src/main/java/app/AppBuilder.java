@@ -26,7 +26,7 @@ public class AppBuilder {
         moveViewModel = new MoveViewModel();
 
         //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
-        gameState = new GameState(new Board(1,0), 0, 0, new BoardStateList(),"idk what this is");
+        gameState = new GameState(new Board(0,0), 0, 0, new BoardStateList(),"idk what this is");
         MoveValidator moveValidator = new MoveValidator();
 
         movePresenter = new MovePresenter(moveViewModel);

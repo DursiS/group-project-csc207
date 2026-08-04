@@ -26,4 +26,6 @@ public abstract class Move {
     public String toString(){
         return "(" + origin[0] + "," + origin[1] + ") -> (" + destination[0] + "," + destination[1] + ")";
     }
+
+    public abstract void ApplyMove(Board b);
 }

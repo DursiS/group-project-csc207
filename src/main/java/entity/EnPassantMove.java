@@ -9,4 +9,9 @@ public class EnPassantMove extends Move {
     public Boolean getIsNormalMove() {
         return false;
     }
+
+    @Override
+    public void ApplyMove(Board b) {
+
+    }
 }

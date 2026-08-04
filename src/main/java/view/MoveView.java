@@ -43,6 +43,10 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
             for (int x = 0; x < EIGHT; x++) {
                 buttons[y][x] = new JButton(x + " " + y);
                 buttons[y][x].setBounds(1,1,1,1);
+                buttons[y][x].setMargin(new Insets(0,0,0,0));
+
+                //buttons[y][x].setFont(new Font(buttons[y][x].getFont().getName(), buttons[y][x].getFont().getStyle(), 40));
+
                 //copy to effectively final for each button
                 int finalX = x;
                 int finalY = y;
@@ -87,7 +91,6 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
                 buttons[y][x].setBackground(vm.getSquareColour(x,y));
                 buttons[y][x].setText(vm.getSquareText(x,y));
 
-
                 int size = Math.min(width, height);
 
                 int sideLength = (size - 7*INNER_MARGIN - 2*OUTER_MARGIN)/8;
@@ -102,6 +105,8 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
                 buttons[y][x].setBounds(x_0 + (sideLength+INNER_MARGIN)*x,
                         y_0 + (sideLength+INNER_MARGIN)*y,
                         sideLength, sideLength);
+
+                buttons[y][x].setFont(new Font(buttons[y][x].getFont().getName(), buttons[y][x].getFont().getStyle(), (int)(sideLength*.75)));
 
             }
         }
