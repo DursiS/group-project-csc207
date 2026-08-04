@@ -24,6 +24,7 @@ public class ChessApiAdapter implements ChessApiInterface {
         try {
             return client.send(request, HttpResponse.BodyHandlers.ofString());
         }
+        // no reason to handle it later, right now is efficient
         catch (InterruptedException ex) {
             // closes the thread
             Thread.currentThread().interrupt();

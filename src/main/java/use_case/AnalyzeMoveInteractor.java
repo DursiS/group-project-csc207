@@ -99,8 +99,12 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * @throws IOException if the request fails
      * @throws IllegalStateException if the API rejects the position
      */
-    private JsonObject requestOrThrow(String fen) throws IOException {
+    private JsonObject requestOrThrow(String fen)
+            throws IOException, IllegalStateException {
         final JsonObject response = this.apiInterface.request(fen);
+
+        // we handle it here because we can communicate the fen
+        // that led to the error right away
         if (response.has("type") && "error".equals(response.get("type").getAsString())) {
             throw new IllegalStateException("Chess API rejected the position: "
                     + response.get("text"));
