@@ -1,14 +1,13 @@
 package use_case;
 
-public record AnalyzeOutputData(String boardEval, String bestMove,
-                                boolean isWhiteTurn) {
-    /**
-     * Bundles the raw analysis results for the presenter to format.
-     *
-     * @param boardEval, the evaluation text
-     * @param bestMove, the best move text
-     * @param isWhiteTurn, whether it is White's turn
-     */
-    public AnalyzeOutputData {
-    }
+/**
+ * Bundles the raw analysis data points for the presenter to format.
+ * @param winChance the raw win chance from the API
+ * @param eval the raw evaluation from the API
+ * @param from the best move's origin square
+ * @param to the best move's destination square
+ * @param isWhiteTurn whether it is White's turn
+ */
+public record AnalyzeOutputData(double winChance, double eval, String from,
+                                String to, boolean isWhiteTurn) {
 }
