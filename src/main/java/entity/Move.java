@@ -3,11 +3,9 @@
 
 package entity;
 
-public class Move {
+public abstract class Move {
     private int[] origin;
     private int[] destination;
-    private Boolean isNormalMove;
-    //private gameState
 
     public int[] getOrigin() {
         return origin;
@@ -17,14 +15,11 @@ public class Move {
         return destination;
     }
 
-    public Boolean getIsNormalMove() {
-        return isNormalMove;
-    }
+    public abstract Boolean getIsNormalMove();
 
     public Move(int[] origin, int[] destination) {
         this.origin = origin;
         this.destination = destination;
-        this.isNormalMove = true;
     }
 
     //for debugging

@@ -167,13 +167,13 @@ public class MoveValidator {
                         //allow move if the move captures and square is occupied by an enemy
                         //also allow move if the move isn't required to capture and square is empty
                         if(moveType.isCanCapture() && board.isSquareEnemy(destination[0], destination[1])){
-                            moves.add(new Move(new int[]{x,y}, destination));
+                            moves.add(new NormalMove(new int[]{x,y}, destination));
                             break;
                             //can't move past an enemy.
                         }
                         else if(moveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))
                         {
-                            moves.add(new Move(new int[]{x,y}, destination));
+                            moves.add(new NormalMove(new int[]{x,y}, destination));
 
                             //can keep moving if the square was empty
                         }else
