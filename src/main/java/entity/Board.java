@@ -63,7 +63,7 @@ public class Board {
     public boolean isSquareEmpty(int x, int y){
         return squares[y][x] == 0;
     }
-    public boolean canPieceMove(int x, int y){//return whether the piece on tile (x,y) can move on current turn
+    public boolean isPiecesTurn(int x, int y){//return whether the piece on tile (x,y) can move on current turn
         return !isSquareEmptyOrEnemy(x,y);
     }
     public boolean isSquareEnemy(int x, int y){//return whether the piece on tile (x,y) is an enemy piece of the player whose turn it currently is

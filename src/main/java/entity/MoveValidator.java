@@ -137,7 +137,7 @@ public class MoveValidator {
     public void addAllMoves(ArrayList<Move> moves, Board b){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                if(b.canPieceMove(x,y)){
+                if(b.isPiecesTurn(x,y)){
                     //adds all valid moves for this piece.
                     addPieceMoves(moves, b, x, y);
                 }
@@ -212,8 +212,24 @@ public class MoveValidator {
     public void ApplyMove(Board b, Move m){
         //System.out.println( b.toString());
         //System.out.println(m.toString());
-        if(!b.canPieceMove(m.getOrigin()[0], m.getOrigin()[1])){
+        if(!b.isPiecesTurn(m.getOrigin()[0], m.getOrigin()[1])){
             throw new IllegalArgumentException();
+        }
+
+
+
+        //remove en passant status
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                if (b.isPiecesTurn(x,y)){
+                    if(b.getSquare(x,y) == 3){
+                        b.setSquare(x,y, 2);
+                    }
+                    if(b.getSquare(x,y) == -3){
+                        b.setSquare(x,y, -2);
+                    }
+                }
+            }
         }
         if(m.getIsNormalMove()){
             int initialPiece =  b.getSquare(m.getOrigin());
@@ -221,6 +237,9 @@ public class MoveValidator {
 
             if ( Math.abs(initialPiece) == 1){//pawn
                 finalPiece = 2;
+                if(Math.abs(m.getOrigin()[1] - m.getDestination()[1]) == 2){
+                    finalPiece = 3;
+                }
             }
             if ( Math.abs(initialPiece) == 4){//rook
                 finalPiece = 5;
@@ -232,8 +251,6 @@ public class MoveValidator {
                 finalPiece  = -finalPiece;
             }
 
-
-
             b.setSquare(m.getDestination(), finalPiece);
             b.setSquare(m.getOrigin(), 0);
         }
@@ -241,6 +258,7 @@ public class MoveValidator {
 
         //todo add castle.
         b.incrementTurn();
+
     }
 
 }
