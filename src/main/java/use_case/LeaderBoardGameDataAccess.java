@@ -2,13 +2,13 @@ package use_case;
 
 import entity.GameRecord;
 
-import java.util.UUID;
+import java.util.List;
 
 public interface LeaderBoardGameDataAccess {
 
     /**
-     * Loads the game.
-     * @param id the UUID of the game
+     * Browse all completed games.
+     * @return a list of completed game summaries from latest to earliest
      */
-    GameRecord load(UUID id);
+    List<GameSummary> browse();
 }

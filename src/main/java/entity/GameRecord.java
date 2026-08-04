@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class GameRecord {
 
-    private final UUID uuid;
+    private final UUID id;
     private final ArrayList<GameState> history; // list of game states after each move in order
     private final String timeCreated;
 
@@ -16,7 +16,7 @@ public class GameRecord {
     private String gameResult;
 
     public GameRecord(GameState initialGameState) {
-        uuid = UUID.randomUUID();
+        id = UUID.randomUUID();
         history = new ArrayList<>();
         history.add(initialGameState);
         timeCreated = LocalDateTime.now().toString();
@@ -26,7 +26,7 @@ public class GameRecord {
 
     public GameRecord(UUID id, ArrayList<GameState> history, String timeCreated,
                       boolean isCompleted, String gameResult) {
-        this.uuid = id;
+        this.id = id;
         this.history = history;
         this.timeCreated = timeCreated;
         this.isCompleted = isCompleted;
@@ -45,8 +45,8 @@ public class GameRecord {
         gameResult = result;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
     }
 
     public ArrayList<GameState> getHistory() {
