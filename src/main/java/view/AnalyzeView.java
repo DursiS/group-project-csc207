@@ -1,11 +1,22 @@
 package view;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import interface_adapter.AnalyzeController;
 import interface_adapter.AnalyzeViewModel;
@@ -23,13 +34,22 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private JTextArea textArea;
     private final AnalyzeController controller;
 
+    /**
+     * Builds the analysis view and subscribes it to the view model.
+     * @param viewModel the view model to observe
+     * @param controller the controller to call
+     */
     public AnalyzeView(AnalyzeViewModel viewModel, AnalyzeController controller) {
-        // Setup
         this.controller = controller;
         setupTextArea();
-        viewModel.addPropertyChangeListener(this);
 
-        // Panel Config
+        // subscribing the ViewModel
+        viewModel.addPropertyChangeListener(this);
+        applyPanelConfiguration();
+    }
+
+    /** Lays out the label, text area, and button row. */
+    private void applyPanelConfiguration() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         addDisplayLabel();
@@ -49,11 +69,19 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         this.controller.executeTurnAnalysis();
     }
 
+    /**
+     * Updates the text area with the latest analysis message.
+     * @param evt the property change event
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         SwingUtilities.invokeLater(() -> this.textArea.setText((String) evt.getNewValue()));
     }
 
+    /**
+     * Builds the row holding the two buttons.
+     * @return the button row panel
+     */
     private JPanel getButtonRow() {
         final JPanel buttonRow = new JPanel(new GridLayout(1, 2));
         buttonRow.setBackground(COLOR);
@@ -63,6 +91,7 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         return buttonRow;
     }
 
+    /** Initializes the read-only analysis text area. */
     private void setupTextArea() {
         this.textArea = new JTextArea();
         this.textArea.setEditable(false);
@@ -72,6 +101,10 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         this.textArea.setBackground(COLOR);
     }
 
+    /**
+     * Builds the message-history button.
+     * @return the history button
+     */
     private JButton getHistoryButton() {
         final JButton historyButton = new JButton("Message History");
         historyButton.addActionListener(click -> {
@@ -85,6 +118,10 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         return historyButton;
     }
 
+    /**
+     * Builds the return button.
+     * @return the return button
+     */
     private JButton getReturnButton() {
         final JButton returnButton = new JButton("Return");
         returnButton.addActionListener(click -> {
@@ -98,6 +135,7 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         return returnButton;
     }
 
+    /** Adds the centered title label. */
     private void addDisplayLabel() {
         final JLabel displayLabel = new JLabel("Analysis Metrics");
         displayLabel.setFont(new Font(FONT, Font.PLAIN, TITLE_SIZE));
@@ -107,7 +145,7 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
 
 }
 
-// View Cycle:
+// View Cycle Notes:
 //
 // Move is made (The Event)
 // -> Controller calls Interactor.executeTurnAnalysis
