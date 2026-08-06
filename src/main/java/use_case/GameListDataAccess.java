@@ -1,10 +1,8 @@
 package use_case;
 
-import entity.GameRecord;
-
 import java.util.List;
 
-public interface LeaderBoardGameDataAccess {
+public interface GameListDataAccess {
 
     /**
      * Browse all completed games.

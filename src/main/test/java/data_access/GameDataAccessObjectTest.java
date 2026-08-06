@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameDataAccessObjectTest {
 
-    private static GameDataAccessObject gameDataAccessObject = new GameDataAccessObject();
+    private final static GameDataAccessObject gameDataAccessObject = new GameDataAccessObject();
     private static GameRecord gameRecord;
 
     @BeforeAll

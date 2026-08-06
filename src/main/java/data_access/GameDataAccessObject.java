@@ -6,7 +6,7 @@ import use_case.EndGameDataAccess;
 
 import com.google.gson.Gson;
 import use_case.GameSummary;
-import use_case.LeaderBoardGameDataAccess;
+import use_case.GameListDataAccess;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -21,7 +21,7 @@ import use_case.ViewGameDataAccess;
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 
-public class GameDataAccessObject implements EndGameDataAccess, LeaderBoardGameDataAccess,
+public class GameDataAccessObject implements EndGameDataAccess, GameListDataAccess,
         ViewGameDataAccess {
 
     private final String url = "jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:5432/postgres";
