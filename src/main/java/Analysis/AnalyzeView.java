@@ -1,4 +1,4 @@
-package view;
+package Analysis;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -17,9 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
-import interface_adapter.AnalyzeController;
-import interface_adapter.AnalyzeViewModel;
 
 public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private static final int WIDTH = 300;

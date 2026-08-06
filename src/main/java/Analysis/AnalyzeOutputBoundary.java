@@ -1,4 +1,4 @@
-package use_case;
+package Analysis;
 
 public interface AnalyzeOutputBoundary {
     /**

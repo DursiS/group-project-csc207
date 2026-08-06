@@ -1,4 +1,4 @@
-package use_case;
+package Analysis;
 
 /**
  * Bundles the raw analysis data points for the presenter to format.

@@ -1,14 +1,9 @@
-package interface_adapter;
+package Analysis;
 
 import java.awt.*;
 import java.io.IOException;
 
 import javax.swing.*;
-
-import entity.Board;
-import use_case.AnalyzeMoveInteractor;
-import use_case.GameStateDataAccessInterface;
-import view.AnalyzeView;
 
 public class AnalyzeEndToEndTest {
 

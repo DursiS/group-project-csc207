@@ -1,11 +1,7 @@
-package view;
+package Analysis;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
-
-import interface_adapter.AnalyzeController;
-import use_case.AnalyzeInputBoundary;
-import interface_adapter.AnalyzeViewModel;
 
 public class AnalyzeViewDemo {
 

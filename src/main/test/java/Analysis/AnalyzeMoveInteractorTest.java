@@ -1,14 +1,8 @@
-package interface_adapter;
+package Analysis;
 
 import com.google.gson.JsonObject;
-import entity.Board;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import use_case.AnalyzeMoveInteractor;
-import use_case.AnalyzeOutputData;
-import use_case.BoardToFenTranslator;
-import use_case.ChessApiInterface;
-import use_case.GameStateDataAccessInterface;
 
 import java.io.IOException;
 

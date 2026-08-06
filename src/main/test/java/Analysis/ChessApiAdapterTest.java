@@ -1,4 +1,4 @@
-package interface_adapter;
+package Analysis;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

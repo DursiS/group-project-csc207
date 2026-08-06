@@ -1,4 +1,4 @@
-package interface_adapter;
+package Analysis;
 
 import java.net.URI;
 import java.net.http.HttpClient;

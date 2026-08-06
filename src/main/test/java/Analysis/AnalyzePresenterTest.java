@@ -1,8 +1,7 @@
-package interface_adapter;
+package Analysis;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import use_case.AnalyzeOutputData;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

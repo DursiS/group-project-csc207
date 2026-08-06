@@ -1,9 +1,7 @@
-package use_case;
+package Analysis;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import entity.Board;
 
 /**
  * Translates a Board into its FEN string representation.

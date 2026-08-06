@@ -1,7 +1,4 @@
-package interface_adapter;
-
-import use_case.AnalyzeOutputBoundary;
-import use_case.AnalyzeOutputData;
+package Analysis;
 
 public class AnalyzePresenter implements AnalyzeOutputBoundary {
     private static final double NUM_TO_ROUND = 100.0;

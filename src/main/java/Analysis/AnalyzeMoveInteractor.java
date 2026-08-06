@@ -1,9 +1,8 @@
-package use_case;
+package Analysis;
 
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
-import entity.Board;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
 
@@ -46,7 +45,6 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         messageCount += 1;
     }
 
-    // TODO: Make sure that data interface is correct when implemented
     private Board getRecentBoard() {
         return this.gameStateDataAccess.getRecentBoard();
     }

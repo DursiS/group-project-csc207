@@ -1,6 +1,4 @@
-package use_case;
-
-import entity.Board;
+package Analysis;
 
 public interface GameStateDataAccessInterface {
     /**
