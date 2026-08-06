@@ -14,22 +14,6 @@ public class MoveValidator {
         this.moveTypes= moveTypes;
     }
 
-    //private MoveType[] getMoveTypesOfPiece(int pieceType){
-    //    //maybe check for valid pieceType...
-//
-//        //white pieces move in the opposite direction
-//        if (pieceType < 0){
-//            return this.moveTypes[-pieceType];
-//        }
-//        else{
-//            MoveType[] mirroredMoveTypes = new MoveType[moveTypes[pieceType].length];
-//            for (int i = 0; i < mirroredMoveTypes.length; i++) {
-//                mirroredMoveTypes[i] = MoveType.createMirroredMove(moveTypes[pieceType][i]);
-//            }
-//            return mirroredMoveTypes;
-//        }
-//    }
-
     private MoveType[] getMoveTypesOfPiece(int pieceType){
         //System.out.println(pieceType);
         //System.out.println(moveTypes.containsKey(pieceType));
@@ -57,6 +41,14 @@ public class MoveValidator {
             boolean invalid = false;
             //this is kind of cheating, but the only moves that could theoretically endanger the king are normal moves that have destination at the king...
             for (int j = 0; j < enemyImaginaryMoves.size(); j++) {
+                //System.out.println(enemyImaginaryMoves.get(j).getOrigin()[0] + " " + enemyImaginaryMoves.get(j).getOrigin()[1]);
+                //System.out.println(enemyImaginaryMoves.get(j).getDestination()[0] + " " + enemyImaginaryMoves.get(j).getDestination()[1]);
+
+                //System.out.println(enemyImaginaryMoves.get(j) instanceof EnPassantMove);
+                //System.out.println(enemyImaginaryMoves.get(j) instanceof CastleMove);
+                //System.out.println(enemyImaginaryMoves.get(j) instanceof NormalMove);
+
+
                 if(isNonTurnPlayersKing(imaginaryBoard, enemyImaginaryMoves.get(j).getDestination())){
                     invalid = true;
                     break;
@@ -102,27 +94,6 @@ public class MoveValidator {
         }
     }
 
-    //public boolean checkIllegalMove(Board b, Move m){
-        //just use a checkmate method that should maybe exist anyway?
-        //Board b2 = ApplyMove(b, m);
-    //}
-
-    //public static int[] applyMovementVector(int[] position, int[] moveVector, int[] edgeTopologies){
-    //    int[] newPosition = new int[]{position[0]  + moveVector[0], position[1] + moveVector[1]};
-    //    //vertical edge type applies to horizontal movement,
-    //    for (int i = 0; i < 2; i++) {
-    //        boolean locationWithinBoard  = (newPosition[i] >= 0 && newPosition[i] <= 7);
-    //        if (edgeTopologies[i] == 0 && !locationWithinBoard) {
-    //            return null;
-    //        }
-    //        else if (edgeTopologies[i] == 1 && !locationWithinBoard){
-    //            newPosition[i] = Math.floorMod(newPosition[i], 8);//use floorMod to always return a positive value
-    //        }
-    //        //mirrored topology unimplemented
-    //    }
-    //    return newPosition;
-    //}
-
     public static int[] applyQuotientRelation(int[] position, Board b) {
         int[] edgeTopologies = new int[]{b.getVerticalEdgeType(), b.getHorizontalEdgeType()};
         for (int i = 0; i < 2; i++) {
@@ -143,8 +114,6 @@ public class MoveValidator {
         if(!b.isPiecesTurn(m.getOrigin())){
             throw new IllegalArgumentException();
         }
-
-
 
         //remove en passant status
         for (int y = 0; y < 8; y++) {
@@ -174,10 +143,6 @@ public class MoveValidator {
             }
         }
 
-
-        //todo add en passant.
-
-        //todo add castle.
         b.incrementTurn();
 
     }

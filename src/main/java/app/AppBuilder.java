@@ -28,12 +28,7 @@ public class AppBuilder {
         //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
         gameState = new GameState(b, 0, 0, new BoardStateList(),"idk what this is");
         MoveValidator moveValidator;
-        MoveValidatorBuilder mvb = new MoveValidatorBuilder();
-        mvb.addNormalMoves();
-        mvb.addEnPassants();
-        mvb.addCastles();
-        mvb.duplicateAndMirrorMoves();
-        moveValidator = mvb.build();
+        moveValidator =new MoveValidatorBuilder().addNormalMoves().addEnPassants().addCastles().duplicateAndMirrorMoves().build();
 
         movePresenter = new MovePresenter(moveViewModel);
 

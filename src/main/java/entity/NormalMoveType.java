@@ -35,14 +35,9 @@ public class NormalMoveType extends MoveType{
     }
 
     //@Override
-    //public boolean isNormalMove() {
-    //    return true;
+    //public Move createMove(int[] origin) {
+    //    return new NormalMove(origin, addVectors(origin, movementVector));
     //}
-
-    @Override
-    public Move createMove(int[] origin) {
-        return new NormalMove(origin, addVectors(origin, movementVector));
-    }
 
     public Move createMove(int[] origin, int repeats) {
         return new NormalMove(origin, addVectors(origin, multiplyVector(movementVector, repeats+1)));

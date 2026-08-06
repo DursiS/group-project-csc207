@@ -13,11 +13,6 @@ public class EnPassantMoveType extends MoveType {
     }
 
     //@Override
-    //public boolean isNormalMove() {
-    //    return false;
-    //}
-
-    @Override
     public EnPassantMove createMove(int[] origin) {
         return new EnPassantMove(origin, addVectors(origin,movementVector), addVectors(origin,captureVector));
     }
@@ -34,12 +29,11 @@ public class EnPassantMoveType extends MoveType {
         if(destination==null || capture==null){
             return;
         }
-
-        if(b.isSquareEmpty(createMove(origin).getDestination())
-                && b.isSquareEnemy(createMove(origin).getCapture())
-                &&b.getSquare(createMove(origin).getCapture()) == 3 || b.getSquare(createMove(origin).getCapture()) == -3 ){
+        //System.out.println(d);
+        if(b.isSquareEmpty(destination)
+                && b.isSquareEnemy(capture)
+                &&b.getSquare(capture) == 3 || b.getSquare(capture) == -3 ){
             moves.add(createMove(origin));
         }
-
     }
 }

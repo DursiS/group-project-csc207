@@ -32,7 +32,7 @@ public class MoveValidatorBuilder {
         moveTypesLists = new HashMap<Integer, ArrayList<MoveType>>();
     }
 
-    public void addNormalMoves(){
+    public MoveValidatorBuilder addNormalMoves(){
         //Pawn moves
         addMove(new int[]{-1}, new NormalMoveType(new int[]{0,1}, 1, false, true));
         addMove(new int[]{-2,-3}, new NormalMoveType(new int[]{0,1}, 0, false, true));
@@ -66,23 +66,25 @@ public class MoveValidatorBuilder {
         addMove(new int[]{-9,-10}, new NormalMoveType(new int[]{1,-1},0));
         addMove(new int[]{-9,-10}, new NormalMoveType(new int[]{-1,1},0));
         addMove(new int[]{-9,-10}, new NormalMoveType(new int[]{-1,-1},0));
+        return this;
     }
 
 
-    public void addEnPassants(){
+    public MoveValidatorBuilder addEnPassants(){
         addMove(new int[]{-1,-2,-3}, new EnPassantMoveType(new int[]{1,1}, new int[]{1,0}));
         addMove(new int[]{-1,-2,-3}, new EnPassantMoveType(new int[]{-1,1}, new int[]{-1,0}));
+        return this;
     }
 
-    public void addCastles(){
+    public MoveValidatorBuilder addCastles(){
         //short castle
         addMove(new int[]{-9}, new CastleMoveType( new int[]{3,0}, new int[]{2,0}, new int[]{-2,0}, 1 ));
         //long castle
         addMove(new int[]{-9}, new CastleMoveType( new int[]{-4,0}, new int[]{-2,0}, new int[]{3,0}, -1 ));
-
+        return this;
     }
 
-    public void duplicateAndMirrorMoves(){
+    public MoveValidatorBuilder duplicateAndMirrorMoves(){
         ArrayList<Integer> copySet = new ArrayList<>(moveTypesLists.keySet());
         //create a copy of the key set because it will cause an error if you modify it while iterating over it
         for (int key: copySet){
@@ -93,6 +95,7 @@ public class MoveValidatorBuilder {
             }
             moveTypesLists.put(-key, m2);
         }
+        return this;
     }
 
     public MoveValidatorBuilder doDefaultSetup(){

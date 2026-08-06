@@ -14,11 +14,6 @@ public class CastleMoveType extends MoveType{
     }
 
     //@Override
-    //public boolean isNormalMove() {
-    //    return false;
-    //}
-
-    @Override
     public CastleMove createMove(int[] origin) {
         //rook destination vector is the movetype's destination vector (rook location) plus rook movement vector
         return new CastleMove(origin, addVectors(origin,movementVector), addVectors(origin,king),addVectors(addVectors(origin,movementVector),rook));

@@ -10,10 +10,7 @@ public class EnPassantMove extends Move {
     public int[] getCapture() {
         return capture;
     }
-//@Override
-    //public Boolean getIsNormalMove() {
-    //    return false;
-    //}
+
 
     @Override
     public void ApplyMove(Board b) {

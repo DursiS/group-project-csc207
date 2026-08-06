@@ -97,6 +97,7 @@ public class MoveValidatorTest {
         assertEquals(moves.size(), 5);
     }
 
+
     @Test
     void castleTest(){
         int[][] squares = new int[8][8];
