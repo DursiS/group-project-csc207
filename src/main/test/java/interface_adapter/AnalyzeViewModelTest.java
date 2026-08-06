@@ -15,7 +15,7 @@ public class AnalyzeViewModelTest {
     @BeforeEach
     void setUp() {
         viewModel = new AnalyzeViewModel();
-        fired = new AtomicReference<>();
+        fired = new AtomicReference<>();  // mocking the View's TextArea
         viewModel.addPropertyChangeListener(evt -> fired.set((String) evt.getNewValue()));
     }
 

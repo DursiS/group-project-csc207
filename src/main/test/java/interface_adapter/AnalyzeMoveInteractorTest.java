@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import use_case.AnalyzeMoveInteractor;
 import use_case.AnalyzeOutputData;
+import use_case.BoardToFenTranslator;
 import use_case.ChessApiInterface;
 import use_case.GameStateDataAccessInterface;
 
@@ -50,7 +51,7 @@ public class AnalyzeMoveInteractorTest {
                 { 0, 0, 0, 0, 0, 0, 0, 0},
                 { 1, 1, 1, 1, 0, 1, 1, 1},
                 { 4, 6, 7, 8, 9, 7, 6, 4}
-        }, 5);
+        }, 4);
     }
 
     @Test
@@ -84,18 +85,18 @@ public class AnalyzeMoveInteractorTest {
 
     @Test
     void convertsToFenCorrectly() {
-        String convertedStartFen = interactor.convertToFen(BOARD);
+        BoardToFenTranslator translator = new BoardToFenTranslator();
+        String convertedStartFen = translator.convertToFen(BOARD);
         assertEquals(START_FEN, convertedStartFen);
 
-        String convertedRandomFen = interactor
-                .convertToFen(BAD_BOARD);
+        String convertedRandomFen = translator.convertToFen(BAD_BOARD);
         assertEquals(BAD_FEN, convertedRandomFen);
     }
 
     private static JsonObject mockRequest(){
         JsonObject response = new JsonObject();
 
-        // fixed random (but valid) info
+        // fixed random (but still valid) info
         response.addProperty("eval", 0.42);
         response.addProperty("winChance", 45.14);
         response.addProperty("from", "g8");

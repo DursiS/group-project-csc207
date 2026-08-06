@@ -18,11 +18,12 @@ public class AnalyzePresenterTest {
                 0.49,
                 "e4",
                 "e5",
-                true
+                true,
+                1
         );
         viewModel = new AnalyzeViewModel();
         presenter = new AnalyzePresenter(viewModel);
-        formatted_message = "== WHITE'S TURN == \n\nWhite's Metrics: \n"
+        formatted_message = "== WHITE'S TURN (1) == \n\nWhite's Metrics: \n"
                 + "White WinChance: 39.0% \nWhite Eval: 0.49\n"
                 + "Best Move: e4 -> e5\n\n";
     }
