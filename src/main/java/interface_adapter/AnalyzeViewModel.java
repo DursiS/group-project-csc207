@@ -18,8 +18,10 @@ public class AnalyzeViewModel {
      * @param message the message to add
      */
     public void setMessage(String message) {
-        this.messageHistory.add(message);
-        this.support.firePropertyChange(ANALYSIS_PROPERTY, null, message);
+        if (!"".equals(message)) {
+            this.messageHistory.add(message);
+            this.support.firePropertyChange(ANALYSIS_PROPERTY, null, message);
+        }
     }
 
     /**

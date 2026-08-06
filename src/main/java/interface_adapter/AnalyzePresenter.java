@@ -31,14 +31,17 @@ public class AnalyzePresenter implements AnalyzeOutputBoundary {
         final String side;
         final double winChance;
         final double eval;
+        final String turn = " (" + outputData.messageNum() + ") ";
+        final String doubleSpace = "\n\n";
+
         if (outputData.isWhiteTurn()) {
-            header = "== WHITE'S TURN == \n\nWhite's Metrics: \n";
+            header = "== WHITE'S TURN " + turn + "==" + doubleSpace;
             side = "White";
             winChance = outputData.winChance();
             eval = outputData.eval();
         }
         else {
-            header = "== BLACK'S TURN == \n\nBlack's Metrics: \n";
+            header = "== BLACK'S TURN " + turn + "==" + doubleSpace;
             side = "Black";
             winChance = (-1) * (1 - outputData.winChance());
             eval = (-1) * outputData.eval();
@@ -46,7 +49,7 @@ public class AnalyzePresenter implements AnalyzeOutputBoundary {
         final String body = side + " WinChance: " + roundTwo(winChance) + "% \n"
                 + side + " Eval: " + roundTwo(eval) + "\n"
                 + "Best Move: " + outputData.from() + " -> " + outputData.to();
-        return header + body + "\n\n";
+        return header + body + doubleSpace;
     }
 
     /**
