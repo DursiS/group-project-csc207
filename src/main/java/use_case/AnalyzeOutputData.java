@@ -7,7 +7,8 @@ package use_case;
  * @param from the best move's origin square
  * @param to the best move's destination square
  * @param isWhiteTurn whether it is White's turn
+ * @param messageNum which number move of the game this is
  */
 public record AnalyzeOutputData(double winChance, double eval, String from,
-                                String to, boolean isWhiteTurn) {
+                                String to, boolean isWhiteTurn, int messageNum) {
 }

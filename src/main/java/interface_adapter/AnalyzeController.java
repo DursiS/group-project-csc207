@@ -2,6 +2,8 @@ package interface_adapter;
 
 import java.io.IOException;
 
+import use_case.AnalyzeInputBoundary;
+
 public class AnalyzeController {
     private final AnalyzeInputBoundary inputBoundary;
 
