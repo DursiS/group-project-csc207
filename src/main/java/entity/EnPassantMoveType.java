@@ -36,7 +36,8 @@ public class EnPassantMoveType extends MoveType {
         }
 
         if(b.isSquareEmpty(createMove(origin).getDestination())
-                && b.isSquareEnemy(createMove(origin).getCapture())){
+                && b.isSquareEnemy(createMove(origin).getCapture())
+                &&b.getSquare(createMove(origin).getCapture()) == 3 || b.getSquare(createMove(origin).getCapture()) == -3 ){
             moves.add(createMove(origin));
         }
 
