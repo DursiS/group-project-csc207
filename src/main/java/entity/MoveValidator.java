@@ -155,6 +155,18 @@ public class MoveValidator {
             int repeats = 0;
             int[] destination = new int[]{x,y};
             do{
+                if (moveType.isEnPassant()){
+                    destination = applyMovementVector(destination,moveType,edgeTopologies);
+                    //int[] horizontal = moveType.getVector();
+                    //horizontal[1] = 0;
+                    //horizontal = applyMovementVector(new int[]{x,y},new moveType())
+
+
+                    //OK i think for these move types, it's easiest to have another (normal) move type, and that one is applied to the destination or whatever
+                    //and would work nicer for the
+                    //so yeah, make a Move type class, and then make a EnPassantMoveType, and CastleMoveType classes........
+                    //and pass these values directly to the constructor of the special Move classes (inherited from Move).
+                }
                 if (moveType.isNormalMove()){
                     destination = applyMovementVector(destination, moveType, edgeTopologies);
                     //initial validity check:
