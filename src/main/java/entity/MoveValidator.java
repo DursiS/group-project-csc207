@@ -98,70 +98,7 @@ public class MoveValidator {
 
         for (int i = 0; i < pieceMoveTypes.length; i++) {
             MoveType moveType = pieceMoveTypes[i];
-            int[] destination;
-
-            //if (moveType.isEnPassant()){
-                //destination = applyMovementVector(destination,moveType,edgeTopologies);
-                //int[] horizontal = moveType.getVector();
-                //horizontal[1] = 0;
-                //horizontal = applyMovementVector(new int[]{x,y},new moveType())
-
-
-                //OK i think for these move types, it's easiest to have another (normal) move type, and that one is applied to the destination or whatever
-                //and would work nicer for the
-                //so yeah, make a Move type class, and then make a EnPassantMoveType, and CastleMoveType classes........
-                //and pass these values directly to the constructor of the special Move classes (inherited from Move).
-            //}
-            if (moveType instanceof EnPassantMoveType nMoveType){
-                destination = applyQuotientRelation(nMoveType.createMove(origin).getDestination(), board);
-                int[] capture = applyQuotientRelation(nMoveType.createMove(origin).getCapture(), board);
-                if(destination==null || capture==null){
-                    return;
-                }
-
-                if(board.isSquareEmpty(nMoveType.createMove(origin).getDestination())
-                && board.isSquareEnemy(nMoveType.createMove(origin).getCapture())){
-                    moves.add(nMoveType.createMove(origin));
-                }
-            }
-
-
-            //do the repeated checking-validation which is required for normal moves
-            if (moveType instanceof NormalMoveType nMoveType){
-                int repeats = 0;
-                do{
-                    destination = nMoveType.createMove(origin, repeats).getDestination();
-                    destination = applyQuotientRelation(destination, board);
-                    //initial validity check:
-                    //don't allow move if it results in an invalid location
-                    //don't allow move if it loops back to the piece's original location due to an alternate board topology
-                    //(this is allowed in some implementations of chess but we disable it for simplicity.)
-
-                    if(destination == null || (destination[0] ==x && destination[1] == y)){
-                        break;
-                    }else{
-                        //allow move if the move captures and square is occupied by an enemy
-                        //also allow move if the move isn't required to capture and square is empty
-                        if(board.isSquareEnemy(destination[0], destination[1])){
-                            if (nMoveType.isCanCapture()){
-                                moves.add(nMoveType.createMove(origin, repeats));
-                            }
-                            break;
-                            //can't move past an enemy.
-                        }
-                        else if(nMoveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))
-                        {
-                            moves.add(nMoveType.createMove(origin, repeats));
-                            //can keep moving if the square was empty, so don't break.
-                        }else if( !board.isSquareEmptyOrEnemy(destination[0],destination[1]))
-                        {
-                            //if square is occupied by an ally, don't allow movement through it
-                            break;
-                        }
-                    }
-                    repeats += 1;
-                }while(repeats <= nMoveType.getMaxRepeats()) ;
-            }
+            moveType.AddPossibleMoves(moves,board,origin);
         }
     }
 

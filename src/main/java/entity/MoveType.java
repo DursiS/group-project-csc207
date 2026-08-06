@@ -6,6 +6,8 @@
 
 package entity;
 
+import java.util.ArrayList;
+
 public abstract class MoveType {
     protected int[] movementVector;//how the actual piece moves
 
@@ -86,4 +88,8 @@ public abstract class MoveType {
     }
 
     public abstract MoveType createMirroredMove();
+
+    //Add all possible moves resulting from this move type to the list.
+    //implementation depends on the circumstances under which the possible moves are allowed.
+    public abstract void AddPossibleMoves(ArrayList<Move> moves, Board b, int[] origin);
 }

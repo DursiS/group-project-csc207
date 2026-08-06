@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.ArrayList;
+
 public class CastleMoveType extends MoveType{
 
     //@Override
@@ -15,5 +17,10 @@ public class CastleMoveType extends MoveType{
     @Override
     public MoveType createMirroredMove() {
         return null;
+    }
+
+    @Override
+    public void AddPossibleMoves(ArrayList<Move> moves, Board b, int[] origin) {
+
     }
 }
