@@ -47,13 +47,19 @@ public class MoveViewTest {
         //king castle
         assertEquals(moveViewModel.getSquareColour(0,0), moveViewModel.getSquareColour(5,0));
 
-        final JFrame application = new JFrame("Chess");
-        application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        application.setSize(600,600);
+        String king = moveViewModel.getSquareText(4,0);
 
-        application.add(moveView);//as a panel
+        moveController.ReceiveClick(0,0);
 
-        application.setVisible(true);
+        assertEquals(moveViewModel.getSquareText(2,0), king);
+
+        //final JFrame application = new JFrame("Chess");
+        //application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //application.setSize(600,600);
+
+        //application.add(moveView);//as a panel
+
+        //application.setVisible(true);
 
 
         //Thread.sleep(5000);
