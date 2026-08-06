@@ -8,15 +8,14 @@ public class EnPassantMoveType extends MoveType {
         this.captureVector = captureVector;
     }
 
-    @Override
-    public boolean isNormalMove() {
-        return false;
-    }
+    //@Override
+    //public boolean isNormalMove() {
+    //    return false;
+    //}
 
     @Override
-    public Move createMove(int[] origin) {
-        return null;
-        //TODO
+    public EnPassantMove createMove(int[] origin) {
+        return new EnPassantMove(origin, addVectors(origin,movementVector), addVectors(origin,captureVector));
     }
 
     @Override

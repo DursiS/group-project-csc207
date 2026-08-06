@@ -63,6 +63,9 @@ public class Board {
     public boolean isSquareEmpty(int x, int y){
         return squares[y][x] == 0;
     }
+    public boolean isSquareEmpty(int[] vec){
+        return isSquareEmpty(vec[0], vec[1]);
+    }
     public boolean isPiecesTurn(int x, int y){//return whether the piece on tile (x,y) can move on current turn
         return !isSquareEmptyOrEnemy(x,y);
     }
@@ -71,6 +74,9 @@ public class Board {
             return(squares[y][x] < 0);
         }
         return(squares[y][x] > 0);
+    }
+    public boolean isSquareEnemy(int[] vec){
+        return isSquareEnemy(vec[0], vec[1]);
     }
     public boolean isSquareEmptyOrEnemy(int x, int y) {//this method will be called many times...
         if(turn %2 ==0){

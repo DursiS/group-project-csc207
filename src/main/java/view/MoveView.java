@@ -42,7 +42,7 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
         for (int y = 0; y < EIGHT; y++) {
             for (int x = 0; x < EIGHT; x++) {
                 buttons[y][x] = new JButton(x + " " + y);
-                buttons[y][x].setBounds(1,1,1,1);
+                buttons[y][x].setBounds(1,1,1,1);//will be resized dynamically when the user changes the window size
                 buttons[y][x].setMargin(new Insets(0,0,0,0));
 
                 //buttons[y][x].setFont(new Font(buttons[y][x].getFont().getName(), buttons[y][x].getFont().getStyle(), 40));

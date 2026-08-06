@@ -10,8 +10,8 @@ public class CastleMove extends Move{
 
     }
 
-    @Override
-    public Boolean getIsNormalMove() {
-        return false;
-    }
+    //@Override
+    //public Boolean getIsNormalMove() {
+    //    return false;
+    //}
 }

@@ -46,7 +46,7 @@ public class MoveValidatorBuilder {
         //bishop and queen moves
         addMove(new int[]{-7,-8}, new NormalMoveType(new int[]{1,1},62));
         addMove(new int[]{-7,-8}, new NormalMoveType(new int[]{1,-1},62));
-        addMove(new int[]{-7,-8}, new NormalMoveType(new int[]{1,-1},62));
+        addMove(new int[]{-7,-8}, new NormalMoveType(new int[]{-1,-1},62));
         addMove(new int[]{-7,-8}, new NormalMoveType(new int[]{-1,1},62));
         //horse
         addMove(-6, new NormalMoveType(new int[]{1, 2}, 0));

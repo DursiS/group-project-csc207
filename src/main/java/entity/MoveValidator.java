@@ -98,7 +98,7 @@ public class MoveValidator {
 
         for (int i = 0; i < pieceMoveTypes.length; i++) {
             MoveType moveType = pieceMoveTypes[i];
-            int[] destination = new int[]{x,y};
+            int[] destination;
 
             //if (moveType.isEnPassant()){
                 //destination = applyMovementVector(destination,moveType,edgeTopologies);
@@ -112,6 +112,18 @@ public class MoveValidator {
                 //so yeah, make a Move type class, and then make a EnPassantMoveType, and CastleMoveType classes........
                 //and pass these values directly to the constructor of the special Move classes (inherited from Move).
             //}
+            if (moveType instanceof EnPassantMoveType nMoveType){
+                destination = applyQuotientRelation(nMoveType.createMove(origin).getDestination(), board);
+                int[] capture = applyQuotientRelation(nMoveType.createMove(origin).getCapture(), board);
+                if(destination==null || capture==null){
+                    return;
+                }
+
+                if(board.isSquareEmpty(nMoveType.createMove(origin).getDestination())
+                && board.isSquareEnemy(nMoveType.createMove(origin).getCapture())){
+                    moves.add(nMoveType.createMove(origin));
+                }
+            }
 
 
             //do the repeated checking-validation which is required for normal moves
@@ -130,15 +142,17 @@ public class MoveValidator {
                     }else{
                         //allow move if the move captures and square is occupied by an enemy
                         //also allow move if the move isn't required to capture and square is empty
-                        if(nMoveType.isCanCapture() && board.isSquareEnemy(destination[0], destination[1])){
-                            moves.add(nMoveType.createMove(origin, repeats));
+                        if(board.isSquareEnemy(destination[0], destination[1])){
+                            if (nMoveType.isCanCapture()){
+                                moves.add(nMoveType.createMove(origin, repeats));
+                            }
                             break;
                             //can't move past an enemy.
                         }
                         else if(nMoveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))
                         {
                             moves.add(nMoveType.createMove(origin, repeats));
-                            //can keep moving if the square was empty
+                            //can keep moving if the square was empty, so don't break.
                         }else if( !board.isSquareEmptyOrEnemy(destination[0],destination[1]))
                         {
                             //if square is occupied by an ally, don't allow movement through it

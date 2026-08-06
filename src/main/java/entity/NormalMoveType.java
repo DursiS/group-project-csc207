@@ -30,10 +30,10 @@ public class NormalMoveType extends MoveType{
         return maxRepeats;
     }
 
-    @Override
-    public boolean isNormalMove() {
-        return true;
-    }
+    //@Override
+    //public boolean isNormalMove() {
+    //    return true;
+    //}
 
     @Override
     public Move createMove(int[] origin) {

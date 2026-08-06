@@ -40,7 +40,7 @@ public abstract class MoveType {
     //    return vector;
     //}
 
-    public abstract boolean isNormalMove();
+    //public abstract boolean isNormalMove();
 
     //public int getMaxRepeats() {
     //    return maxRepeats;
