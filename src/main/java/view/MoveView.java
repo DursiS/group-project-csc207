@@ -78,7 +78,7 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println("property change " + evt.getPropertyName());
+        //System.out.println("property change " + evt.getPropertyName());
         RefreshButtons();
     }
 

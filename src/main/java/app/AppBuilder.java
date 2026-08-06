@@ -1,10 +1,7 @@
 package app;
 
 
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
-import entity.MoveValidator;
+import entity.*;
 import interface_adapter.MoveController;
 import interface_adapter.MovePresenter;
 import interface_adapter.MoveViewModel;
@@ -27,7 +24,12 @@ public class AppBuilder {
 
         //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
         gameState = new GameState(new Board(0,0), 0, 0, new BoardStateList(),"idk what this is");
-        MoveValidator moveValidator = new MoveValidator();
+        MoveValidator moveValidator;
+        MoveValidatorBuilder mvb = new MoveValidatorBuilder();
+        mvb.addNormalMoves();
+        mvb.addEnPassants();
+        mvb.duplicateAndMirrorMoves();
+        moveValidator = mvb.build();
 
         movePresenter = new MovePresenter(moveViewModel);
 

@@ -10,12 +10,12 @@ import java.util.Map;
 public class MovePresenter implements MoveOutputBoundary {
     private MoveViewModel moveViewModel;
 
-    Color square1 = new Color(240, 217, 181);
-    Color square2 = new Color(181, 136, 99);
-    Color selected = new Color(0, 120, 215);
-    Color moveable = new Color(0,215,120);
-    Color[] boardColours = {square1, square2};
-    Map<Integer, String> pieceStrings = new HashMap<>(Map.ofEntries(
+    private Color square1 = new Color(240, 217, 181);
+    private Color square2 = new Color(181, 136, 99);
+    private Color selected = new Color(0, 120, 215);
+    private Color moveable = new Color(0,215,120);
+    private Color[] boardColours = {square1, square2};
+    private Map<Integer, String> pieceStrings = new HashMap<>(Map.ofEntries(
             Map.entry(0,""),
             Map.entry(1,"♙"),
             Map.entry(2,"♙"),

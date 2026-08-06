@@ -14,7 +14,7 @@ public class MoveController {
         //updateColours();
         //DO STUFF HERE!!!!!
         //support.firePropertyChange("update Move View", null,null);
-        System.out.println("receiving click at " +x + " "+y);
+        //System.out.println("receiving click at " +x + " "+y);
 
         MoveInputData data = new MoveInputData(x,y);
         moveInputBoundary.receiveMove(data);

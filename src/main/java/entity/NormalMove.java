@@ -1,5 +1,7 @@
 package entity;
 
+import use_case.MakeMoveInteractor;
+
 public class NormalMove extends Move{
 
     @Override
@@ -32,7 +34,8 @@ public class NormalMove extends Move{
             finalPiece  = -finalPiece;
         }
 
-        b.setSquare(this.getDestination(), finalPiece);
+        int[] destination = MoveValidator.applyQuotientRelation(this.getDestination(),b);
+        b.setSquare(destination, finalPiece);
         b.setSquare(this.getOrigin(), 0);
     }
 }

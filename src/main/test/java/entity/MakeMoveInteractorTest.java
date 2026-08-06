@@ -24,7 +24,7 @@ public class MakeMoveInteractorTest {
         moveViewModel = new MoveViewModel();
         //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
         gameState = new GameState(new Board(0,0), 0, 0, new BoardStateList(),"idk what this is");
-        MoveValidator moveValidator = new MoveValidator();
+        MoveValidator moveValidator = new MoveValidatorBuilder().doDefaultSetup().build();
         movePresenter = new MovePresenter(moveViewModel);
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
         moveController = new MoveController(makeMoveInteractor);

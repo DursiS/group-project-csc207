@@ -10,7 +10,7 @@ public class MoveValidatorTest {
     void basicMoveValidatorTest(){
         //start with default board
         Board b = new Board();
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -28,7 +28,8 @@ public class MoveValidatorTest {
         squares[0][0] = 4;
         squares[0][3] = -4;
         Board b = new Board(squares,  0,0,0);
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
+
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -44,7 +45,7 @@ public class MoveValidatorTest {
         squares[0][4] = 4;
         squares[0][3] = 4;
         Board b = new Board(squares, 0,0,0);//default board;
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -64,7 +65,7 @@ public class MoveValidatorTest {
         squares[4][7] = 4;
 
         Board b = new Board(squares, 0,0,0);//default board;
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -86,7 +87,7 @@ public class MoveValidatorTest {
 
 
         Board b = new Board(squares, 0,1,0);
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
