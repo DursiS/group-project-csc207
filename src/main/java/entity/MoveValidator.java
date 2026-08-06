@@ -41,14 +41,6 @@ public class MoveValidator {
             boolean invalid = false;
             //this is kind of cheating, but the only moves that could theoretically endanger the king are normal moves that have destination at the king...
             for (int j = 0; j < enemyImaginaryMoves.size(); j++) {
-                //System.out.println(enemyImaginaryMoves.get(j).getOrigin()[0] + " " + enemyImaginaryMoves.get(j).getOrigin()[1]);
-                //System.out.println(enemyImaginaryMoves.get(j).getDestination()[0] + " " + enemyImaginaryMoves.get(j).getDestination()[1]);
-
-                //System.out.println(enemyImaginaryMoves.get(j) instanceof EnPassantMove);
-                //System.out.println(enemyImaginaryMoves.get(j) instanceof CastleMove);
-                //System.out.println(enemyImaginaryMoves.get(j) instanceof NormalMove);
-
-
                 if(isNonTurnPlayersKing(imaginaryBoard, enemyImaginaryMoves.get(j).getDestination())){
                     invalid = true;
                     break;

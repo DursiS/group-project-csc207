@@ -23,7 +23,7 @@ public class AppBuilder {
         moveViewModel = new MoveViewModel();
         Board b = new Board(0,0);
 
-        b = new Board(0,0);
+        b = new Board(1,0);
 
         //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
         gameState = new GameState(b, 0, 0, new BoardStateList(),"idk what this is");

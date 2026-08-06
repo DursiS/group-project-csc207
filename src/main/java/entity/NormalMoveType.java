@@ -33,14 +33,10 @@ public class NormalMoveType extends MoveType{
     public int getMaxRepeats() {
         return maxRepeats;
     }
-
-    //@Override
-    //public Move createMove(int[] origin) {
-    //    return new NormalMove(origin, addVectors(origin, movementVector));
-    //}
-
-    public Move createMove(int[] origin, int repeats) {
-        return new NormalMove(origin, addVectors(origin, multiplyVector(movementVector, repeats+1)));
+    public Move createMove(int[] origin, int repeats, Board b) {
+        int[] destination = addVectors(origin, multiplyVector(movementVector, repeats+1));
+        destination = applyQuotientRelation(destination, b);
+        return new NormalMove(origin, destination);
     }
 
 
@@ -54,8 +50,8 @@ public class NormalMoveType extends MoveType{
         int[] destination;
         int repeats = 0;
         do{
-            destination = createMove(origin, repeats).getDestination();
-            destination = applyQuotientRelation(destination, b);
+            destination = createMove(origin, repeats, b).getDestination();
+            //destination = applyQuotientRelation(destination, b);
             //initial validity check:
             //don't allow move if it results in an invalid location
             //don't allow move if it loops back to the piece's original location due to an alternate board topology
@@ -68,14 +64,14 @@ public class NormalMoveType extends MoveType{
                 //also allow move if the move isn't required to capture and square is empty
                 if(b.isSquareEnemy(destination[0], destination[1])){
                     if (isCanCapture()){
-                        moves.add(createMove(origin, repeats));
+                        moves.add(createMove(origin, repeats, b));
                     }
                     break;
                     //can't move past an enemy.
                 }
                 else if(isCanNotCapture() && b.isSquareEmpty(destination))
                 {
-                    moves.add(createMove(origin, repeats));
+                    moves.add(createMove(origin, repeats, b));
                     //can keep moving if the square was empty, so don't break.
                 }else if( !b.isSquareEmptyOrEnemy(destination[0],destination[1]))
                 {
