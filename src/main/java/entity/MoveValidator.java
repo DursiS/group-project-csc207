@@ -140,7 +140,7 @@ public class MoveValidator {
 
 
     public void ApplyMove(Board b, Move m){
-        if(!b.isPiecesTurn(m.getOrigin()[0], m.getOrigin()[1])){
+        if(!b.isPiecesTurn(m.getOrigin())){
             throw new IllegalArgumentException();
         }
 

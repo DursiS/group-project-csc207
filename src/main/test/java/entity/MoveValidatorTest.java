@@ -97,6 +97,28 @@ public class MoveValidatorTest {
         assertEquals(moves.size(), 5);
     }
 
+    @Test
+    void castleTest(){
+        int[][] squares = new int[8][8];
+        squares[0][4] = -9;
+        squares[0][0] = -4;
+        Board b = new Board(squares, 0,0,0);
+        b.setTurn(1);
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
+
+        ArrayList<Move> moves = v.getAllValidMoves(b);
+        System.out.println(moves.size());
+        for (int i = 0; i < moves.size(); i++) {
+            System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
+        }
+        assertEquals(moves.size(), 16);
+
+        CastleMove castle = (CastleMove)( moves.get(15));
+        System.out.println(vectorToString(castle.getOrigin()));
+        System.out.println(vectorToString(castle.getDestination()));
+
+    }
+
 
 
     static String vectorToString(int[] vector){

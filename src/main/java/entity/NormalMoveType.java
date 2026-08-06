@@ -78,7 +78,7 @@ public class NormalMoveType extends MoveType{
                     break;
                     //can't move past an enemy.
                 }
-                else if(isCanNotCapture() && b.isSquareEmpty(destination[0], destination[1]))
+                else if(isCanNotCapture() && b.isSquareEmpty(destination))
                 {
                     moves.add(createMove(origin, repeats));
                     //can keep moving if the square was empty, so don't break.

@@ -75,6 +75,10 @@ public class MoveValidatorBuilder {
     }
 
     public void addCastles(){
+        //short castle
+        addMove(new int[]{-9}, new CastleMoveType( new int[]{3,0}, new int[]{2,0}, new int[]{-2,0}, 1 ));
+        //long castle
+        addMove(new int[]{-9}, new CastleMoveType( new int[]{-4,0}, new int[]{-2,0}, new int[]{3,0}, -1 ));
 
     }
 

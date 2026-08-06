@@ -69,6 +69,10 @@ public class Board {
     public boolean isPiecesTurn(int x, int y){//return whether the piece on tile (x,y) can move on current turn
         return !isSquareEmptyOrEnemy(x,y);
     }
+    public boolean isPiecesTurn(int[] vec){//return whether the piece on tile (x,y) can move on current turn
+        return isPiecesTurn(vec[0], vec[1]);
+    }
+
     public boolean isSquareEnemy(int x, int y){//return whether the piece on tile (x,y) is an enemy piece of the player whose turn it currently is
         if(turn %2 ==0){
             return(squares[y][x] < 0);
