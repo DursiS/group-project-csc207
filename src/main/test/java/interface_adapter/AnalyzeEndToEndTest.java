@@ -17,7 +17,6 @@ public class AnalyzeEndToEndTest {
         final Board board = new Board();
         final AnalyzeView view = getView(board);
 
-        // TODO: Replace with AppBuilder when ready
         final JFrame mainFrame = new JFrame("Analyze View");
 
         mainFrame.setLayout(new BorderLayout());
@@ -26,8 +25,6 @@ public class AnalyzeEndToEndTest {
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-        // TODO: wire in with move signals later instead of manual executions
-        // TODO: test real game data access retrieval
 
         // first move made to the board
         firstMove(board);
@@ -53,22 +50,19 @@ public class AnalyzeEndToEndTest {
         return new AnalyzeView(viewModel, controller);
     }
 
-    // 1. e4 : white pawn e2 -> e4. Kept as a moved pawn (2), not en-passant
-    // because the chess API rejects any FEN that carries an en-passant square.
+    // note, the chess API rejects any FEN that carries an en-passant square
     private static void firstMove(Board board) {
         board.setSquare(4, 6, 0);
         board.setSquare(4, 4, 2);
         board.incrementTurn();
     }
 
-    // 1... e5 : black pawn e7 -> e5
     private static void secondMove(Board board) {
         board.setSquare(4, 1, 0);
         board.setSquare(4, 3, -2);
         board.incrementTurn();
     }
 
-    // 2. Nf3 : white knight g1 -> f3
     private static void thirdMove(Board board) {
         board.setSquare(6, 7, 0);
         board.setSquare(5, 5, 6);
