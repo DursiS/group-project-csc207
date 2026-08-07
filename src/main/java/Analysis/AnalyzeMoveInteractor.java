@@ -3,13 +3,13 @@ package Analysis;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
+import entity.Board;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
 
     private Integer messageCount = 1;
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
-    private final GameStateDataAccessInterface gameStateDataAccess;
     private final BoardToFenTranslator fenTranslator = new BoardToFenTranslator();
 
     /**
@@ -17,36 +17,39 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
      * Uses dependencies injecting instead of hard dependencies.
      * @param apiInterface the chess API to use
      * @param analyzeOutputBoundary the output boundary to present results
-     * @param gameStateDataAccess the source of the current board
      */
     public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
-                                 AnalyzeOutputBoundary analyzeOutputBoundary,
-                                 GameStateDataAccessInterface gameStateDataAccess) {
+                                 AnalyzeOutputBoundary analyzeOutputBoundary) {
         this.apiInterface = apiInterface;
         this.analyzeOutputBoundary = analyzeOutputBoundary;
-        this.gameStateDataAccess = gameStateDataAccess;
     }
 
-    // SRP
     @Override
     public void executeTurnAnalysis() throws IOException {
         final Board board = getRecentBoard();
-        final String fen = this.fenTranslator.convertToFen(board);
+        final String fen = this.fenTranslator.convertToFen(board,
+                isWhiteTurn()
+        );
         final JsonObject response = requestOrThrow(fen);
         final AnalyzeOutputData outputData = new AnalyzeOutputData(
                 response.get("winChance").getAsDouble(),
                 response.get("eval").getAsDouble(),
                 response.get("from").getAsString(),
                 response.get("to").getAsString(),
-                board.isWhiteTurn(),
+                isWhiteTurn(),
                 messageCount
         );
         this.analyzeOutputBoundary.addMessage(outputData);
         messageCount += 1;
     }
 
+    private boolean isWhiteTurn() {
+        return messageCount % 2 == 1;
+    }
+
     private Board getRecentBoard() {
-        return this.gameStateDataAccess.getRecentBoard();
+        // TODO: This will receive action fires
+        return new Board();
     }
 
     @Override
