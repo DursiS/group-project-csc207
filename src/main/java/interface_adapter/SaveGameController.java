@@ -11,6 +11,6 @@ public class SaveGameController {
 
     public void execute(String saveName, GameState gameState){
         SaveGameInputData inputData = new SaveGameInputData(saveName, gameState);
-        interactor.execute(saveName, gameState);
+        interactor.execute(inputData);
     }
 }

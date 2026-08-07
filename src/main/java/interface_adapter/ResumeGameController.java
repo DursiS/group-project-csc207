@@ -9,8 +9,8 @@ public class ResumeGameController {
         this.interactor = interactor;
     }
 
-    public void execute(String saveName, GameState gameState) {
-        ResumeGameInputData inputData = new ResumeGameInputData(saveName, gameState);
+    public void execute(String saveName) {
+        ResumeGameInputData inputData = new ResumeGameInputData(saveName);
         interactor.execute(saveName);
     }
 }

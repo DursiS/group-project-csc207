@@ -1,9 +1,9 @@
 package use_case;
-public class ResumeGameInputData {
+
+public class SaveGameOutputData {
     private String saveName;
 
-
-    public ResumeGameInputData(String saveName){
+    public SaveGameOutputData(String saveName){
         this.saveName = saveName;
     }
 
