@@ -1,17 +1,14 @@
-//this is a data object, for validation purposes only
-//that just stores the information about the types of moves a piece can make. (not an actual move made by a player)
-//it also tracks whether move types are a special move, in which case the movement code will have to activate some special case
-//there is a list of MoveType for each piece,
-//and the move validator checks all of them when checking for valid moves.
-
 package entity;
 
 import java.util.ArrayList;
 
+/**
+ * this class is an abstract class, the classes inheriting it represent the
+ * types of possible moves pieces can make (like, the movemnt rules), and they're repsponsible for creating
+ * the corresponding move objects
+ */
 public abstract class MoveType {
-    protected int[] movementVector;//how the actual piece moves
-
-    //public abstract Move createMove(int[] origin);
+    protected int[] movementVector;
 
     public static int[] mirrorVector(int[] vector){
         return new int[]{vector[0], -vector[1]};
@@ -27,7 +24,13 @@ public abstract class MoveType {
 
     public abstract MoveType createMirroredMove();
 
-    //Add all possible moves resulting from this move type to the list.
-    //implementation depends on the circumstances under which the possible moves are allowed.
+
+    /**
+     *     //Add all possible moves resulting from this move type to the list.
+     *     //implementation depends on the circumstances under which the possible moves are allowed.
+     * @param moves moves list to add to
+     * @param b current board
+     * @param origin location of piece that's making the move
+     */
     public abstract void AddPossibleMoves(ArrayList<Move> moves, Board b, int[] origin);
 }

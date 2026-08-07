@@ -1,18 +1,22 @@
-//the purpose of this class is to create a move validator
-//Since this allows the move validator to use the dependency injection design pattern,
-//which allows creating move validators that follow different rules of chess,
-//This in turn increases the amount of SRP and OCP, rather than having a fixed constructor for the Move validator.
-
-
-
 package entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * //the purpose of this class is to create a move validator
+ * //Since this allows the move validator to use the dependency injection design pattern,
+ * //which allows creating move validators that follow different rules of chess,
+ * //This in turn increases the amount of SRP and OCP, rather than having a fixed constructor for the Move validator.
+ */
 public class MoveValidatorBuilder {
     private HashMap<Integer, ArrayList<MoveType>> moveTypesLists;
 
+    /**
+     *designate this move type to be added to the move validator
+     * @param pieceType the piece which should have the move type
+     * @param moveType the move type
+     */
     public void addMove(int pieceType, MoveType moveType){
         if(moveTypesLists.containsKey(pieceType)){
             moveTypesLists.get(pieceType).add(moveType);
@@ -22,16 +26,28 @@ public class MoveValidatorBuilder {
         }
     }
 
+    /**
+     * designate this move type to be added to the move validator, for multiple piece types
+     * @param pieceTypes list of the piece types to add it to
+     * @param moveType the move type
+     */
     public void addMove(int[] pieceTypes, MoveType moveType){
         for (int i = 0; i < pieceTypes.length; i++) {
             addMove(pieceTypes[i], moveType);
         }
     }
 
+    /**
+     * default constructor
+     */
     public MoveValidatorBuilder() {
         moveTypesLists = new HashMap<Integer, ArrayList<MoveType>>();
     }
 
+    /**
+     * adds all the normal chess moves types
+     * @return itself
+     */
     public MoveValidatorBuilder addNormalMoves(){
         //Pawn moves
         addMove(new int[]{-1}, new NormalMoveType(new int[]{0,1}, 1, false, true));
@@ -69,13 +85,20 @@ public class MoveValidatorBuilder {
         return this;
     }
 
-
+    /**
+     * add all the en passant moves types
+     * @return itself
+     */
     public MoveValidatorBuilder addEnPassants(){
         addMove(new int[]{-1,-2,-3}, new EnPassantMoveType(new int[]{1,1}, new int[]{1,0}));
         addMove(new int[]{-1,-2,-3}, new EnPassantMoveType(new int[]{-1,1}, new int[]{-1,0}));
         return this;
     }
 
+    /**
+     * add all the castle moves types
+     * @return itself
+     */
     public MoveValidatorBuilder addCastles(){
         //short castle
         addMove(new int[]{-9}, new CastleMoveType( new int[]{3,0}, new int[]{2,0}, new int[]{-2,0}, 1 ));
@@ -84,6 +107,10 @@ public class MoveValidatorBuilder {
         return this;
     }
 
+    /**
+     * create copy of all moves that are vertically mirrored, for the opposite colour of piece
+     * @return itself
+     */
     public MoveValidatorBuilder duplicateAndMirrorMoves(){
         ArrayList<Integer> copySet = new ArrayList<>(moveTypesLists.keySet());
         //create a copy of the key set because it will cause an error if you modify it while iterating over it
@@ -98,6 +125,10 @@ public class MoveValidatorBuilder {
         return this;
     }
 
+    /**
+     * just set up all the default rules for chess
+     * @return itself
+     */
     public MoveValidatorBuilder doDefaultSetup(){
         addNormalMoves();
         addEnPassants();
@@ -106,8 +137,12 @@ public class MoveValidatorBuilder {
         return this;
     }
 
+    /**
+     * create the move validator after setting up some rules
+     * @return the move validator
+     */
     public MoveValidator build(){
-        //convert map of lists into map of arrays.
+        //convert map of movetype lists into map of movetype arrays.
         HashMap<Integer, MoveType[]> moveTypes = new HashMap<Integer, MoveType[]>();
         for (int key: moveTypesLists.keySet()){
             moveTypes.put(key, moveTypesLists.get(key).toArray(new MoveType[0]));
