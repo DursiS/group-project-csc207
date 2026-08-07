@@ -6,6 +6,7 @@ import entity.Move;
 import entity.MoveValidator;
 
 import javax.swing.*;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 /**
@@ -13,6 +14,9 @@ import java.util.ArrayList;
  * which includes player input to the board, move validation, and game movement logic
  */
 public class MakeMoveInteractor implements MoveInputBoundary {
+    private static final String UPDATE_CHANNEL = "update-analysis";
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+
     private MoveValidator validator;
     private GameState gameState;
     private MoveOutputBoundary moveOutputBoundary;
@@ -34,6 +38,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         selectedSquare = null;
 
         initializeTurn();
+        updateAnalyzeMoveInteractor();
     }
 
     /**
@@ -99,14 +104,14 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             }
         }
 
-        UpdateBoardVisuals();
+        updateVisuals();
     }
 
     /**
      * after the player input, redetermine the board appearance
      * and prepare to present that data through the output boundary
      */
-    public void UpdateBoardVisuals(){
+    public void updateVisuals(){
         Board b = gameState.getBoard();
 
         int[][] tileVisuals = new int[8][8];//0: default (will be checkerboard), 1:selected piece, 2:moveable square for the currently selected piece
@@ -133,5 +138,16 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         MoveOutputData outData = new MoveOutputData(pieceTypes,tileVisuals);
 
         moveOutputBoundary.present(outData);
+    }
+
+    /**
+     * Updates the AnalyzeMoveInteractor's reference of GameState
+     * by using an Observer Pattern to solve the problem of consistency.
+     */
+    private void updateAnalyzeMoveInteractor() {
+        support.firePropertyChange(UPDATE_CHANNEL,
+                null,
+                gameState
+        );
     }
 }

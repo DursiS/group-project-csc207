@@ -36,7 +36,7 @@ public class AppBuilder {
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
-        makeMoveInteractor.UpdateVisuals();
+        makeMoveInteractor.updateVisuals();
 
         return this;
     }

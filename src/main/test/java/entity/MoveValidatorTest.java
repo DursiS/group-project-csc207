@@ -120,6 +120,18 @@ public class MoveValidatorTest {
 
     }
 
+    @Test
+    void enPassantTest(){
+        int[][] squares = new int[8][8];
+        squares[4][1] = -3;
+        squares[4][0] = 2;
+        Board b = new Board(squares, 0,0,0);
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
+
+        ArrayList<Move> moves = v.getAllValidMoves(b);
+        assertEquals(moves.size(),  2);
+    }
+
 
 
     static String vectorToString(int[] vector){
