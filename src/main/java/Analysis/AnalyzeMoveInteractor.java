@@ -1,16 +1,25 @@
 package Analysis;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.gson.JsonObject;
 import entity.Board;
+import entity.BoardStateList;
+import entity.GameState;
 
-public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
+import javax.swing.*;
 
+public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChangeListener {
+    private static final String UPDATE_CHANNEL = "update-analysis";
     private Integer messageCount = 1;
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
     private final BoardToFenTranslator fenTranslator = new BoardToFenTranslator();
+    private GameState gameState;
 
     /**
      * Constructs the interactor with its dependencies.
@@ -22,6 +31,25 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
                                  AnalyzeOutputBoundary analyzeOutputBoundary) {
         this.apiInterface = apiInterface;
         this.analyzeOutputBoundary = analyzeOutputBoundary;
+    }
+
+    /**
+     * Receives an update signal and re-runs the analysis off the UI thread.
+     * Updates reference to the latest game state from MakeMoveInteractor
+     * @param propertyChangeEvent the fired update event
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if (UPDATE_CHANNEL.equals(propertyChangeEvent.getPropertyName())) {
+            this.gameState = (GameState) propertyChangeEvent.getNewValue();
+            new Thread(() -> {
+                try {
+                    executeTurnAnalysis();
+                } catch (IOException event) {
+                    throw new RuntimeException(event);
+                }
+            }).start();
+        }
     }
 
     @Override
@@ -48,8 +76,12 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
     }
 
     private Board getRecentBoard() {
-        // TODO: This will receive action fires
-        return new Board();
+        final BoardStateList boardList = gameState.getBoardStateListCopy();
+        final List<Board> boardStates = Collections
+                .singletonList(boardList
+                        .getBoardCopy(boardList.size() - 1));
+        return boardStates.get(boardStates.size() - 1);
+
     }
 
     @Override
@@ -74,7 +106,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary {
         final JsonObject response = this.apiInterface.request(fen);
 
         // we handle it here because we can communicate the fen
-        // that led to the error right away
+        // that led to the error right away, good
         if (response.has("type") && "error".equals(response.get("type").getAsString())) {
             throw new IllegalStateException("Chess API rejected the position: "
                     + response.get("text"));
