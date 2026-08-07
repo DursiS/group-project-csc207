@@ -29,7 +29,7 @@ public class MakeMoveInteractorTest {
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
         moveController = new MoveController(makeMoveInteractor);
         moveView = new MoveView(moveViewModel, moveController);
-        makeMoveInteractor.UpdateVisuals();
+        makeMoveInteractor.updateVisuals();
 
         moveController.ReceiveClick(0,6);
         moveController.ReceiveClick(0,4);
