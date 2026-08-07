@@ -27,6 +27,7 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     private static final String FONT = "Arial";
     private static final Color COLOR = new Color(210, 180, 140);
     private static final Color TEXT_COLOR = Color.BLACK;
+    private static final String ANALYSIS_PROPERTY = "analysis";
 
     private JTextArea textArea;
     private final AnalyzeController controller;
@@ -41,7 +42,7 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
         setupTextArea();
 
         // subscribing the ViewModel
-        viewModel.addPropertyChangeListener(this);
+        viewModel.addPropertyChangeListener(ANALYSIS_PROPERTY, this);
         applyPanelConfiguration();
     }
 
