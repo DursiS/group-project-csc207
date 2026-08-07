@@ -8,6 +8,10 @@ import entity.MoveValidator;
 import javax.swing.*;
 import java.util.ArrayList;
 
+/**
+ * this interactor is responsible for the movement use case,
+ * which includes player input to the board, move validation, and game movement logic
+ */
 public class MakeMoveInteractor implements MoveInputBoundary {
     private MoveValidator validator;
     private GameState gameState;
@@ -17,6 +21,12 @@ public class MakeMoveInteractor implements MoveInputBoundary {
 
     private ArrayList<Move> moves;
 
+    /**
+     * create make move interactor
+     * @param validator the move validator it's assigned to
+     * @param gameState reference to the gamestate to retrieve the board from
+     * @param moveOutputBoundary after making a move, the raw information to present is passed here
+     */
     public MakeMoveInteractor(MoveValidator validator, GameState gameState, MoveOutputBoundary moveOutputBoundary) {
         this.validator = validator;
         this.gameState = gameState;
@@ -26,8 +36,10 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         initializeTurn();
     }
 
-
-
+    /**
+     * this method is called at the start of each turn, to check if there are valid moves,
+     * if there are none, it's game over. (checkmate.).
+     */
     public void initializeTurn(){
         moves = validator.getAllValidMoves(gameState.getBoard());
 
@@ -44,8 +56,14 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         }
     }
 
+    /**
+     * this takes the player input for making a selection or move, and
+     * either changes the selection if they were trying to select something
+     * or makes a move if they were trying to make a move
+     * @param data the input data
+     */
     @Override
-    public void receiveMove(MoveInputData data) {
+    public void receiveInput(MoveInputData data) {
         Board b = gameState.getBoard();
         boolean moved = false;
 
@@ -81,12 +99,15 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             }
         }
 
-        ConcludeInteraction();
+        UpdateBoardVisuals();
     }
 
-    private void ConcludeInteraction(){
+    /**
+     * after the player input, redetermine the board appearance
+     * and prepare to present that data through the output boundary
+     */
+    public void UpdateBoardVisuals(){
         Board b = gameState.getBoard();
-
 
         int[][] tileVisuals = new int[8][8];//0: default (will be checkerboard), 1:selected piece, 2:moveable square for the currently selected piece
         int[][] pieceTypes = new int[8][8];
@@ -109,14 +130,8 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                 }
             }
         }
-
         MoveOutputData outData = new MoveOutputData(pieceTypes,tileVisuals);
 
-
         moveOutputBoundary.present(outData);
-    }
-
-    public void UpdateVisuals(){
-        ConcludeInteraction();
     }
 }

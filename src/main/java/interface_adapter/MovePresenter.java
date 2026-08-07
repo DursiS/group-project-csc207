@@ -37,26 +37,27 @@ public class MovePresenter implements MoveOutputBoundary {
             Map.entry(-8,"♛"),
             Map.entry(-9,"♚"),
             Map.entry(-10,"♚")
-
-
-
     )
     );
 
-            //Map.of(0, "", 1, "♙",2,"♙",3,"♙",4,"♖", );
-
+    /**
+     *create a move presenter
+     * @param moveViewModel the view model it's assigned to
+     */
     public MovePresenter(MoveViewModel moveViewModel) {
         this.moveViewModel = moveViewModel;
-
     }
 
+    /**
+     * present the data to the view model, and fire it
+     * @param data the output data to present
+     */
     @Override
     public void present(MoveOutputData data) {
 
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 moveViewModel.setSquareColour(x,y, boardColours[ (x + y) % 2]);
-                //moveViewModel.setSquareText(x,y, String.valueOf(data.getPieceType(x,y)));
                 moveViewModel.setSquareText(x,y, this.pieceStrings.get(data.getPieceType(x,y)));
 
                 if (data.getSquareVisual(x,y) == 1){

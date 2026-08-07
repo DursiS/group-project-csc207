@@ -29,7 +29,6 @@ public class MoveViewModel {
         squareTexts[y][x] = t;
     }
 
-
     private final PropertyChangeSupport support
             = new PropertyChangeSupport(this);
 
@@ -37,13 +36,10 @@ public class MoveViewModel {
         support.addPropertyChangeListener(listener);
     }
 
-
+    /**
+     * updates the move view (this is called by presenter)
+     */
     public void fire(){
         support.firePropertyChange("update Move View", null,null);
     }
-
-
-
-
-
 }
