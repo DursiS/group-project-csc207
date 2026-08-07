@@ -6,9 +6,13 @@ import entity.Move;
 import entity.MoveValidator;
 
 import javax.swing.*;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 public class MakeMoveInteractor implements MoveInputBoundary {
+    private static final String UPDATE_CHANNEL = "update-analysis";
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+
     private MoveValidator validator;
     private GameState gameState;
     private MoveOutputBoundary moveOutputBoundary;
@@ -24,6 +28,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         selectedSquare = null;
 
         initializeTurn();
+        updateAnalyzeMoveInteractor();
     }
 
 
@@ -118,5 +123,16 @@ public class MakeMoveInteractor implements MoveInputBoundary {
 
     public void UpdateVisuals(){
         ConcludeInteraction();
+    }
+
+    /**
+     * Updates the AnalyzeMoveInteractor's reference of GameState
+     * by using an Observer Pattern to solve the problem of consistency.
+     */
+    private void updateAnalyzeMoveInteractor() {
+        support.firePropertyChange(UPDATE_CHANNEL,
+                null,
+                gameState
+        );
     }
 }
