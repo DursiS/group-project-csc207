@@ -1,5 +1,8 @@
 package app;
 
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+
 import Analysis.AnalyzeController;
 import Analysis.AnalyzeMoveInteractor;
 import Analysis.AnalyzePresenter;
@@ -15,12 +18,6 @@ import interface_adapter.MoveViewModel;
 import use_case.MakeMoveInteractor;
 import view.MoveView;
 
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
-
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.EAST;
-
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
  * stack and adding its view to a region of the frame.
@@ -28,10 +25,12 @@ import static java.awt.BorderLayout.EAST;
 public class AppBuilder extends JFrame {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
+    private static final String CENTER = "Center";
+    private static final String EAST = "East";
 
     private final GameState gameState;
 
-    // Move feature
+    // MakeMove feature
     private MoveViewModel moveViewModel;
     private MoveView moveView;
     private MoveController moveController;
@@ -51,11 +50,20 @@ public class AppBuilder extends JFrame {
      * @param gameState the shared game state the features build on
      */
     public AppBuilder(GameState gameState) {
+        changeListeningSetup();
         this.gameState = gameState;
         setTitle("Chess App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setSize(WIDTH, HEIGHT);
+    }
+
+    private void changeListeningSetup() {
+        analyzeViewModel = new AnalyzeViewModel();
+        analyzePresenter = new AnalyzePresenter(analyzeViewModel);
+
+        chessApiAdaptor = new ChessApiAdapter();
+        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter);
     }
 
     /**
@@ -73,10 +81,11 @@ public class AppBuilder extends JFrame {
 
         movePresenter = new MovePresenter(moveViewModel);
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
+
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
-        makeMoveInteractor.UpdateVisuals();
         add(moveView, CENTER);
         return this;
     }
@@ -86,13 +95,7 @@ public class AppBuilder extends JFrame {
      * @return this builder, for chaining
      */
     public AppBuilder addAnalysisView() {
-        analyzeViewModel = new AnalyzeViewModel();
-        analyzePresenter = new AnalyzePresenter(analyzeViewModel);
-
-        chessApiAdaptor = new ChessApiAdapter();
-        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter);
         analyzeController = new AnalyzeController(analyzeInteractor);
-
         analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
         add(analyzeView, EAST);
         return this;

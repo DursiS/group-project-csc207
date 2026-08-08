@@ -6,6 +6,7 @@ import entity.Move;
 import entity.MoveValidator;
 
 import javax.swing.*;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
@@ -38,7 +39,6 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         selectedSquare = null;
 
         initializeTurn();
-        updateAnalyzeMoveInteractor();
     }
 
     /**
@@ -59,6 +59,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             JOptionPane.showMessageDialog(null, "CHECKMATE! " + winner + " WINS!", "CHECKMATE!", JOptionPane.INFORMATION_MESSAGE);
             //checkmate, game is over, return to menu or something?
         }
+        updateAnalyzeMoveInteractor();
     }
 
     /**
@@ -149,5 +150,13 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                 null,
                 gameState
         );
+    }
+
+    /**
+     * Add a change listener so fires are actually listener to.
+     * @param listener a property change listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
     }
 }

@@ -14,7 +14,7 @@ import entity.GameState;
 /**
  * Application entry point: shows a topology menu, then launches the game.
  */
-public class main {
+public class Main {
     private static final int STANDARD_TOPOLOGY = 0;
     private static final int WRAP_TOPOLOGY = 1;
     private static final int ROWS = 3;
