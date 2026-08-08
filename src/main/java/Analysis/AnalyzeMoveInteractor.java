@@ -45,7 +45,8 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
             new Thread(() -> {
                 try {
                     executeTurnAnalysis();
-                } catch (IOException event) {
+                }
+                catch (IOException event) {
                     throw new RuntimeException(event);
                 }
             }).start();
@@ -72,7 +73,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
     }
 
     private boolean isWhiteTurn() {
-        return messageCount % 2 == 1;
+        return messageCount % 2 == 0;
     }
 
     private Board getRecentBoard() {
