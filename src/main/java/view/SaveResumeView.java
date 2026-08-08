@@ -55,11 +55,16 @@ public class SaveResumeView {
         frame.add(panel);
 
         saveButton.addActionListener(event -> {
+
             String saveName = saveNameField.getText();
 
             saveGameController.execute(saveName, this.gameState);
 
-            if (!saveGameViewModel.getError().equals("")) {
+            if(!saveGameViewModel.getOverwriteMessage().equals("")) {
+                overwrite(saveGameController, saveGameViewModel);
+            }
+
+            else if (!saveGameViewModel.getError().equals("")) {
                 messageLabel.setText(saveGameViewModel.getError());
             }
             else{
@@ -82,6 +87,41 @@ public class SaveResumeView {
 
         frame.setVisible(true);
 
+    }
+
+    private void overwrite(SaveGameController saveGameController, SaveGameViewModel saveGameViewModel) {
+        JFrame overwriteFrame = new JFrame();
+        overwriteFrame.setTitle("Overwrite");
+        overwriteFrame.setSize(250,100);
+        overwriteFrame.setDefaultCloseOperation(overwriteFrame.EXIT_ON_CLOSE);
+
+        JPanel overwritePanel = new JPanel();
+        JLabel overwriteLabel = new JLabel(saveGameViewModel.getOverwriteMessage());
+        JButton overwriteYes = new JButton("Yes");
+        JButton overwriteNo = new JButton("No");
+
+        overwritePanel.add(overwriteLabel);
+        overwritePanel.add(overwriteYes);
+        overwritePanel.add(overwriteNo);
+
+        overwriteYes.addActionListener(event -> {
+            String saveName = saveNameField.getText();
+            saveGameController.overwrite(saveName, this.gameState);
+
+            messageLabel.setText(saveGameViewModel.getMessage());
+
+            overwriteFrame.dispose();
+        });
+
+        overwriteNo.addActionListener(event -> {
+            messageLabel.setText("Please Enter Another Name");
+            saveNameField.setText("");
+
+            overwriteFrame.dispose();
+        });
+
+        overwriteFrame.add(overwritePanel);
+        overwriteFrame.setVisible(true);
     }
 
 }

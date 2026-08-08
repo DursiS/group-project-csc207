@@ -17,8 +17,13 @@ public class SaveGameInteractor implements SaveGameInputBoundary {
     public void execute(SaveGameInputData inputData) {
         String saveName = inputData.getSaveName();
         GameState gameState = inputData.getGameState();
+        boolean overwrite = inputData.getOverwrite();
         if (saveName == null || saveName.trim().equals("")) {
-            presenter.prepareFailSaveView("Save Name Cannot Be Empty!");
+            saveName = generateSaveName();
+        }
+
+        if (gameDataAccess.saveExists(saveName) && !overwrite) {
+            presenter.prepareOverwriteView("Save Already Exist, Do You Want To Overwrite Save?");
             return;
         }
 
@@ -38,8 +43,16 @@ public class SaveGameInteractor implements SaveGameInputBoundary {
     @Override
     public void autosave(GameState gameState) {
 
-        SaveGameInputData inputData = new SaveGameInputData(AUTOSAVE_NAME, gameState);
+        SaveGameInputData inputData = new SaveGameInputData(AUTOSAVE_NAME, gameState, true);
 
         execute(inputData);
+    }
+
+    private String generateSaveName() {
+        int i = 1;
+        while(gameDataAccess.saveExists("save" + i)) {
+            i++;
+        }
+        return "save" + i;
     }
 }

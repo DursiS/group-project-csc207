@@ -10,7 +10,12 @@ public class SaveGameController {
     }
 
     public void execute(String saveName, GameState gameState){
-        SaveGameInputData inputData = new SaveGameInputData(saveName, gameState);
+        SaveGameInputData inputData = new SaveGameInputData(saveName, gameState, false);
+        interactor.execute(inputData);
+    }
+
+    public void overwrite(String saveName, GameState gameState) {
+        SaveGameInputData inputData = new SaveGameInputData(saveName, gameState, true);
         interactor.execute(inputData);
     }
 }
