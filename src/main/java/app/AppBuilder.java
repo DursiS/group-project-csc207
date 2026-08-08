@@ -108,6 +108,7 @@ public class AppBuilder extends JFrame {
     public JFrame build() {
         pack();
         setVisible(true);
+        analyzeInteractor.analyzeInitialPosition(gameState);
         return this;
     }
 }
