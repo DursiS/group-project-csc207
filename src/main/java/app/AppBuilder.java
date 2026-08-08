@@ -72,6 +72,8 @@ public class AppBuilder extends JFrame {
 
         movePresenter = new MovePresenter(moveViewModel);
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
+
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
