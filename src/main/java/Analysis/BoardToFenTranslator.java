@@ -1,5 +1,7 @@
 package Analysis;
 
+import entity.Board;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,13 +19,15 @@ public class BoardToFenTranslator {
     private static final int KING = 9;
     private static final int ROOK = 4;
     private static final int EN_PASSANT_PAWN = 3;
+    private static boolean isWhiteTurn;
 
     /**
      * Converts a Board into its FEN string.
      * @param board the board to convert
      * @return the FEN string
      */
-    public String convertToFen(Board board) {
+    public String convertToFen(Board board, boolean isWhiteTurn) {
+        this.isWhiteTurn = isWhiteTurn;
         return buildFenGrid(board)
                 + buildFenTail(board);
     }
@@ -84,7 +88,7 @@ public class BoardToFenTranslator {
     private String buildFenTail(Board board) {
         final StringBuilder result = new StringBuilder();
 
-        if (board.isWhiteTurn()) {
+        if (isWhiteTurn) {
             result.append(" w ");
         }
         else {
