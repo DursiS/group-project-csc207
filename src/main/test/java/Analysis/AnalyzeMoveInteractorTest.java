@@ -2,12 +2,15 @@ package Analysis;
 
 import com.google.gson.JsonObject;
 import entity.Board;
-import org.junit.jupiter.api.BeforeAll;
+import entity.BoardStateList;
+import entity.GameState;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -18,25 +21,18 @@ public class AnalyzeMoveInteractorTest {
 
     private static final String START_FEN
             = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    private static final String BAD_FEN
-            = "rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
-    private static final Board BOARD = new Board();
-    private static Board BAD_BOARD;
+    private static final String NO_EN_PASSANT_FEN
+            = "rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1";
 
-    @BeforeAll
-    static void setUp() {
-        // entity.Board(squares, turn, verticalEdgeType, horizontalEdgeType);
-        // turn is unused by the translator now (isWhiteTurn is passed in explicitly).
-        BAD_BOARD = new Board(new int[][]{
-                {-4,-6,-7,-8,-9,-7,-6,-4},
-                {-1,-1,-1, 0,-1,-1,-1,-1},
-                { 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0,-2, 3, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0},
-                { 1, 1, 1, 1, 0, 1, 1, 1},
-                { 4, 6, 7, 8, 9, 7, 6, 4}
-        }, 0, 0, 0);
+    private GameState gameState;
+
+    @BeforeEach
+    void setUp() {
+        gameState = new GameState(new Board(), 0, 0, new BoardStateList(), "test");
+    }
+
+    private AnalyzeMoveInteractor interactorWith(ChessApiInterface api, AnalyzeOutputBoundary out) {
+        return new AnalyzeMoveInteractor(api, out, gameState);
     }
 
     @Test
@@ -44,7 +40,7 @@ public class AnalyzeMoveInteractorTest {
         ChessApiInterface adapter = mock(ChessApiInterface.class);
         when(adapter.request(anyString())).thenReturn(mockRequest());
         AnalyzeOutputBoundary presenter = mock(AnalyzeOutputBoundary.class);
-        AnalyzeMoveInteractor interactor = new AnalyzeMoveInteractor(adapter, presenter);
+        AnalyzeMoveInteractor interactor = interactorWith(adapter, presenter);
 
         interactor.executeTurnAnalysis();
 
@@ -58,8 +54,7 @@ public class AnalyzeMoveInteractorTest {
         error.addProperty("type", "error");
         error.addProperty("text", "wrong FEN");
         when(rejectingApi.request(anyString())).thenReturn(error);
-        AnalyzeMoveInteractor rejecting = new AnalyzeMoveInteractor(
-                rejectingApi, mock(AnalyzeOutputBoundary.class));
+        AnalyzeMoveInteractor rejecting = interactorWith(rejectingApi, mock(AnalyzeOutputBoundary.class));
 
         assertThrows(IllegalStateException.class, rejecting::executeTurnAnalysis);
     }
@@ -68,8 +63,7 @@ public class AnalyzeMoveInteractorTest {
     void networkFailureThrowsIOException() throws IOException {
         ChessApiInterface downApi = mock(ChessApiInterface.class);
         when(downApi.request(anyString())).thenThrow(new IOException("network down"));
-        AnalyzeMoveInteractor offline = new AnalyzeMoveInteractor(
-                downApi, mock(AnalyzeOutputBoundary.class));
+        AnalyzeMoveInteractor offline = interactorWith(downApi, mock(AnalyzeOutputBoundary.class));
 
         assertThrows(IOException.class, offline::executeTurnAnalysis);
     }
@@ -77,8 +71,23 @@ public class AnalyzeMoveInteractorTest {
     @Test
     void convertsToFenCorrectly() {
         BoardToFenTranslator translator = new BoardToFenTranslator();
-        assertEquals(START_FEN, translator.convertToFen(BOARD, true));
-        assertEquals(BAD_FEN, translator.convertToFen(BAD_BOARD, false));
+        assertEquals(START_FEN, translator.convertToFen(new Board(), true));
+        assertEquals(NO_EN_PASSANT_FEN, translator.convertToFen(enPassantBoard(), false));
+    }
+
+    private static Board enPassantBoard() {
+        // a real double-pawn-move leaves an en-passant-able pawn (code 3);
+        // the FEN must still omit the en-passant square, since the API rejects it.
+        return new Board(new int[][]{
+                {-4, -6, -7, -8, -9, -7, -6, -4},
+                {-1, -1, -1,  0, -1, -1, -1, -1},
+                { 0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0},
+                { 0,  0,  0, -2,  3,  0,  0,  0},
+                { 0,  0,  0,  0,  0,  0,  0,  0},
+                { 1,  1,  1,  1,  0,  1,  1,  1},
+                { 4,  6,  7,  8,  9,  7,  6,  4}
+        }, 0, 0, 0);
     }
 
     private static JsonObject mockRequest() {

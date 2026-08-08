@@ -5,6 +5,10 @@ import java.io.IOException;
 
 import javax.swing.*;
 
+import entity.Board;
+import entity.BoardStateList;
+import entity.GameState;
+
 public class AnalyzeEndToEndTest {
 
     static void boardToViewModelDemo() throws IOException {
@@ -27,8 +31,10 @@ public class AnalyzeEndToEndTest {
     private static AnalyzeView getView() {
         final AnalyzeViewModel viewModel = new AnalyzeViewModel();
         final AnalyzePresenter presenter = new AnalyzePresenter(viewModel);
+        final GameState gameState =
+                new GameState(new Board(), 0, 0, new BoardStateList(), "demo");
         final AnalyzeMoveInteractor interactor =
-                new AnalyzeMoveInteractor(new ChessApiAdapter(), presenter);
+                new AnalyzeMoveInteractor(new ChessApiAdapter(), presenter, gameState);
         final AnalyzeController controller = new AnalyzeController(interactor);
         return new AnalyzeView(viewModel, controller);
     }
