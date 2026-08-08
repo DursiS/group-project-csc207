@@ -4,7 +4,7 @@ import entity.GameState;
 
 public interface ResumeGameInputBoundary {
 
-    GameState execute(String saveName);
+    GameState execute(ResumeGameInputData inputData);
 
     GameState recoverAutosave();
 }

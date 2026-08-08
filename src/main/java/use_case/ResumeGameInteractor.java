@@ -5,32 +5,36 @@ public class ResumeGameInteractor
         implements ResumeGameInputBoundary {
 
     private GameDataAccess gameDataAccess;
+    private ResumeGameOutputBoundary presenter;
 
     public ResumeGameInteractor(
-            GameDataAccess gameDataAccess) {
+            GameDataAccess gameDataAccess, ResumeGameOutputBoundary presenter) {
         this.gameDataAccess = gameDataAccess;
+        this.presenter = presenter;
     }
     @Override
-    public GameState execute(String saveName) {
+    public GameState execute(ResumeGameInputData inputData) {
+        String saveName = inputData.getSaveName();
         if (saveName == null
                 || saveName.trim().equals("")) {
 
-            throw new IllegalArgumentException(
-                    "Save name cannot be empty."
-            );
+            presenter.prepareFailResumeView("Save name cannot be empty.");
+            return null;
+
         }
 
         if (!gameDataAccess.saveExists(saveName)) {
-            throw new IllegalArgumentException(
-                    "Save does not exist."
-            );
+            presenter.prepareFailResumeView("Save does not exist.");
+            return null;
         }
-        return gameDataAccess.loadGame(saveName);
+        ResumeGameOutputData outputData = new ResumeGameOutputData(saveName);
+        GameState gameState = gameDataAccess.loadGame(saveName);
+        presenter.prepareSuccessResumeView(outputData);
+        return gameState;
     }
     @Override
     public GameState recoverAutosave() {
-        return execute(
-                SaveGameInteractor.AUTOSAVE_NAME
-        );
+        ResumeGameInputData recoverData = new ResumeGameInputData(SaveGameInteractor.AUTOSAVE_NAME);
+        return execute(recoverData);
     }
 }

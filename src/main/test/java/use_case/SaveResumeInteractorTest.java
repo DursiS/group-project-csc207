@@ -8,6 +8,10 @@ import entity.GameState;
 import interface_adapter.SaveGameViewModel;
 import interface_adapter.SaveGamePresenter;
 
+
+import interface_adapter.ResumeGameViewModel;
+import interface_adapter.ResumeGamePresenter;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,11 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SaveResumeInteractorTest {
     private SaveGameViewModel saveGameViewModel;
+    private ResumeGameViewModel resumeGameViewModel;
     private GameDataAccess gameDataAccess;
     private SaveGameInputBoundary saveInteractor;
     private ResumeGameInputBoundary resumeInteractor;
     private GameState gameState;
     private SaveGameOutputBoundary savePresenter;
+    private ResumeGameOutputBoundary resumePresenter;
     private String saveName;
 
     @BeforeEach
@@ -30,7 +36,10 @@ public class SaveResumeInteractorTest {
         saveGameViewModel = new SaveGameViewModel();
         savePresenter = new SaveGamePresenter(saveGameViewModel);
         saveInteractor = new SaveGameInteractor(gameDataAccess, savePresenter);
-        resumeInteractor = new ResumeGameInteractor(gameDataAccess);
+
+        resumeGameViewModel = new ResumeGameViewModel();
+        resumePresenter = new ResumeGamePresenter(resumeGameViewModel);
+        resumeInteractor = new ResumeGameInteractor(gameDataAccess, resumePresenter);
         Board board = new Board();
 
         gameState = new GameState(
@@ -43,18 +52,22 @@ public class SaveResumeInteractorTest {
 
     @Test
     void saveAndResumeGame() {
-        SaveGameInputData inputData = new SaveGameInputData(saveName, gameState);
-        saveInteractor.execute(inputData);
+        SaveGameInputData SaveinputData = new SaveGameInputData(saveName, gameState);
+        saveInteractor.execute(SaveinputData);
+        ResumeGameInputData ResumeInputData = new ResumeGameInputData(saveName);
 
-        GameState loadedGame = resumeInteractor.execute(saveName);
+        GameState loadedGame = resumeInteractor.execute(ResumeInputData);
         assertEquals(300000, loadedGame.getWhiteMilliSec());
         assertEquals(295000, loadedGame.getBlackMilliSec());
         assertEquals("IN_PROCESS", loadedGame.getGameResult());
         assertNotSame(gameState.getBoardCopy(), loadedGame.getBoardCopy());
     }
     @Test
-    void loadingMissingSaveThrowexceptionTest(){
-        assertThrows(IllegalArgumentException.class, () -> resumeInteractor.execute(saveName));
+    void loadingMissingSaveTest(){
+        ResumeGameInputData inputData = new ResumeGameInputData("save2");
+        resumeInteractor.execute(inputData);
+        String errormessage = resumeGameViewModel.getErrorMessage();
+        assertEquals("Error: Save does not exist.", errormessage);
     }
     @Test
     void emptySaveNameTest(){

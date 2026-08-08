@@ -1,12 +1,12 @@
 package use_case;
 import entity.GameState;
 public class ResumeGameOutputData {
-    private GameState gameState;
-    public ResumeGameOutputData(GameState gameState) {
-        this.gameState = gameState;
+    private String saveName;
+    public ResumeGameOutputData(String saveName) {
+        this.saveName = saveName;
     }
 
-    public GameState getGameState() {
-        return gameState;
+    public String getsaveName() {
+        return saveName;
     }
 }
