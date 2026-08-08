@@ -3,8 +3,6 @@ package Analysis;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 import com.google.gson.JsonObject;
 import entity.Board;
@@ -42,15 +40,30 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (UPDATE_CHANNEL.equals(propertyChangeEvent.getPropertyName())) {
             this.gameState = (GameState) propertyChangeEvent.getNewValue();
-            new Thread(() -> {
-                try {
-                    executeTurnAnalysis();
-                }
-                catch (IOException event) {
-                    throw new RuntimeException(event);
-                }
-            }).start();
+            runAnalysisAsync();
         }
+    }
+
+    /**
+     * Runs one analysis of the starting position at app startup.
+     * The observer signal from MakeMove fires before this listener is
+     * subscribed, so the opening position is kicked off here instead.
+     * @param startState the initial game state to analyze
+     */
+    public void analyzeInitialPosition(GameState startState) {
+        this.gameState = startState;
+        runAnalysisAsync();
+    }
+
+    private void runAnalysisAsync() {
+        new Thread(() -> {
+            try {
+                executeTurnAnalysis();
+            }
+            catch (IOException event) {
+                throw new RuntimeException(event);
+            }
+        }).start();
     }
 
     @Override
@@ -78,11 +91,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
 
     private Board getRecentBoard() {
         final BoardStateList boardList = gameState.getBoardStateListCopy();
-        final List<Board> boardStates = Collections
-                .singletonList(boardList
-                        .getBoardCopy(boardList.size() - 1));
-        return boardStates.get(boardStates.size() - 1);
-
+        if (boardList.size() == 0) {
+            return gameState.getBoard();
+        }
+        return boardList.getBoardCopy(boardList.size() - 1);
     }
 
     @Override
