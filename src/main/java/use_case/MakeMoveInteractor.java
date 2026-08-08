@@ -39,7 +39,6 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         selectedSquare = null;
 
         initializeTurn();
-        updateAnalyzeMoveInteractor();
     }
 
     /**
@@ -60,6 +59,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             JOptionPane.showMessageDialog(null, "CHECKMATE! " + winner + " WINS!", "CHECKMATE!", JOptionPane.INFORMATION_MESSAGE);
             //checkmate, game is over, return to menu or something?
         }
+        updateAnalyzeMoveInteractor();
     }
 
     /**
