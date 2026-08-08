@@ -19,7 +19,7 @@ public class GameListViewModel {
     }
 
     public void firePropertyChanged() {
-        support.firePropertyChange("state", null, this);
+        support.firePropertyChange(null, null, this);
     }
 
     public Object[][] getData() {

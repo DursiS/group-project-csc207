@@ -16,7 +16,7 @@ public class GameListPresenter implements GameListOutputBoundary {
     }
 
     @Override
-    public void prepareSuccessView(GameListOutputData gameListOutputData) {
+    public void prepareGameListView(GameListOutputData gameListOutputData) {
         final List<GameSummary> summaries = gameListOutputData.getSummaries();
         final Object[][] data = new Object[summaries.size()][2];
         final UUID[] ids = new UUID[summaries.size()];
@@ -28,12 +28,13 @@ public class GameListPresenter implements GameListOutputBoundary {
         }
 
         viewModel.setData(data);
+        viewModel.setIds(ids);
         viewModel.setErrorMessage(null);
         viewModel.firePropertyChanged();
     }
 
     @Override
-    public void prepareFailedView(String errorMessage) {
+    public void prepareErrorView(String errorMessage) {
         viewModel.setErrorMessage(errorMessage);
         viewModel.firePropertyChanged();
     }

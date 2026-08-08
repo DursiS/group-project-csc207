@@ -8,7 +8,7 @@ public interface GameDetailOutputBoundary {
     void prepareGameDetailView(GameDetailOutputData gameDetailOutputData);
 
     /**
-     * Prepare failed view if something went wrong
+     * Prepare error view if something went wrong
      */
-    void prepareFailedView(String errorMessage);
+    void prepareErrorView(String errorMessage);
 }

@@ -23,10 +23,11 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
             UUID id = gameDetailInputData.getId();
             GameRecord game = gameDataAccessObject.load(id);
             GameState gameState = game.getHistory().get(0);
-            GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, 0, gameState);
+            GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, 0, 
+                    gameState, null);
             gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
         } catch (RuntimeException e) {
-            gameDetailPresenter.prepareFailedView("Could not load the game: " + e.getMessage());
+            gameDetailPresenter.prepareErrorView("Could not load the game: " + e.getMessage());
         }
     }
 
@@ -37,13 +38,14 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
             int current = gameDetailInputData.getCurrentStateNumber();
             GameRecord game = gameDataAccessObject.load(id);
             if (current > 0) {
-                GameState gameState = game.getHistory().get(current - 1);
-                GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, 0,
-                        gameState);
+                current--;
+                GameState gameState = game.getHistory().get(current);
+                GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, current,
+                        gameState, null);
                 gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
             }
         } catch (RuntimeException e) {
-            gameDetailPresenter.prepareFailedView("An error occurred while loading the  move: "
+            gameDetailPresenter.prepareErrorView("An error occurred while loading the  move: "
                     + e.getMessage());
         }
     }
@@ -55,13 +57,24 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
             int current = gameDetailInputData.getCurrentStateNumber();
             GameRecord game = gameDataAccessObject.load(id);
             if (current <  game.getHistory().size() - 1) {
-                GameState gameState = game.getHistory().get(current + 1);
-                GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, 0,
-                        gameState);
+                current++;
+                GameState gameState = game.getHistory().get(current);
+
+                GameDetailOutputData gameDetailOutputData;
+
+                // if the next state is the final state, show the game result
+                if (current == game.getHistory().size() - 1) {
+                    gameDetailOutputData = new GameDetailOutputData(id, current, gameState,
+                            game.getGameResult());
+                }
+                else {
+                    gameDetailOutputData = new GameDetailOutputData(id, current, gameState, null);
+                }
+
                 gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
             }
         } catch (RuntimeException e) {
-            gameDetailPresenter.prepareFailedView("An error occurred while loading the move: "
+            gameDetailPresenter.prepareErrorView("An error occurred while loading the move: "
                     + e.getMessage());
         }
     }

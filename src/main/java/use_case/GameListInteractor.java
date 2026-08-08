@@ -1,6 +1,5 @@
 package use_case;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class GameListInteractor implements GameListInputBoundary {
@@ -18,10 +17,10 @@ public class GameListInteractor implements GameListInputBoundary {
     public void getGameList() {
         try {
             List<GameSummary> gameSummaries = gameListDataAccess.browse();
-            gameListOutputBoundary.prepareSuccessView(new GameListOutputData(gameSummaries));
+            gameListOutputBoundary.prepareGameListView(new GameListOutputData(gameSummaries));
         } catch (RuntimeException e) {
             // This notifies the UI that something went wrong
-            gameListOutputBoundary.prepareFailedView("Could not load games: " + e.getMessage());
+            gameListOutputBoundary.prepareErrorView("Could not load games: " + e.getMessage());
         }
     }
 }
