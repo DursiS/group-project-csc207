@@ -50,8 +50,8 @@ public class AppBuilder extends JFrame {
      * @param gameState the shared game state the features build on
      */
     public AppBuilder(GameState gameState) {
-        changeListeningSetup();
         this.gameState = gameState;
+        changeListeningSetup();
         setTitle("Chess App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -63,7 +63,7 @@ public class AppBuilder extends JFrame {
         analyzePresenter = new AnalyzePresenter(analyzeViewModel);
 
         chessApiAdaptor = new ChessApiAdapter();
-        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter);
+        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter, gameState);
     }
 
     /**
@@ -108,7 +108,7 @@ public class AppBuilder extends JFrame {
     public JFrame build() {
         pack();
         setVisible(true);
-        analyzeInteractor.analyzeInitialPosition(gameState);
+        analyzeInteractor.analyzeInitialPosition();
         return this;
     }
 }

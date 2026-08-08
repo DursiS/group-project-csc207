@@ -24,11 +24,14 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
      * Uses dependencies injecting instead of hard dependencies.
      * @param apiInterface the chess API to use
      * @param analyzeOutputBoundary the output boundary to present results
+     * @param gameState the initial game state to analyze
      */
     public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
-                                 AnalyzeOutputBoundary analyzeOutputBoundary) {
+                                 AnalyzeOutputBoundary analyzeOutputBoundary,
+                                 GameState gameState) {
         this.apiInterface = apiInterface;
         this.analyzeOutputBoundary = analyzeOutputBoundary;
+        this.gameState = gameState;
     }
 
     /**
@@ -48,10 +51,8 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
      * Runs one analysis of the starting position at app startup.
      * The observer signal from MakeMove fires before this listener is
      * subscribed, so the opening position is kicked off here instead.
-     * @param startState the initial game state to analyze
      */
-    public void analyzeInitialPosition(GameState startState) {
-        this.gameState = startState;
+    public void analyzeInitialPosition() {
         runAnalysisAsync();
     }
 
