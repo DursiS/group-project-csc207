@@ -49,8 +49,10 @@ public class AnalyzeViewModel {
     /**
      * Registers a listener for analysis updates.
      * @param listener the listener to add
+     * @param propertyName the name of the channel were listening to
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.support.addPropertyChangeListener(listener);
+    public void addPropertyChangeListener(String propertyName,
+                                          PropertyChangeListener listener) {
+        this.support.addPropertyChangeListener(propertyName, listener);
     }
 }

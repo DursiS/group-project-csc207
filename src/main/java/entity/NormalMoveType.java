@@ -4,17 +4,34 @@ import java.util.ArrayList;
 
 import static entity.MoveValidator.applyQuotientRelation;
 
+/**
+ * Normal Move Type class
+ * a member of this class describes a rule set that Normal Moves can be created based off of.
+ */
 public class NormalMoveType extends MoveType{
     private int maxRepeats;
     private boolean canCapture;
     private boolean canNotCapture;
 
+    /**
+     * constructor for normal moves that can either capture or not capture
+     * @param vector movement vector
+     * @param maxRepeats max amount of times it can repeat, e.g. horses never repeat, pawns repeat 1 time on first move, queen has unlimited repeats
+     */
     public NormalMoveType(int[] vector, int maxRepeats) {
         this.movementVector = vector;
         this.maxRepeats = maxRepeats;
         this.canCapture = true;
         this.canNotCapture = true;
     }
+
+    /**
+     * general constructor for normal moves
+     * @param vector same
+     * @param maxRepeats same
+     * @param canCapture if the piece is allowed to capture e.g. pawn's diagonal moves
+     * @param canNotCapture if the piece is allowed to capture e.g. pawn's straight moves
+     */
     public NormalMoveType(int[] vector, int maxRepeats, boolean canCapture, boolean canNotCapture) {
         this.movementVector = vector;
         this.maxRepeats = maxRepeats;
@@ -33,18 +50,35 @@ public class NormalMoveType extends MoveType{
     public int getMaxRepeats() {
         return maxRepeats;
     }
+
+    /**
+     * create the move from this move type
+     * @param origin location of piece
+     * @param repeats amount of repeats of the movement vector
+     * @param b the board (board topology can affect the move)
+     * @return the move
+     */
     public Move createMove(int[] origin, int repeats, Board b) {
         int[] destination = addVectors(origin, multiplyVector(movementVector, repeats+1));
         destination = applyQuotientRelation(destination, b);
         return new NormalMove(origin, destination);
     }
 
-
+    /**
+     * create a new move type which is this one but mirrored vertically
+     * @return mirrored move type
+     */
     @Override
     public MoveType createMirroredMove() {
         return new NormalMoveType(mirrorVector(movementVector), maxRepeats, canCapture,canNotCapture);
     }
 
+    /**
+     * adds possible moves from this move type into the list (can add multiple, if the move type repeats.)
+     * @param moves moves list to add to
+     * @param b current board
+     * @param origin location of piece that's making the move
+     */
     @Override
     public void AddPossibleMoves(ArrayList<Move> moves, Board b, int[] origin) {
         int[] destination;

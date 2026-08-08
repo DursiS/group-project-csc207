@@ -1,41 +1,32 @@
 package Analysis;
 
 import com.google.gson.JsonObject;
+import entity.Board;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class AnalyzeMoveInteractorTest {
 
     private static final String START_FEN
-            = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";;
-    private static final String BAD_FEN = "rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";;
+            = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    private static final String BAD_FEN
+            = "rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
     private static final Board BOARD = new Board();
     private static Board BAD_BOARD;
-    private static AnalyzeMoveInteractor interactor;
-    private static AnalyzeMoveInteractor integrated_interactor;
 
     @BeforeAll
-    static void setUp() throws IOException {
-        ChessApiInterface adapter = mock(ChessApiInterface.class);
-        AnalyzePresenter presenter = mock(AnalyzePresenter.class);
-        GameStateDataAccessInterface dataInterface
-                = mock(GameStateDataAccessInterface.class);
-
-        when(adapter.request(anyString())).thenReturn(mockRequest());
-        when(dataInterface.getRecentBoard()).thenReturn(BOARD);
-        interactor = new AnalyzeMoveInteractor(adapter,
-                presenter, dataInterface);
-
-        integrated_interactor = new AnalyzeMoveInteractor(new ChessApiAdapter(),
-                presenter, dataInterface);
-
+    static void setUp() {
+        // entity.Board(squares, turn, verticalEdgeType, horizontalEdgeType);
+        // turn is unused by the translator now (isWhiteTurn is passed in explicitly).
         BAD_BOARD = new Board(new int[][]{
                 {-4,-6,-7,-8,-9,-7,-6,-4},
                 {-1,-1,-1, 0,-1,-1,-1,-1},
@@ -45,7 +36,19 @@ public class AnalyzeMoveInteractorTest {
                 { 0, 0, 0, 0, 0, 0, 0, 0},
                 { 1, 1, 1, 1, 0, 1, 1, 1},
                 { 4, 6, 7, 8, 9, 7, 6, 4}
-        }, 4);
+        }, 0, 0, 0);
+    }
+
+    @Test
+    void executeTurnAnalysisPresentsOutput() throws IOException {
+        ChessApiInterface adapter = mock(ChessApiInterface.class);
+        when(adapter.request(anyString())).thenReturn(mockRequest());
+        AnalyzeOutputBoundary presenter = mock(AnalyzeOutputBoundary.class);
+        AnalyzeMoveInteractor interactor = new AnalyzeMoveInteractor(adapter, presenter);
+
+        interactor.executeTurnAnalysis();
+
+        verify(presenter).addMessage(any(AnalyzeOutputData.class));
     }
 
     @Test
@@ -55,11 +58,8 @@ public class AnalyzeMoveInteractorTest {
         error.addProperty("type", "error");
         error.addProperty("text", "wrong FEN");
         when(rejectingApi.request(anyString())).thenReturn(error);
-
-        GameStateDataAccessInterface data = mock(GameStateDataAccessInterface.class);
-        when(data.getRecentBoard()).thenReturn(new Board());
         AnalyzeMoveInteractor rejecting = new AnalyzeMoveInteractor(
-                rejectingApi, mock(AnalyzePresenter.class), data);
+                rejectingApi, mock(AnalyzeOutputBoundary.class));
 
         assertThrows(IllegalStateException.class, rejecting::executeTurnAnalysis);
     }
@@ -68,11 +68,8 @@ public class AnalyzeMoveInteractorTest {
     void networkFailureThrowsIOException() throws IOException {
         ChessApiInterface downApi = mock(ChessApiInterface.class);
         when(downApi.request(anyString())).thenThrow(new IOException("network down"));
-
-        GameStateDataAccessInterface data = mock(GameStateDataAccessInterface.class);
-        when(data.getRecentBoard()).thenReturn(new Board());
         AnalyzeMoveInteractor offline = new AnalyzeMoveInteractor(
-                downApi, mock(AnalyzePresenter.class), data);
+                downApi, mock(AnalyzeOutputBoundary.class));
 
         assertThrows(IOException.class, offline::executeTurnAnalysis);
     }
@@ -80,14 +77,11 @@ public class AnalyzeMoveInteractorTest {
     @Test
     void convertsToFenCorrectly() {
         BoardToFenTranslator translator = new BoardToFenTranslator();
-        String convertedStartFen = translator.convertToFen(BOARD);
-        assertEquals(START_FEN, convertedStartFen);
-
-        String convertedRandomFen = translator.convertToFen(BAD_BOARD);
-        assertEquals(BAD_FEN, convertedRandomFen);
+        assertEquals(START_FEN, translator.convertToFen(BOARD, true));
+        assertEquals(BAD_FEN, translator.convertToFen(BAD_BOARD, false));
     }
 
-    private static JsonObject mockRequest(){
+    private static JsonObject mockRequest() {
         JsonObject response = new JsonObject();
 
         // fixed random (but still valid) info
