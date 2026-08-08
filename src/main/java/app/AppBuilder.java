@@ -1,5 +1,8 @@
 package app;
 
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
+
 import Analysis.AnalyzeController;
 import Analysis.AnalyzeMoveInteractor;
 import Analysis.AnalyzePresenter;
@@ -15,12 +18,6 @@ import interface_adapter.MoveViewModel;
 import use_case.MakeMoveInteractor;
 import view.MoveView;
 
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
-
-import static java.awt.BorderLayout.CENTER;
-import static java.awt.BorderLayout.EAST;
-
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
  * stack and adding its view to a region of the frame.
@@ -28,10 +25,12 @@ import static java.awt.BorderLayout.EAST;
 public class AppBuilder extends JFrame {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
+    private static final String CENTER = "Center";
+    private static final String EAST = "East";
 
     private final GameState gameState;
 
-    // Move feature
+    // MakeMove feature
     private MoveViewModel moveViewModel;
     private MoveView moveView;
     private MoveController moveController;
@@ -76,7 +75,6 @@ public class AppBuilder extends JFrame {
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
-        makeMoveInteractor.UpdateVisuals();
         add(moveView, CENTER);
         return this;
     }
