@@ -1,7 +1,6 @@
 package view;
 
 import data_access.GameDataAccessObject;
-import interface_adapter.GameDetailController;
 import interface_adapter.GameListController;
 import interface_adapter.GameListPresenter;
 import interface_adapter.GameListViewModel;
@@ -24,9 +23,8 @@ public class GameListViewDemo {
         final GameListInteractor gameListInteractor= new GameListInteractor(gameDataAccessObject,
                 gameListOutputBoundary);
         final GameListController gameListController = new GameListController(gameListInteractor);
-        final GameDetailController gameDetailController = new GameDetailController();
         final GameListView gameListView = new GameListView(gameListController, gameListViewModel,
-                gameDetailController);
+                null);
 
         application.add(gameListView);
         application.setVisible(true);

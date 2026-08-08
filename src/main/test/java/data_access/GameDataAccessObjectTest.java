@@ -88,7 +88,7 @@ public class GameDataAccessObjectTest {
     @Test
     void browseGameTest() {
         List<GameSummary> gameSummaries = gameDataAccessObject.browse();
-        assertNotEquals(gameSummaries.size(), 0);
+        assertNotEquals(0, gameSummaries.size());
         assertEquals(gameSummaries.get(0).id(), gameRecord.getId());
         assertEquals(gameSummaries.get(0).gameResult(),
                 gameRecord.getGameResult());
