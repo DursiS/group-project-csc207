@@ -18,7 +18,6 @@ public class BoardToFenTranslator {
     private static final int KING_FILE = 4;
     private static final int KING = 9;
     private static final int ROOK = 4;
-    private static final int EN_PASSANT_PAWN = 3;
     private static boolean isWhiteTurn;
 
     /**
@@ -112,42 +111,8 @@ public class BoardToFenTranslator {
             }
         }
 
-        result.append(' ')
-                .append(enPassantSquare(board))
-                .append(" 0 1");
+        // en passant is always "-": chess-api.com rejects any FEN with an en passant square
+        result.append(" - 0 1");
         return result.toString();
-    }
-
-    /**
-     * Finds the en passant target square, if any.
-     * @param board the board to check
-     * @return the target square in algebraic notation, or "-" otherwise
-     */
-    private String enPassantSquare(Board board) {
-        String square = "-";
-        for (int y = 0; y < BOARD_SIZE; y++) {
-            for (int x = 0; x < BOARD_SIZE; x++) {
-                final int code = board.getSquare(x, y);
-                if (code == EN_PASSANT_PAWN) {
-                    square = enPassantSquareAlgebra(x, y + 1);
-                }
-                else if (code == -EN_PASSANT_PAWN) {
-                    square = enPassantSquareAlgebra(x, y - 1);
-                }
-            }
-        }
-        return square;
-    }
-
-    /**
-     * Converts board coordinates into algebraic notation.
-     * @param fileIndex the row index (0-7)
-     * @param rankIndex the column index (0-7)
-     * @return the square in algebraic notation, like "e3"
-     */
-    private String enPassantSquareAlgebra(int fileIndex, int rankIndex) {
-        final char file = (char) ('a' + fileIndex);
-        final int rank = BOARD_SIZE - rankIndex;
-        return "" + file + rank;
     }
 }

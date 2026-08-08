@@ -142,11 +142,3 @@ public class AnalyzeView extends JPanel implements PropertyChangeListener {
     }
 
 }
-
-// View Cycle Notes:
-//
-// Move is made (The Event)
-// -> Controller calls Interactor.executeTurnAnalysis
-// -> Adds message to the ViewModel through OutputBoundary
-// -> Fires property change in ViewModel
-// -> View.propertyChange changes JPanel TextArea in separate thread
