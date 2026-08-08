@@ -55,6 +55,9 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
         runAnalysisAsync();
     }
 
+    /**
+     * Runs the analysis on a background thread to keep the UI responsive.
+     */
     private void runAnalysisAsync() {
         new Thread(() -> {
             try {
@@ -66,6 +69,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
         }).start();
     }
 
+    /**
+     * Analyzes the most recent board and pushes the result to the presenter.
+     * @throws IOException if the API request fails
+     */
     @Override
     public void executeTurnAnalysis() throws IOException {
         final Board board = getRecentBoard();
@@ -85,10 +92,18 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
         messageCount += 1;
     }
 
+    /**
+     * Reports whether it is white's turn for the current analysis.
+     * @return true if white is to move, false otherwise
+     */
     private boolean isWhiteTurn() {
         return messageCount % 2 == 0;
     }
 
+    /**
+     * Returns the latest board to analyze.
+     * @return the last board in the state list, or the opening board if empty
+     */
     private Board getRecentBoard() {
         final BoardStateList boardList = gameState.getBoardStateListCopy();
         if (boardList.size() == 0) {
@@ -97,11 +112,17 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
         return boardList.getBoardCopy(boardList.size() - 1);
     }
 
+    /**
+     * Shows only the most recent analysis message in the view.
+     */
     @Override
     public void executeSingleMessageDisplay() {
         this.analyzeOutputBoundary.setRecentMessage();
     }
 
+    /**
+     * Shows the full analysis message history in the view.
+     */
     @Override
     public void executeMessageHistoryDisplay() {
         this.analyzeOutputBoundary.setHistoryMessage();
