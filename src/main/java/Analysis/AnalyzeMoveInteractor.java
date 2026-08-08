@@ -97,7 +97,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
      * @return true if white is to move, false otherwise
      */
     private boolean isWhiteTurn() {
-        return messageCount % 2 == 0;
+        return messageCount % 2 == 1;
     }
 
     /**
