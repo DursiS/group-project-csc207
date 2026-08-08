@@ -12,7 +12,7 @@ public class GameRecord {
 
     private boolean isCompleted;
 
-    // "Black/White Wins (Checkmate)", "Black/White Wins (Time)", "Draw", or "In Progress"
+    // "Black/White wins (checkmate)", "Black/White wins (time)", "Draw", or "In progress"
     private String gameResult;
 
     public GameRecord(GameState initialGameState) {
@@ -21,7 +21,7 @@ public class GameRecord {
         history.add(initialGameState);
         timeCreated = LocalDateTime.now().toString();
         isCompleted = false;
-        gameResult = "In Progress";
+        gameResult = "In progress";
     }
 
     public GameRecord(UUID id, ArrayList<GameState> history, String timeCreated,
