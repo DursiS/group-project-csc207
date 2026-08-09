@@ -21,6 +21,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
     private MoveValidator validator;
     private GameState gameState;
     private MoveOutputBoundary moveOutputBoundary;
+    private SaveGameInputBoundary saveGameInputBoundary;
 
     private int[] selectedSquare;
 
@@ -32,10 +33,14 @@ public class MakeMoveInteractor implements MoveInputBoundary {
      * @param gameState reference to the gamestate to retrieve the board from
      * @param moveOutputBoundary after making a move, the raw information to present is passed here
      */
-    public MakeMoveInteractor(MoveValidator validator, GameState gameState, MoveOutputBoundary moveOutputBoundary) {
+    public MakeMoveInteractor(MoveValidator validator,
+                              GameState gameState,
+                              MoveOutputBoundary moveOutputBoundary,
+                              SaveGameInputBoundary saveGameInputBoundary) {
         this.validator = validator;
         this.gameState = gameState;
         this.moveOutputBoundary = moveOutputBoundary;
+        this.saveGameInputBoundary = saveGameInputBoundary;
         selectedSquare = null;
 
         initializeTurn();
@@ -93,6 +98,9 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                         gameState.getBoardStateList().addBoardCopy(b);
                         validator.ApplyMove(b, m);
                         initializeTurn();
+
+                        saveGameInputBoundary.autosave(gameState);
+
                         selectedSquare=null;
                         moved = true;
                         break;

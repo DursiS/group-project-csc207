@@ -8,12 +8,17 @@ public class ResumeGameInteractor
 
     private GameDataAccess gameDataAccess;
     private ResumeGameOutputBoundary presenter;
+    private SaveGameInputBoundary saveGameInputBoundary;
 
     public ResumeGameInteractor(
-            GameDataAccess gameDataAccess, ResumeGameOutputBoundary presenter) {
+            GameDataAccess gameDataAccess,
+            ResumeGameOutputBoundary presenter,
+            SaveGameInputBoundary saveGameInputBoundary) {
         this.gameDataAccess = gameDataAccess;
         this.presenter = presenter;
+        this.saveGameInputBoundary = saveGameInputBoundary;
     }
+
     @Override
     public GameState execute(ResumeGameInputData inputData) {
         String saveName = inputData.getSaveName();
@@ -31,6 +36,7 @@ public class ResumeGameInteractor
         }
         ResumeGameOutputData outputData = new ResumeGameOutputData(saveName);
         GameState gameState = gameDataAccess.loadGame(saveName);
+        saveGameInputBoundary.setCurrentSaveName(saveName);
         presenter.prepareSuccessResumeView(outputData);
         return gameState;
     }

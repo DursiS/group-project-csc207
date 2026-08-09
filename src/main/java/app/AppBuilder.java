@@ -18,6 +18,13 @@ import interface_adapter.MoveViewModel;
 import use_case.MakeMoveInteractor;
 import view.MoveView;
 
+import data_access.InMemoryGameDataAccessObject;
+import interface_adapter.SaveGamePresenter;
+import interface_adapter.SaveGameViewModel;
+import use_case.GameDataAccess;
+import use_case.SaveGameInputBoundary;
+import use_case.SaveGameInteractor;
+
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
  * stack and adding its view to a region of the frame.
@@ -37,6 +44,12 @@ public class AppBuilder extends JFrame {
     private MakeMoveInteractor makeMoveInteractor;
     private MovePresenter movePresenter;
 
+    //Save feature
+    private GameDataAccess gameDataAccess;
+    private SaveGameViewModel saveGameViewModel;
+    private SaveGamePresenter saveGamePresenter;
+    private SaveGameInputBoundary saveGameInteractor;
+
     // Analysis feature
     private AnalyzeViewModel analyzeViewModel;
     private AnalyzePresenter analyzePresenter;
@@ -52,6 +65,9 @@ public class AppBuilder extends JFrame {
     public AppBuilder(GameState gameState) {
         changeListeningSetup();
         this.gameState = gameState;
+
+        saveSetup();
+
         setTitle("Chess App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -64,6 +80,14 @@ public class AppBuilder extends JFrame {
 
         chessApiAdaptor = new ChessApiAdapter();
         analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter);
+    }
+
+    private void saveSetup() {
+
+        gameDataAccess = new InMemoryGameDataAccessObject();
+        saveGameViewModel = new SaveGameViewModel();
+        saveGamePresenter = new SaveGamePresenter(saveGameViewModel);
+        saveGameInteractor = new SaveGameInteractor(gameDataAccess, saveGamePresenter);
     }
 
     /**
@@ -80,7 +104,10 @@ public class AppBuilder extends JFrame {
                 .build();
 
         movePresenter = new MovePresenter(moveViewModel);
-        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator,
+                gameState,
+                movePresenter,
+                saveGameInteractor);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
 
         moveController = new MoveController(makeMoveInteractor);

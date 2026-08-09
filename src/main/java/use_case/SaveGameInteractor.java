@@ -19,6 +19,7 @@ public class SaveGameInteractor implements SaveGameInputBoundary {
     public void execute(SaveGameInputData inputData) {
         String saveName = inputData.getSaveName();
         GameState gameState = inputData.getGameState();
+
         boolean overwrite = inputData.getOverwrite();
         if (saveName == null || saveName.trim().equals("")) {
             saveName = generateSaveName();
@@ -35,6 +36,10 @@ public class SaveGameInteractor implements SaveGameInputBoundary {
         }
 
         gameDataAccess.saveGame(saveName, gameState);
+
+        if (!AUTOSAVE_NAME.equals(saveName)) {
+            this.currentSaveName = saveName;
+        }
 
         SaveGameOutputData outputData = new SaveGameOutputData(saveName);
 
