@@ -8,9 +8,8 @@ import java.util.Map;
 /**
  * Translates a Board into its FEN string representation.
  */
-public class BoardToFenTranslator {
+public class BoardToFenAdapter {
 
-    // To avoid "magic" numbers or strings, looks messy, but it's fine
     private static final String WHITE_FEN_BY_CODE = "0PPPRRNBQKK";
     private static final Map<Integer, Character> PIECE_TO_FEN = buildPieceToFen();
     private static final int BOARD_SIZE = 8;
@@ -23,6 +22,7 @@ public class BoardToFenTranslator {
     /**
      * Converts a Board into its FEN string.
      * @param board the board to convert
+     * @param isWhiteTurn is the turn white's
      * @return the FEN string
      */
     public String convertToFen(Board board, boolean isWhiteTurn) {
@@ -111,7 +111,7 @@ public class BoardToFenTranslator {
             }
         }
 
-        // en passant is always "-": chess-api.com rejects any FEN with an en passant square
+        // en passant is always "-": api rejects any FEN with en passant squares
         result.append(" - 0 1");
         return result.toString();
     }

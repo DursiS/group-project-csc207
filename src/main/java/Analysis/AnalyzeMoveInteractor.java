@@ -9,14 +9,12 @@ import entity.Board;
 import entity.BoardStateList;
 import entity.GameState;
 
-import javax.swing.*;
-
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChangeListener {
     private static final String UPDATE_CHANNEL = "update-analysis";
     private Integer messageCount = 1;
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
-    private final BoardToFenTranslator fenTranslator = new BoardToFenTranslator();
+    private final BoardToFenAdapter fenTranslator = new BoardToFenAdapter();
     private GameState gameState;
 
     /**
