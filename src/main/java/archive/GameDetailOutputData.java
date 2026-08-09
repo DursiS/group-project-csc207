@@ -1,6 +1,6 @@
 package archive;
 
-import entity.GameState;
+import MakeMove.GameState;
 
 /**
  * @param currentStateNumber the number of the current game state, 0 for the initial state

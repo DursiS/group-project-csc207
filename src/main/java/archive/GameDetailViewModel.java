@@ -1,6 +1,6 @@
 package archive;
 
-import entity.Board;
+import MakeMove.Board;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

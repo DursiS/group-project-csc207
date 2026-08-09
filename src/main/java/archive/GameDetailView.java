@@ -1,6 +1,6 @@
 package archive;
 
-import entity.Board;
+import MakeMove.Board;
 
 import javax.swing.*;
 import java.awt.*;

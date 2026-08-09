@@ -1,6 +1,6 @@
 package archive;
 
-import entity.GameState;
+import MakeMove.GameState;
 
 import java.util.UUID;
 import java.time.LocalDateTime;

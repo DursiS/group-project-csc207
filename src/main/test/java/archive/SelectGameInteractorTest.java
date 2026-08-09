@@ -1,8 +1,8 @@
 package archive;
 
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
+import MakeMove.Board;
+import MakeMove.BoardStateList;
+import MakeMove.GameState;
 import app.ViewManagerModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

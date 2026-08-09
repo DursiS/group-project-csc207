@@ -1,7 +1,7 @@
 package archive;
 
 import app.ViewManagerModel;
-import entity.GameState;
+import MakeMove.GameState;
 
 public class GameDetailPresenter implements SelectGameOutputBoundary, GameDetailOutputBoundary {
 

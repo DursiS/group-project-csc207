@@ -1,6 +1,6 @@
 package archive;
 
-import entity.GameState;
+import MakeMove.GameState;
 
 import com.google.gson.Gson;
 

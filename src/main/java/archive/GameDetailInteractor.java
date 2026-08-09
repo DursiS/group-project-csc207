@@ -1,6 +1,6 @@
 package archive;
 
-import entity.GameState;
+import MakeMove.GameState;
 
 public class GameDetailInteractor implements GameDetailInputBoundary{
 
