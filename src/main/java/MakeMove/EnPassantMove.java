@@ -1,4 +1,4 @@
-package entity;
+package MakeMove;
 
 public class EnPassantMove extends Move {
     private int[] capture;

@@ -1,7 +1,4 @@
-package view;
-
-import interface_adapter.MoveController;
-import interface_adapter.MoveViewModel;
+package MakeMove;
 
 
 import javax.swing.*;

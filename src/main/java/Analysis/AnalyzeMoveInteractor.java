@@ -5,9 +5,8 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
+import MakeMove.Board;
+import MakeMove.GameState;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChangeListener {
     private static final String UPDATE_CHANNEL = "update-analysis";
@@ -104,13 +103,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
      * @return the last board in the state list, or the opening board if empty
      */
     private Board getRecentBoard() {
-        final BoardStateList boardList = gameState.getBoardStateListCopy();
-        if (boardList.size() == 0) {
-            return gameState.getBoard();
-        }
-        else {
-            return boardList.getBoardCopy(boardList.size() - 1);
-        }
+        return gameState.getBoard();
     }
 
     /**

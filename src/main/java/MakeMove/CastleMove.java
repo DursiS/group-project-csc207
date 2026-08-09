@@ -1,4 +1,4 @@
-package entity;
+package MakeMove;
 
 public class CastleMove extends Move{
     private int[] kingDest;

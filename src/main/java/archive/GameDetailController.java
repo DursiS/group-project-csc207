@@ -1,6 +1,5 @@
 package archive;
 
-
 public class GameDetailController {
 
     private final GameDetailInputBoundary gameDetailInteractor;

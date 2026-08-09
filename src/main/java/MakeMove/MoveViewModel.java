@@ -1,4 +1,4 @@
-package interface_adapter;
+package MakeMove;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;

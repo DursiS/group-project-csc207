@@ -1,4 +1,4 @@
-package use_case;
+package MakeMove;
 
 public class MoveOutputData {
     private int[][] pieceTypes;

@@ -1,4 +1,4 @@
-package entity;
+package MakeMove;
 
 public class GameState {
     //current chess board
@@ -11,7 +11,7 @@ public class GameState {
     //stores previous board states
     private BoardStateList boardStateList;
 
-    //current result for the game, use null for the initial game state
+    //current result for the game
     private String gameResult;
 
     //create a game state with infos to save the game

@@ -5,9 +5,9 @@ import java.io.IOException;
 
 import javax.swing.*;
 
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
+import MakeMove.Board;
+import MakeMove.BoardStateList;
+import MakeMove.GameState;
 
 public class AnalyzeEndToEndTest {
 

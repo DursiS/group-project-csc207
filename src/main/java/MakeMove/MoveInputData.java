@@ -1,4 +1,4 @@
-package use_case;
+package MakeMove;
 
 public class MoveInputData {
     private int x;

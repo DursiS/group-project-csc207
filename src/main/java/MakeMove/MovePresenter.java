@@ -1,7 +1,4 @@
-package interface_adapter;
-
-import use_case.MoveOutputBoundary;
-import use_case.MoveOutputData;
+package MakeMove;
 
 import java.awt.*;
 import java.util.HashMap;

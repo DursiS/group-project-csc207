@@ -1,9 +1,9 @@
 package Analysis;
 
 import com.google.gson.JsonObject;
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
+import MakeMove.Board;
+import MakeMove.BoardStateList;
+import MakeMove.GameState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

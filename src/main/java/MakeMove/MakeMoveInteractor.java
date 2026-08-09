@@ -1,9 +1,4 @@
-package use_case;
-
-import entity.Board;
-import entity.GameState;
-import entity.Move;
-import entity.MoveValidator;
+package MakeMove;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;

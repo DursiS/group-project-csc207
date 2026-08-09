@@ -1,4 +1,4 @@
-package entity;
+package MakeMove;
 
 /**
  * //this is a data type for a move that's made by a player

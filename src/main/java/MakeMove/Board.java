@@ -1,5 +1,5 @@
 
-package entity;
+package MakeMove;
 
 /**
  * //this class is a data type, which contains all information about a board state (all pieces and the current turn)

@@ -1,8 +1,7 @@
-package entity;
+package MakeMove;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * //this class has the responsibility of generating a list of all valid moves for each piece each turn

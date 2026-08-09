@@ -1,7 +1,4 @@
-package interface_adapter;
-
-import use_case.MoveInputBoundary;
-import use_case.MoveInputData;
+package MakeMove;
 
 public class MoveController {
     private MoveInputBoundary moveInputBoundary;

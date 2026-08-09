@@ -1,8 +1,8 @@
-package entity;
+package MakeMove;
 
 import java.util.ArrayList;
 
-import static entity.MoveValidator.applyQuotientRelation;
+import static MakeMove.MoveValidator.applyQuotientRelation;
 
 /**
  * Normal Move Type class
