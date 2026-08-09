@@ -6,11 +6,13 @@ public class SaveGameInteractor implements SaveGameInputBoundary {
     public static final String AUTOSAVE_NAME = "autosave";
     private GameDataAccess gameDataAccess;
     private SaveGameOutputBoundary presenter;
+    private String currentSaveName;
 
     public SaveGameInteractor(GameDataAccess gameDataAccess, SaveGameOutputBoundary presenter) {
 
         this.gameDataAccess = gameDataAccess;
         this.presenter = presenter;
+        this.currentSaveName = null;
     }
 
     @Override
@@ -43,9 +45,23 @@ public class SaveGameInteractor implements SaveGameInputBoundary {
     @Override
     public void autosave(GameState gameState) {
 
-        SaveGameInputData inputData = new SaveGameInputData(AUTOSAVE_NAME, gameState, true);
+        String saveName = AUTOSAVE_NAME;
+
+        if (currentSaveName != null) {
+            saveName = currentSaveName;
+        }
+
+        SaveGameInputData inputData = new SaveGameInputData(
+                        saveName,
+                        gameState,
+                        true);
 
         execute(inputData);
+    }
+
+    @Override
+    public void setCurrentSaveName(String saveName) {
+        this.currentSaveName = saveName;
     }
 
     private String generateSaveName() {

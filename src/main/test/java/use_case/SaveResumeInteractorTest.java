@@ -46,13 +46,14 @@ public class SaveResumeInteractorTest {
                 board,
                 300000,
                 295000,
+                new BoardStateList(),
                 "IN_PROCESS"
         );
     }
 
     @Test
     void saveAndResumeGame() {
-        SaveGameInputData SaveinputData = new SaveGameInputData(saveName, gameState);
+        SaveGameInputData SaveinputData = new SaveGameInputData(saveName, gameState, false);
         saveInteractor.execute(SaveinputData);
         ResumeGameInputData ResumeInputData = new ResumeGameInputData(saveName);
 
@@ -79,10 +80,10 @@ public class SaveResumeInteractorTest {
     }
     @Test
     void automaticSaveNameTest(){
-        SaveGameInputData inputData = new SaveGameInputData("", gameState);
+        SaveGameInputData inputData = new SaveGameInputData("", gameState, false);
         saveInteractor.execute(inputData);
         assertTrue(gameDataAccess.saveExists("save1"));
-        SaveGameInputData inputData1 = new SaveGameInputData("", gameState);
+        SaveGameInputData inputData1 = new SaveGameInputData("", gameState, false);
         saveInteractor.execute(inputData1);
         assertTrue(gameDataAccess.saveExists("save2"));
 

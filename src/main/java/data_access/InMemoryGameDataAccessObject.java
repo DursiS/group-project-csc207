@@ -18,6 +18,7 @@ public class InMemoryGameDataAccessObject implements GameDataAccess {
         GameState copyGame = new GameState(game.getBoardCopy(),
                 game.getWhiteMilliSec(),
                 game.getBlackMilliSec(),
+                game.getBoardStateListCopy(),
                 game.getGameResult());
         return copyGame;
     }
