@@ -2,6 +2,9 @@ package interface_adapter;
 import entity.GameState;
 import use_case.SaveGameInputBoundary;
 import use_case.SaveGameInputData;
+
+import java.util.ArrayList;
+
 public class SaveGameController {
     private SaveGameInputBoundary interactor;
 
@@ -18,4 +21,5 @@ public class SaveGameController {
         SaveGameInputData inputData = new SaveGameInputData(saveName, gameState, true);
         interactor.execute(inputData);
     }
+
 }

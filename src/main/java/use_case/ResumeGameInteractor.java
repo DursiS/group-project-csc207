@@ -1,6 +1,8 @@
 package use_case;
 import entity.GameState;
 
+import java.util.ArrayList;
+
 public class ResumeGameInteractor
         implements ResumeGameInputBoundary {
 
@@ -37,4 +39,10 @@ public class ResumeGameInteractor
         ResumeGameInputData recoverData = new ResumeGameInputData(SaveGameInteractor.AUTOSAVE_NAME);
         return execute(recoverData);
     }
+
+    @Override
+    public ArrayList<String> getSaveNameList(){
+        return gameDataAccess.getSaveNames();
+    }
+
 }

@@ -13,7 +13,7 @@ public class ResumeGamePresenter implements ResumeGameOutputBoundary {
 
     @Override
     public void prepareSuccessResumeView(ResumeGameOutputData outputData){
-        viewModel.setMessage(outputData.getsaveName() + "Successfully Resumed!");
+        viewModel.setMessage(outputData.getsaveName() + " Successfully Resumed!");
     }
 
     @Override

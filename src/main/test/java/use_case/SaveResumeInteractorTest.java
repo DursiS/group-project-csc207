@@ -69,12 +69,23 @@ public class SaveResumeInteractorTest {
         String errormessage = resumeGameViewModel.getErrorMessage();
         assertEquals("Error: Save does not exist.", errormessage);
     }
+
     @Test
-    void emptySaveNameTest(){
+    void loadingNameEmptyTest() {
+        ResumeGameInputData inputData = new ResumeGameInputData("");
+        resumeInteractor.execute(inputData);
+        String errormessage = resumeGameViewModel.getErrorMessage();
+        assertEquals("Error: Save name cannot be empty.", errormessage);
+    }
+    @Test
+    void automaticSaveNameTest(){
         SaveGameInputData inputData = new SaveGameInputData("", gameState);
         saveInteractor.execute(inputData);
-        String errormessage = saveGameViewModel.getError();
-        assertEquals("Save Name Cannot Be Empty!", errormessage);
+        assertTrue(gameDataAccess.saveExists("save1"));
+        SaveGameInputData inputData1 = new SaveGameInputData("", gameState);
+        saveInteractor.execute(inputData1);
+        assertTrue(gameDataAccess.saveExists("save2"));
+
     }
 
     @Test

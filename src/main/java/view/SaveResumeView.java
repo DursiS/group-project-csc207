@@ -8,7 +8,11 @@ import interface_adapter.ResumeGameController;
 import interface_adapter.ResumeGameViewModel;
 
 import javax.swing.*;
-import java.awt.FlowLayout;
+import java.awt.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import java.util.ArrayList;
 
 public class SaveResumeView {
     private SaveGameController saveGameController;
@@ -21,6 +25,8 @@ public class SaveResumeView {
     private JFrame frame;
     private JTextField saveNameField;
     private JLabel messageLabel;
+    private DefaultListModel<String> saveNameList;
+    private JList<String> savedGamesList;
 
     public SaveResumeView(SaveGameController saveGameController,
                           SaveGameViewModel saveGameViewModel,
@@ -36,23 +42,53 @@ public class SaveResumeView {
         frame = new JFrame();
 
         frame.setTitle("Save / Resume Game");
-        frame.setSize(450,150);
+        frame.setSize(500,350);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
 
-        JPanel panel = new JPanel();
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        //top
+        JPanel topPanel = new JPanel();
         JLabel saveNameLabel = new JLabel("Save Name: ");
         saveNameField = new JTextField(10);
         JButton saveButton = new JButton("Save");
         JButton resumeButton = new JButton("Resume");
+
+        topPanel.add(saveNameLabel);
+        topPanel.add(saveNameField);
+        topPanel.add(saveButton);
+        topPanel.add(resumeButton);
+
+        //center
+        this.saveNameList = new DefaultListModel<>();
+        this.savedGamesList = new JList<>(saveNameList);
+
+        savedGamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        savedGamesList.addListSelectionListener(event -> {
+            String selectedSave = savedGamesList.getSelectedValue();
+            if (selectedSave != null) {
+                saveNameField.setText(selectedSave);
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(savedGamesList);
+        JPanel centerPanel = new JPanel(new BorderLayout());
+
+        centerPanel.add(new JLabel("Saved Games"), BorderLayout.NORTH);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+
+        //bottom
         messageLabel = new JLabel("");
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(messageLabel, BorderLayout.NORTH);
 
-        panel.add(saveNameLabel);
-        panel.add(saveNameField);
-        panel.add(saveButton);
-        panel.add(resumeButton);
-        panel.add(messageLabel);
+        //main
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        frame.add(panel);
+        frame.add(mainPanel);
 
         saveButton.addActionListener(event -> {
 
@@ -69,6 +105,7 @@ public class SaveResumeView {
             }
             else{
                 messageLabel.setText(saveGameViewModel.getMessage());
+                refreshSaveList();
             }
         });
 
@@ -84,7 +121,7 @@ public class SaveResumeView {
                 messageLabel.setText(resumeGameViewModel.getMessage());
             }
         });
-
+        refreshSaveList();
         frame.setVisible(true);
 
     }
@@ -110,6 +147,7 @@ public class SaveResumeView {
 
             messageLabel.setText(saveGameViewModel.getMessage());
 
+            refreshSaveList();
             overwriteFrame.dispose();
         });
 
@@ -122,6 +160,18 @@ public class SaveResumeView {
 
         overwriteFrame.add(overwritePanel);
         overwriteFrame.setVisible(true);
+    }
+
+    private void refreshSaveList() {
+
+        saveNameList.clear();
+
+        ArrayList<String> saves =
+                resumeGameController.getSaveNames();
+
+        for (String saveName : saves) {
+            saveNameList.addElement(saveName);
+        }
     }
 
 }
