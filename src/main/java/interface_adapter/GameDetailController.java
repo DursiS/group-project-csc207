@@ -1,9 +1,9 @@
 package interface_adapter;
 
+import entity.GameRecord;
 import use_case.GameDetailInputBoundary;
 import use_case.GameDetailInputData;
 
-import java.util.UUID;
 
 public class GameDetailController {
 
@@ -13,18 +13,13 @@ public class GameDetailController {
         this.gameDetailInteractor = gameDetailInteractor;
     }
 
-    public void getGame(UUID id) {
-        GameDetailInputData gameDetailInputData = new GameDetailInputData(id, 0);
-        gameDetailInteractor.getGame(gameDetailInputData);
-    }
-
-    public void forward(UUID id, int current) {
-        GameDetailInputData gameDetailInputData = new GameDetailInputData(id, current);
+    public void forward(GameRecord gameRecord, int current) {
+        GameDetailInputData gameDetailInputData = new GameDetailInputData(gameRecord, current);
         gameDetailInteractor.forward(gameDetailInputData);
     }
 
-    public void back(UUID id, int current) {
-        GameDetailInputData gameDetailInputData = new GameDetailInputData(id, current);
+    public void back(GameRecord gameRecord, int current) {
+        GameDetailInputData gameDetailInputData = new GameDetailInputData(gameRecord, current);
         gameDetailInteractor.back(gameDetailInputData);
     }
 }

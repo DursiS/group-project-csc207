@@ -1,7 +1,8 @@
 package view;
 
-import interface_adapter.GameDetailController;
+import interface_adapter.GameListController;
 import interface_adapter.GameListViewModel;
+import use_case.SelectGameInputData;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,16 +15,14 @@ import java.util.UUID;
 
 public class GameListView extends JPanel implements PropertyChangeListener {
 
-//    private final GameListController gameListController;
+    private final GameListController gameListController;
     private final GameListViewModel gameListViewModel;
-    private final GameDetailController gameDetailController;
 
     private JTable gameTable;
 
-    public GameListView(GameDetailController gameDetailController,
+    public GameListView(GameListController gameListController,
                         GameListViewModel gameListViewModel) {
-//        this.gameListController = gameListController;
-        this.gameDetailController = gameDetailController;
+        this.gameListController = gameListController;
         this.gameListViewModel = gameListViewModel;
         this.gameListViewModel.addPropertyChangeListener(this);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -77,7 +76,8 @@ public class GameListView extends JPanel implements PropertyChangeListener {
                 int row =  gameTable.getSelectedRow();
                 if (row != -1) {
                     UUID id = gameListViewModel.getIds()[row];
-                    gameDetailController.getGame(id);
+                    SelectGameInputData selectGameInputData = new SelectGameInputData(id);
+                    gameListController.selectGame(selectGameInputData);
                 }
             }
         });

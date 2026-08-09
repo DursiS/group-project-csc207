@@ -1,16 +1,16 @@
 package interface_adapter;
 
 import entity.Board;
+import entity.GameRecord;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.UUID;
 
 public class GameDetailViewModel {
 
     public static final String VIEW_NAME = "Game Detail";
 
-    private UUID gameId;
+    private GameRecord gameRecord;
     private Board board;
     private int currentStateNumber = 0;
     private int whiteMilliSec;
@@ -40,12 +40,12 @@ public class GameDetailViewModel {
         this.board = board;
     }
 
-    public UUID getGameId() {
-        return gameId;
+    public GameRecord getGameRecord() {
+        return gameRecord;
     }
 
-    public void setGameId(UUID gameId) {
-        this.gameId = gameId;
+    public void setGameRecord(GameRecord gameRecord) {
+        this.gameRecord = gameRecord;
     }
 
     public int getCurrentStateNumber() {

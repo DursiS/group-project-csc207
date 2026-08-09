@@ -68,9 +68,9 @@ public class GameDetailView extends JPanel implements PropertyChangeListener {
         backwardButton.setPreferredSize(new Dimension(60, 40));
         forwardButton.setPreferredSize(new Dimension(60, 40));
         backwardButton.addActionListener(e -> gameDetailController.back(
-                gameDetailViewModel.getGameId(), gameDetailViewModel.getCurrentStateNumber()));
+                gameDetailViewModel.getGameRecord(), gameDetailViewModel.getCurrentStateNumber()));
         forwardButton.addActionListener(e -> gameDetailController.forward(
-                gameDetailViewModel.getGameId(), gameDetailViewModel.getCurrentStateNumber()));
+                gameDetailViewModel.getGameRecord(), gameDetailViewModel.getCurrentStateNumber()));
         controlPanel.add(backwardButton);
         controlPanel.add(forwardButton);
 
