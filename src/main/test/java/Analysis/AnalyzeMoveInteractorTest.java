@@ -163,9 +163,9 @@ public class AnalyzeMoveInteractorTest {
 
     @Test
     void convertsToFenCorrectly() {
-        BoardToFenTranslator translator = new BoardToFenTranslator();
-        assertEquals(START_FEN, translator.convertToFen(new Board(), true));
-        assertEquals(NO_EN_PASSANT_FEN, translator.convertToFen(enPassantBoard(), false));
+        BoardToFenAdapter adapter = new BoardToFenAdapter();
+        assertEquals(START_FEN, adapter.convertToFen(new Board(), true));
+        assertEquals(NO_EN_PASSANT_FEN, adapter.convertToFen(enPassantBoard(), false));
     }
 
     private static Board enPassantBoard() {

@@ -1,7 +1,5 @@
 package entity;
 
-import use_case.MakeMoveInteractor;
-
 /**
  * this class is for moves that just have typical behaviour:
  * they move a single piece and remove a piece if they land on it.

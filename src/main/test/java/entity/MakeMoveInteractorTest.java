@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import use_case.MakeMoveInteractor;
 import view.MoveView;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MakeMoveInteractorTest {
