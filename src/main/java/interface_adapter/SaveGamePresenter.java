@@ -14,6 +14,7 @@ public class SaveGamePresenter implements SaveGameOutputBoundary {
     @Override
     public void prepareSuccessSaveView(SaveGameOutputData outputData){
         viewModel.setMessage(outputData.getSaveName() + " Successfully Saved!");
+        viewModel.setSavedName(outputData.getSaveName());
         viewModel.setError("");
         viewModel.setOverwriteMessage("");
     }

@@ -21,6 +21,7 @@ public class SaveResumeView {
     private ResumeGameViewModel resumeGameViewModel;
 
     private GameState gameState;
+    private String currentSaveName;
 
     private JFrame frame;
     private JTextField saveNameField;
@@ -38,12 +39,13 @@ public class SaveResumeView {
         this.resumeGameController = resumeGameController;
         this.resumeGameViewModel = resumeGameViewModel;
         this.gameState = gameState;
+        this.currentSaveName = null;
 
         frame = new JFrame();
 
         frame.setTitle("Save / Resume Game");
         frame.setSize(500,350);
-        frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -90,25 +92,27 @@ public class SaveResumeView {
 
         frame.add(mainPanel);
 
-        saveButton.addActionListener(event -> {
+        saveGame(saveGameController, saveGameViewModel, saveButton, saveNameField, null);
 
-            String saveName = saveNameField.getText();
+        resumeGame(resumeGameController, resumeGameViewModel, resumeButton);
 
-            saveGameController.execute(saveName, this.gameState);
+        //closing
 
-            if(!saveGameViewModel.getOverwriteMessage().equals("")) {
-                overwrite(saveGameController, saveGameViewModel);
-            }
-
-            else if (!saveGameViewModel.getError().equals("")) {
-                messageLabel.setText(saveGameViewModel.getError());
-            }
-            else{
-                messageLabel.setText(saveGameViewModel.getMessage());
-                refreshSaveList();
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent event) {
+                exitGame();
             }
         });
 
+        refreshSaveList();
+        frame.setVisible(true);
+
+    }
+
+    private void resumeGame(ResumeGameController resumeGameController,
+                            ResumeGameViewModel resumeGameViewModel,
+                            JButton resumeButton) {
         resumeButton.addActionListener(event -> {
             String saveName = saveNameField.getText();
             GameState loadedGame = resumeGameController.execute(saveName);
@@ -118,15 +122,46 @@ public class SaveResumeView {
             }
             else {
                 this.gameState = loadedGame;
+                this.currentSaveName = saveName;
                 messageLabel.setText(resumeGameViewModel.getMessage());
             }
         });
-        refreshSaveList();
-        frame.setVisible(true);
-
     }
 
-    private void overwrite(SaveGameController saveGameController, SaveGameViewModel saveGameViewModel) {
+    private void saveGame(SaveGameController saveGameController,
+                          SaveGameViewModel saveGameViewModel,
+                          JButton saveButton,
+                          JTextField textField,
+                          JFrame frameToClose) {
+        saveButton.addActionListener(event -> {
+
+            String saveName = textField.getText();
+
+            saveGameController.execute(saveName, this.gameState);
+
+            if(!saveGameViewModel.getOverwriteMessage().equals("")) {
+                overwrite(saveGameController, saveGameViewModel, textField);
+            }
+
+            else if (!saveGameViewModel.getError().equals("")) {
+                messageLabel.setText(saveGameViewModel.getError());
+            }
+            else{
+                this.currentSaveName = saveGameViewModel.getSavedName();
+                messageLabel.setText(saveGameViewModel.getMessage());
+                refreshSaveList();
+
+                if (frameToClose != null) {
+                    frameToClose.dispose();
+                    frame.dispose();
+                }
+            }
+        });
+    }
+
+    private void overwrite(SaveGameController saveGameController,
+                           SaveGameViewModel saveGameViewModel,
+                           JTextField textField) {
         JFrame overwriteFrame = new JFrame();
         overwriteFrame.setTitle("Overwrite");
         overwriteFrame.setSize(250,100);
@@ -142,8 +177,10 @@ public class SaveResumeView {
         overwritePanel.add(overwriteNo);
 
         overwriteYes.addActionListener(event -> {
-            String saveName = saveNameField.getText();
+            String saveName = textField.getText();
             saveGameController.overwrite(saveName, this.gameState);
+
+            this.currentSaveName = saveGameViewModel.getSavedName();
 
             messageLabel.setText(saveGameViewModel.getMessage());
 
@@ -172,6 +209,61 @@ public class SaveResumeView {
         for (String saveName : saves) {
             saveNameList.addElement(saveName);
         }
+    }
+
+    private void exitGame() {
+
+        if (currentSaveName != null) {
+            frame.dispose();
+            return;
+        }
+        JFrame closePrompt = new JFrame();
+        closePrompt.setDefaultCloseOperation(closePrompt.DISPOSE_ON_CLOSE);
+        JPanel closePanel = new JPanel(new BorderLayout());
+        JLabel closeLabel = new JLabel("Do You Want To Save?");
+        JPanel buttonPanel = new JPanel();
+        JButton closeYes = new JButton("Yes");
+        JButton closeNo = new JButton("No");
+
+        buttonPanel.add(closeNo);
+        buttonPanel.add(closeYes);
+
+        closePanel.add(closeLabel, BorderLayout.NORTH);
+        closePanel.add(buttonPanel, BorderLayout.CENTER);
+
+        closePrompt.add(closePanel);
+        closePrompt.pack();
+
+        closeYes.addActionListener(event -> {
+            closePrompt.dispose();
+            JFrame anotherSaveFrame = new JFrame();
+            anotherSaveFrame.setDefaultCloseOperation(anotherSaveFrame.DISPOSE_ON_CLOSE);
+            JPanel anotherSavePanel = new JPanel();
+            JLabel anotherLabel = new JLabel("Save Name: ");
+            JTextField anotherSaveTextField = new JTextField(10);
+            JButton anotherSaveButton = new JButton("Save");
+
+            anotherSavePanel.add(anotherLabel);
+            anotherSavePanel.add(anotherSaveTextField);
+            anotherSavePanel.add(anotherSaveButton);
+            anotherSaveFrame.add(anotherSavePanel);
+            anotherSaveFrame.pack();
+
+            saveGame(saveGameController,
+                    saveGameViewModel,
+                    anotherSaveButton,
+                    anotherSaveTextField,
+                    anotherSaveFrame);
+
+            anotherSaveFrame.setVisible(true);
+        });
+
+        closeNo.addActionListener(event -> {
+            closePrompt.dispose();
+            frame.dispose();
+        });
+
+        closePrompt.setVisible(true);
     }
 
 }

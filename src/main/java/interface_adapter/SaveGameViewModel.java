@@ -4,11 +4,13 @@ public class SaveGameViewModel {
     private String Message;
     private String error;
     private String overwriteMessage;
+    private String savedName;
 
     public SaveGameViewModel() {
         this.Message = "";
         this.error = "";
         this.overwriteMessage = "";
+        this.savedName = "";
     }
 
     public String getMessage() {
@@ -31,5 +33,13 @@ public class SaveGameViewModel {
 
     public void setOverwriteMessage(String anotherMessage) {
         this.overwriteMessage = anotherMessage;
+    }
+
+    public String getSavedName() {
+        return savedName;
+    }
+
+    public void setSavedName(String anotherName) {
+        this.savedName = anotherName;
     }
 }
