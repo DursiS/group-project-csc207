@@ -11,13 +11,13 @@
 
 - Perceptible information: Communicates directly whose turn it is and whether their analysis metrics are being displayed.
 
-- Size and Area: It applies, the UI is large enough to accommodate a diversity of visibility characteristics.
+- Size and Area: It applies, the UI is large enough to accommodate a diversity of visibility characteristics. The squares of the game board will resize automatically to fill the window, which allows the game to support any size of monitor. 
 
 - Equitable Use: Not fully met yet; those who play would need to have access to a computer, Wi-Fi, not be visually impaired and be able to use a mouse to play. We could implement an offline mode, and audio Reponses to play and hear plays made in future to accommodate.
 
 - Tolerance error: Largely handled by the inner layer, illegal moves are simply ignored, and a selected piece can be deselected by clicking it again, so a mis click never has a harmful effect.
 
-- Low physical effort: As a digital game, it requires only a mouse and a few clicks per turn, so it demands very little physical effort.
+- Low physical effort: As a digital game, it requires only a mouse and a few clicks per turn, so it demands very little physical effort. Also, pieces can be deselected by clicking any square that does not result in a legal move, which reduces effort required to deselect pieces.
 
 ## 2. Marketing
 *Write a paragraph (3-6 sentences) about who you would market your program towards, if you were to sell or license your program to customers. This could be a specific category of users, such as "students", or vaguer, such as "people who like games". Try to give a bit more detail along with the category.*
