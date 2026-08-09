@@ -26,22 +26,18 @@ public class AnalyzePresenter implements AnalyzeOutputBoundary {
     public String makeMessage(AnalyzeOutputData outputData) {
         final String header;
         final String side;
-        final double winChance;
-        final double eval;
+        final double winChance = outputData.winChance();
+        final double eval = outputData.eval();
         final String turn = " (" + outputData.messageNum() + ") ";
         final String doubleSpace = "\n\n";
 
         if (outputData.isWhiteTurn()) {
             header = "== WHITE'S TURN " + turn + "==" + doubleSpace;
             side = "White";
-            winChance = outputData.winChance();
-            eval = outputData.eval();
         }
         else {
             header = "== BLACK'S TURN " + turn + "==" + doubleSpace;
             side = "Black";
-            winChance = (-1) * (1 - outputData.winChance());
-            eval = (-1) * outputData.eval();
         }
         final String body = side + " WinChance: " + roundTwo(winChance) + "% \n"
                 + side + " Eval: " + roundTwo(eval) + "\n"
