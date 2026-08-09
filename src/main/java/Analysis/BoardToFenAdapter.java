@@ -1,6 +1,6 @@
 package Analysis;
 
-import entity.Board;
+import MakeMove.Board;
 
 import java.util.HashMap;
 import java.util.Map;

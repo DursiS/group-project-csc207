@@ -1,0 +1,46 @@
+@startuml
+hide footbox
+
+actor User
+
+participant AnalyzeView as View #A6C8F4
+participant AnalyzeController as Controller #A8D5A2
+participant AnalyzeMoveInteractor as Interactor #F4A6A6
+participant GameStateDataAccessInterface as GameState #F4A6A6
+participant ChessApiInterface as API #F4A6A6
+participant AnalyzePresenter as Presenter #A8D5A2
+participant AnalyzeViewModel as ViewModel #A8D5A2
+
+legend top right
+  |= Color |= CA Layer |
+  |<#FFF3B0>|   Entities |
+  |<#F4A6A6>|   Use Cases |
+  |<#A8D5A2>|   Interface Adapters |
+  |<#A6C8F4>|   Frameworks & Drivers |
+endlegend
+
+User -> View : executeTurnAnalysis()
+activate View
+  View -> Controller : executeTurnAnalysis()
+  activate Controller
+    Controller -> Interactor : executeTurnAnalysis()
+    activate Interactor
+      Interactor -> GameState : getRecentBoard()
+      activate GameState
+      GameState --> Interactor : Board
+      deactivate GameState
+      Interactor -> API : request(fen)
+      activate API
+      API --> Interactor : JsonObject
+      deactivate API
+      Interactor -> Presenter : addMessage(AnalyzeOutputData)
+      activate Presenter
+        Presenter -> ViewModel : setMessage(text)
+        activate ViewModel
+          ViewModel -> View : propertyChange(evt)
+        deactivate ViewModel
+      deactivate Presenter
+    deactivate Interactor
+  deactivate Controller
+deactivate View
+@enduml

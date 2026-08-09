@@ -1,13 +1,7 @@
 package entity;
 
-import interface_adapter.MoveController;
-import interface_adapter.MovePresenter;
-import interface_adapter.MoveViewModel;
+import MakeMove.*;
 import org.junit.jupiter.api.Test;
-import use_case.MakeMoveInteractor;
-import view.MoveView;
-
-import javax.swing.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

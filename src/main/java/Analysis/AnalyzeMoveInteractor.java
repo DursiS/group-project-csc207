@@ -5,9 +5,8 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
+import MakeMove.Board;
+import MakeMove.GameState;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChangeListener {
     private static final String UPDATE_CHANNEL = "update-analysis";

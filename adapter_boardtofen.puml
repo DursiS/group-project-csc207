@@ -1,0 +1,46 @@
+@startuml
+title Adapter Pattern — Board entity adapted to FEN via FenConverter (returns FEN String)
+
+skinparam backgroundColor White
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor White
+  BorderColor #444444
+  ArrowColor #444444
+  FontColor #222222
+  StereotypeFontColor #888888
+}
+hide circle
+
+class AnalyzeMoveInteractor <<Client>> {
+  - fenConverter : FenConverter
+  --
+  + executeTurnAnalysis() : void
+}
+
+interface FenConverter <<Target>> {
+  + convertToFen(board : Board, isWhiteTurn : boolean) : String
+}
+
+class BoardToFenAdapter <<Adapter>> {
+  + convertToFen(board : Board, isWhiteTurn : boolean) : String
+  - buildFenGrid(board : Board) : String
+  - buildFenTail(board : Board) : String
+}
+
+class Board <<Adaptee>> {
+  + getSquare(x : int, y : int) : int
+  + getTurn() : int
+}
+
+AnalyzeMoveInteractor -right-> FenConverter : uses
+BoardToFenAdapter .up.|> FenConverter
+BoardToFenAdapter -left-> Board : reads
+
+note bottom of BoardToFenAdapter
+  **convertToFen(board, isWhiteTurn)**
+  return buildFenGrid(board)
+      + sideToMove + castling + " - 0 1"
+end note
+@enduml

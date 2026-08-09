@@ -9,14 +9,14 @@ import Analysis.AnalyzePresenter;
 import Analysis.AnalyzeView;
 import Analysis.AnalyzeViewModel;
 import Analysis.ChessApiAdapter;
-import entity.GameState;
-import entity.MoveValidator;
-import entity.MoveValidatorBuilder;
-import interface_adapter.MoveController;
-import interface_adapter.MovePresenter;
-import interface_adapter.MoveViewModel;
-import use_case.MakeMoveInteractor;
-import view.MoveView;
+import MakeMove.GameState;
+import MakeMove.MoveValidator;
+import MakeMove.MoveValidatorBuilder;
+import MakeMove.MoveController;
+import MakeMove.MovePresenter;
+import MakeMove.MoveViewModel;
+import MakeMove.MakeMoveInteractor;
+import MakeMove.MoveView;
 
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
