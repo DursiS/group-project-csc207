@@ -87,6 +87,8 @@ public class AppBuilder extends JFrame {
 
         moveView = new MoveView(moveViewModel, moveController);
         add(moveView, CENTER);
+
+        makeMoveInteractor.updateVisuals();
         return this;
     }
 
