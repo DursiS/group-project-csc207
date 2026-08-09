@@ -21,6 +21,7 @@ public class GameListInteractor implements GameListInputBoundary {
         } catch (RuntimeException e) {
             // This notifies the UI that something went wrong
             gameListOutputBoundary.prepareErrorView("Could not load games: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }

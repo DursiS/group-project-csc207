@@ -6,6 +6,8 @@ import java.util.UUID;
 
 public class GameListViewModel {
 
+    public static final String VIEW_NAME = "Game List";
+
     private Object[][] data;
     private UUID[] ids;
     private String errorMessage = null;

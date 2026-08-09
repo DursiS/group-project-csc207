@@ -1,32 +1,49 @@
 package view;
 
 import data_access.GameDataAccessObject;
-import interface_adapter.GameListController;
-import interface_adapter.GameListPresenter;
-import interface_adapter.GameListViewModel;
+import interface_adapter.*;
+import use_case.GameDetailInteractor;
 import use_case.GameListInteractor;
 import use_case.GameListOutputBoundary;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameListViewDemo {
 
     public static void main(String[] args) {
         final JFrame application = new JFrame("Game List Test");
         application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        application.setSize(300,600);
+        application.setSize(600,600);
+        CardLayout cardLayout = new CardLayout();
+        JPanel views = new JPanel(cardLayout);
+        application.add(views);
+
+        final ViewManagerModel viewManagerModel = new ViewManagerModel();
+        final ViewManager viewManager = new ViewManager(views, cardLayout, viewManagerModel);
+        final GameDataAccessObject gameDataAccessObject = new GameDataAccessObject();
+        final GameDetailViewModel gameDetailViewModel = new GameDetailViewModel();
+        final GameDetailPresenter gameDetailPresenter = new
+                GameDetailPresenter(gameDetailViewModel, viewManagerModel);
+        final GameDetailInteractor gameDetailInteractor = new
+                GameDetailInteractor(gameDataAccessObject, gameDetailPresenter);
+        final GameDetailController gameDetailController=
+                new GameDetailController(gameDetailInteractor);
+        final GameDetailView gameDetailView = new
+                GameDetailView(gameDetailController, gameDetailViewModel);
 
         final GameListViewModel gameListViewModel = new GameListViewModel();
-        final GameDataAccessObject gameDataAccessObject = new GameDataAccessObject();
         final GameListOutputBoundary gameListOutputBoundary = new
-                GameListPresenter(gameListViewModel);
+                GameListPresenter(gameListViewModel, viewManagerModel);
         final GameListInteractor gameListInteractor= new GameListInteractor(gameDataAccessObject,
                 gameListOutputBoundary);
         final GameListController gameListController = new GameListController(gameListInteractor);
-        final GameListView gameListView = new GameListView(gameListController, gameListViewModel,
-                null);
+        final GameListView gameListView = new GameListView(gameDetailController, gameListViewModel);
 
-        application.add(gameListView);
+        views.add(gameListView, GameListViewModel.VIEW_NAME);
+        views.add(gameDetailView, GameDetailViewModel.VIEW_NAME);
+
+        gameListController.getGameList();
         application.setVisible(true);
     }
 }

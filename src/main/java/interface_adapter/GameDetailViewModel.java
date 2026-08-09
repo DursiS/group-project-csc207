@@ -8,11 +8,15 @@ import java.util.UUID;
 
 public class GameDetailViewModel {
 
+    public static final String VIEW_NAME = "Game Detail";
+
     private UUID gameId;
     private Board board;
     private int currentStateNumber = 0;
     private int whiteMilliSec;
     private int blackMilliSec;
+    private boolean hasPrevious = false;
+    private boolean hasNext = true;
     private String gameResult = null;
     private String errorMessage = null;
 
@@ -66,6 +70,22 @@ public class GameDetailViewModel {
 
     public void setBlackMilliSec(int blackMilliSec) {
         this.blackMilliSec = blackMilliSec;
+    }
+
+    public boolean hasPrevious() {
+        return hasPrevious;
+    }
+
+    public void setHasPrevious(boolean hasPrevious) {
+        this.hasPrevious = hasPrevious;
+    }
+
+    public boolean hasNext() {
+        return hasNext;
+    }
+
+    public void setHasNext(boolean hasNext) {
+        this.hasNext = hasNext;
     }
 
     public String getGameResult() {

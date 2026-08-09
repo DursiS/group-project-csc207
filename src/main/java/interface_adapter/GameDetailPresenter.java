@@ -9,9 +9,12 @@ import java.util.UUID;
 public class GameDetailPresenter implements GameDetailOutputBoundary {
 
     private final GameDetailViewModel viewModel;
+    private final ViewManagerModel viewManagerModel;
 
-    public GameDetailPresenter(GameDetailViewModel viewModel) {
+    public GameDetailPresenter(GameDetailViewModel viewModel, ViewManagerModel viewManagerModel)
+    {
         this.viewModel = viewModel;
+        this.viewManagerModel = viewManagerModel;
     }
 
     @Override
@@ -27,13 +30,21 @@ public class GameDetailPresenter implements GameDetailOutputBoundary {
         viewModel.setGameResult(gameResult);
         viewModel.setBlackMilliSec(gameState.getBlackMilliSec());
         viewModel.setWhiteMilliSec(gameState.getWhiteMilliSec());
+        viewModel.setHasPrevious(gameDetailOutputData.hasPrevious());
+        viewModel.setHasNext(gameDetailOutputData.hasNext());
         viewModel.setErrorMessage(null);
         viewModel.firePropertyChanged();
+
+        viewManagerModel.setCurrentView(GameDetailViewModel.VIEW_NAME);
+        viewManagerModel.firePropertyChanged();
     }
 
     @Override
     public void prepareErrorView(String errorMessage) {
         viewModel.setErrorMessage(errorMessage);
         viewModel.firePropertyChanged();
+
+        viewManagerModel.setCurrentView(GameListViewModel.VIEW_NAME);
+        viewManagerModel.firePropertyChanged();
     }
 }

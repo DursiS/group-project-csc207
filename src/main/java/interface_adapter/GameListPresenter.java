@@ -10,9 +10,11 @@ import java.util.UUID;
 public class GameListPresenter implements GameListOutputBoundary {
 
     private final GameListViewModel viewModel;
+    private final ViewManagerModel viewManagerModel;
 
-    public GameListPresenter(GameListViewModel viewModel) {
+    public GameListPresenter(GameListViewModel viewModel, ViewManagerModel viewManagerModel) {
         this.viewModel = viewModel;
+        this.viewManagerModel = viewManagerModel;
     }
 
     @Override
@@ -31,11 +33,17 @@ public class GameListPresenter implements GameListOutputBoundary {
         viewModel.setIds(ids);
         viewModel.setErrorMessage(null);
         viewModel.firePropertyChanged();
+
+        viewManagerModel.setCurrentView(GameListViewModel.VIEW_NAME);
+        viewManagerModel.firePropertyChanged();
     }
 
     @Override
     public void prepareErrorView(String errorMessage) {
         viewModel.setErrorMessage(errorMessage);
         viewModel.firePropertyChanged();
+
+        viewManagerModel.setCurrentView(GameListViewModel.VIEW_NAME);
+        viewManagerModel.firePropertyChanged();
     }
 }

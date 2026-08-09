@@ -24,7 +24,7 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
             GameRecord game = gameDataAccessObject.load(id);
             GameState gameState = game.getHistory().get(0);
             GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, 0, 
-                    gameState, null);
+                    gameState, game.getGameResult(), false, game.getHistory().size() > 1);
             gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
         } catch (RuntimeException e) {
             gameDetailPresenter.prepareErrorView("Could not load the game: " + e.getMessage());
@@ -41,7 +41,7 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
                 current--;
                 GameState gameState = game.getHistory().get(current);
                 GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, current,
-                        gameState, null);
+                        gameState, game.getGameResult(), current > 0, true);
                 gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
             }
         } catch (RuntimeException e) {
@@ -59,23 +59,15 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
             if (current <  game.getHistory().size() - 1) {
                 current++;
                 GameState gameState = game.getHistory().get(current);
-
-                GameDetailOutputData gameDetailOutputData;
-
-                // if the next state is the final state, show the game result
-                if (current == game.getHistory().size() - 1) {
-                    gameDetailOutputData = new GameDetailOutputData(id, current, gameState,
-                            game.getGameResult());
-                }
-                else {
-                    gameDetailOutputData = new GameDetailOutputData(id, current, gameState, null);
-                }
-
+                GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(id, current,
+                        gameState, game.getGameResult(), true,
+                        current < game.getHistory().size() - 1);
                 gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
             }
         } catch (RuntimeException e) {
             gameDetailPresenter.prepareErrorView("An error occurred while loading the move: "
                     + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }

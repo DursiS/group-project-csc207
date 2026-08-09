@@ -1,7 +1,6 @@
 package view;
 
 import interface_adapter.GameDetailController;
-import interface_adapter.GameListController;
 import interface_adapter.GameListViewModel;
 
 import javax.swing.*;
@@ -15,21 +14,19 @@ import java.util.UUID;
 
 public class GameListView extends JPanel implements PropertyChangeListener {
 
-    private final GameListController gameListController;
+//    private final GameListController gameListController;
     private final GameListViewModel gameListViewModel;
     private final GameDetailController gameDetailController;
 
     private JTable gameTable;
 
-    public GameListView(GameListController gameListController,
-                        GameListViewModel gameListViewModel,
-                        GameDetailController gameDetailController) {
-        this.gameListController = gameListController;
+    public GameListView(GameDetailController gameDetailController,
+                        GameListViewModel gameListViewModel) {
+//        this.gameListController = gameListController;
+        this.gameDetailController = gameDetailController;
         this.gameListViewModel = gameListViewModel;
         this.gameListViewModel.addPropertyChangeListener(this);
-        this.gameDetailController = gameDetailController;
-
-        this.gameListController.getGameList();
+        this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
     /**
@@ -88,7 +85,6 @@ public class GameListView extends JPanel implements PropertyChangeListener {
         // wrap table in a JScrollPane
         JScrollPane scrollPane = new JScrollPane(gameTable);
         scrollPane.setPreferredSize(new Dimension(300, 100));
-        scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(titleLabel);
