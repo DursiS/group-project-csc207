@@ -51,7 +51,6 @@ public class ApiDemo {
      * @param args the command-line arguments
      * @throws Exception if the request fails
      */
-    // -@cs[UncommentedMain] Demo main retained for the lab
     public static void main(String[] args) throws Exception {
         ApiDemo.demoRawEvaluation();
     }
