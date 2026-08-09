@@ -1,4 +1,4 @@
-package MakeMove;
+package entity;
 
 /**
  * this class is for moves that just have typical behaviour:
