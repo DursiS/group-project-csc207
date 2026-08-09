@@ -16,7 +16,7 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
         try {
             GameRecord gameRecord = gameDetailInputData.gameRecord();
             int current = gameDetailInputData.currentStateNumber();
-            if (current > 0) {
+            if (current > 0 && current < gameRecord.getHistory().size()) {
                 current--;
                 GameState gameState = gameRecord.getHistory().get(current);
                 GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(current,
@@ -35,7 +35,7 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
         try {
             GameRecord gameRecord = gameDetailInputData.gameRecord();
             int current = gameDetailInputData.currentStateNumber();
-            if (current <  gameRecord.getHistory().size() - 1) {
+            if (current >= 0 && current <  gameRecord.getHistory().size() - 1) {
                 current++;
                 GameState gameState = gameRecord.getHistory().get(current);
                 GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(current,
