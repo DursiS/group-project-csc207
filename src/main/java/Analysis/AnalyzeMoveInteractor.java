@@ -102,18 +102,6 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
     }
 
     /**
-     * Returns the latest board to analyze.
-     * @return the last board in the state list, or the opening board if empty
-     */
-    private Board getRecentBoard() {
-        final BoardStateList boardList = gameState.getBoardStateListCopy();
-        if (boardList.size() == 0) {
-            return gameState.getBoard();
-        }
-        return boardList.getBoardCopy(boardList.size() - 1);
-    }
-
-    /**
      * Shows only the most recent analysis message in the view.
      */
     @Override
