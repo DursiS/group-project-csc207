@@ -1,6 +1,6 @@
 package app;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.BorderLayout;
 
 import Analysis.AnalyzeController;
@@ -22,7 +22,7 @@ import MakeMove.MoveView;
  * Assembles the application window, wiring each feature's Clean Architecture
  * stack and adding its view to a region of the frame.
  */
-public class AppBuilder extends JFrame {
+public class AppBuilder extends JPanel {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
@@ -52,8 +52,6 @@ public class AppBuilder extends JFrame {
     public AppBuilder(GameState gameState) {
         this.gameState = gameState;
         changeListeningSetup();
-        setTitle("Chess App");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setSize(WIDTH, HEIGHT);
     }
@@ -107,8 +105,7 @@ public class AppBuilder extends JFrame {
      * Sizes the frame to its contents and shows it.
      * @return the assembled application frame
      */
-    public JFrame build() {
-        pack();
+    public JPanel build() {
         setVisible(true);
         analyzeInteractor.analyzeInitialPosition();
         return this;
