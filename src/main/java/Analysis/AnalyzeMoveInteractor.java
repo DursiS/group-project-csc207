@@ -10,7 +10,6 @@ import MakeMove.GameState;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChangeListener {
     private static final String UPDATE_CHANNEL = "update-analysis";
-    private Integer messageCount = 1;
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
     private final BoardToFenAdapter fenTranslator = new BoardToFenAdapter();
@@ -75,7 +74,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
     public void executeTurnAnalysis() throws IOException {
         final Board board = getRecentBoard();
         final String fen = this.fenTranslator.convertToFen(board,
-                isWhiteTurn()
+                (board.getTurn() % 2 == 0)
         );
         final JsonObject response = requestOrThrow(fen);
         final AnalyzeOutputData outputData = new AnalyzeOutputData(
@@ -83,19 +82,10 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
                 response.get("eval").getAsDouble(),
                 response.get("from").getAsString(),
                 response.get("to").getAsString(),
-                isWhiteTurn(),
-                messageCount
+                (board.getTurn() % 2 == 0),
+                board.getTurn() +1//by convention, turns in chess are indexed starting at 0.
         );
         this.analyzeOutputBoundary.addMessage(outputData);
-        messageCount += 1;
-    }
-
-    /**
-     * Reports whether it is white's turn for the current analysis.
-     * @return true if white is to move, false otherwise
-     */
-    private boolean isWhiteTurn() {
-        return messageCount % 2 == 1;
     }
 
     /**

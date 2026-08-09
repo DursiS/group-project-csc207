@@ -192,8 +192,8 @@ src/main/java/
 │   ├── main.java        # Topology menu, builds the game
 │   └── AppBuilder.java  # Wires each feature's CA stack into one window
 ├── entity/              # Core game rules (Board, GameState, Move validation, ...)
-├── use_case/            # Make-move application logic (MakeMoveInteractor, boundaries)
-├── interface_adapter/   # Move controller / presenter / view model
+├── archive.use_case/            # Make-move application logic (MakeMoveInteractor, boundaries)
+├── archive.interface_adapter/   # Move controller / presenter / view model
 ├── view/                # MoveView (the chess board UI)
 └── Analysis/            # Analysis feature (packaged by feature)
     ├── AnalyzeMoveInteractor.java   # Use case: turns a board into an analysis
