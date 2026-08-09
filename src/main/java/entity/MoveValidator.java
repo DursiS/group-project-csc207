@@ -1,102 +1,47 @@
-//this class has the responsibility of generating a list of all valid moves for each piece each turn
-
 package entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * //this class has the responsibility of generating a list of all valid moves for each piece each turn
+ */
 public class MoveValidator {
-    private MoveType[][] moveTypes = new MoveType[11][];
-    //private BoardTopology topology;
+    private HashMap<Integer,MoveType[]> moveTypes;
 
-    //default constructor creates all movement rules corresponding to each piece type
-    //i suppose this could instead be stored in a special data storage object....
-    public MoveValidator(){
-        //this.topology = topology;
-        moveTypes[0] = new MoveType[]{}; //empty tile has no moves
-        moveTypes[1] = new MoveType[]{//unmoved pawn
-                new MoveType(new int[]{0,1}, 1, false, true, false, false),
-                new MoveType(new int[]{1,1}, 0, true, false, false, false),
-                new MoveType(new int[]{-1,1}, 0, true, false, false, false),
-                new MoveType(new int[]{1,1}, 0, false, true, true, false),
-                new MoveType(new int[]{-1,1}, 0, false, true, true, false)
-        };
-        moveTypes[2] = new MoveType[5];//moved pawn
-        for (int i = 1; i < 5; i++) {
-            moveTypes[2][i] = moveTypes[1][i];
-        }
-        moveTypes[2][0] = new MoveType(new int[]{0,1}, 0, false, true, false, false);
-        moveTypes[3] = moveTypes[2];//moved pawn (enpassantable)(has the same moves)
-
-        moveTypes[4] = new MoveType[]{//unmoved rook
-                new MoveType(new int[]{0, 1}, 6),
-                new MoveType(new int[]{0, -1}, 6),
-                new MoveType(new int[]{1, 0}, 6),
-                new MoveType(new int[]{-1, 0}, 6),
-        };
-        moveTypes[5] = moveTypes[4];//moved rook (castle is only considered a king move, so it's not added here)
-        moveTypes[6] = new MoveType[]{//🐴
-                new MoveType(new int[]{1, 2}, 0),
-                new MoveType(new int[]{1, -2}, 0),
-                new MoveType(new int[]{-1, 2}, 0),
-                new MoveType(new int[]{-1, -2}, 0),
-                new MoveType(new int[]{2, 1}, 0),
-                new MoveType(new int[]{2, -1}, 0),
-                new MoveType(new int[]{-2, 1}, 0),
-                new MoveType(new int[]{-2, -1}, 0),
-        };
-        moveTypes[7] = new MoveType[]{//bishop
-                new MoveType(new int[]{1, 1}, 30),
-                new MoveType(new int[]{-1, -1}, 30),
-                new MoveType(new int[]{1, -1}, 30),
-                new MoveType(new int[]{-1, 1}, 30),
-        };
-        moveTypes[8] = new MoveType[]{//queen
-                new MoveType(new int[]{0, 1}, 6),
-                new MoveType(new int[]{0, -1}, 6),
-                new MoveType(new int[]{1, 0}, 6),
-                new MoveType(new int[]{-1, 0}, 6),
-                new MoveType(new int[]{1, 1}, 30),
-                new MoveType(new int[]{-1, -1}, 30),
-                new MoveType(new int[]{1, -1}, 30),
-                new MoveType(new int[]{-1, 1}, 30),
-        };
-        moveTypes[10] = new MoveType[]{//moved king (can't castle)
-                new MoveType(new int[]{0, 1}, 0),
-                new MoveType(new int[]{0, -1}, 0),
-                new MoveType(new int[]{1, 0}, 0),
-                new MoveType(new int[]{-1, 0}, 0),
-                new MoveType(new int[]{1, 1}, 0),
-                new MoveType(new int[]{-1, -1}, 0),
-                new MoveType(new int[]{1, -1}, 0),
-                new MoveType(new int[]{-1, 1}, 0),
-        };
-        moveTypes[9] = new MoveType[10];//unmoved king (can castle)
-        for (int i = 0; i < 8; i++) {
-            moveTypes[9][i] = moveTypes[10][i];
-        }
-        moveTypes[9][8] = new MoveType(new int[]{3, 0}, 0, false, false, false, true);
-        moveTypes[9][9] = new MoveType(new int[]{-4, 0}, 0, false, false, false, true);
+    /**
+     * constructor for MoveValidator
+     * @param moveTypes a map from integer -> movetype[], where the keys are the type of piece
+     *                  and the movetype[] is the move types corresponding to the moves the
+     *                  piece can make.
+     */
+    public MoveValidator(HashMap<Integer,MoveType[]> moveTypes){
+        this.moveTypes= moveTypes;
     }
 
+    /**
+     * method to get the move types given a piece type (
+     * @param pieceType the piece type (can be invalid)
+     * @return an array containing all the moves the piece can make (will return an empty list
+     * if there are no moves designated to this piece type.)
+     */
     private MoveType[] getMoveTypesOfPiece(int pieceType){
-        //maybe check for valid pieceType...
-
-        //white pieces move in the opposite direction
-        if (pieceType < 0){
-            return this.moveTypes[-pieceType];
+        if(!moveTypes.containsKey(pieceType)){
+            return new MoveType[]{};
         }
-        else{
-            MoveType[] mirroredMoveTypes = new MoveType[moveTypes[pieceType].length];
-            for (int i = 0; i < mirroredMoveTypes.length; i++) {
-                mirroredMoveTypes[i] = MoveType.createMirroredMove(moveTypes[pieceType][i]);
-            }
-            return mirroredMoveTypes;
-        }
+        return moveTypes.get(pieceType);
     }
 
-    //it generates all moves for every piece belonging to the player who's currently is (in board).
-    //it's necessary to see if the player is currently in checkmate (no valid moves)
-    //this method might be computationally difficult so we might want to do it differently....
+    /**
+     * Returns list of all the valid moves that the player whose turn it currently is can make
+     * (considering every piece)
+     * ("valid" means that it can't be moves that endanger the king)
+     * This is necessary to do at the start of each turn to see if there are no valid moves remaining,
+     * in which case it's checkmate
+     * @param board the board
+     * @return list of moves
+     */
     public ArrayList<Move> getAllValidMoves(Board board){
         ArrayList<Move> moves = new ArrayList<Move>();
         //add moves for each piece
@@ -121,10 +66,15 @@ public class MoveValidator {
                 moves.remove(i);
             }
         }
-
         return moves;
     }
 
+    /**
+     * return if the specified square is the enemy king wrt the player whose turn it currently is
+     * @param b the board
+     * @param location the square in question
+     * @return true iff it's the enemy king
+     */
     private Boolean isNonTurnPlayersKing(Board b, int[] location){
         //on white's turn, return if it is targeting the enemy (black) king
         if (b.getTurn()%2 == 0){
@@ -134,10 +84,17 @@ public class MoveValidator {
         return(b.getSquare(location) == 9 || b.getSquare(location) == 10);
     }
 
+    /**
+     * add all the moves the currently moving player can make to a list
+     * this includes everything, doesn't check if they're valid, i.e. they can leave
+     * the king vulnerable.
+     * @param moves list of moves
+     * @param b current board
+     */
     public void addAllMoves(ArrayList<Move> moves, Board b){
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                if(b.canPieceMove(x,y)){
+                if(b.isPiecesTurn(x,y)){
                     //adds all valid moves for this piece.
                     addPieceMoves(moves, b, x, y);
                 }
@@ -145,102 +102,88 @@ public class MoveValidator {
         }
     }
 
-    //generate moves for a specific piece
+    /**
+     * add all the moves for a piece at a specific (x,y) location to a list
+     * @param moves list to add to
+     * @param board the board
+     * @param x x coord
+     * @param y y coord
+     */
     public void addPieceMoves(ArrayList<Move> moves, Board board, int x, int y){
-        int[] edgeTopologies = new int[]{board.getVerticalEdgeType(), board.getHorizontalEdgeType()};
-
+        int[] origin = new int[]{x,y};
         MoveType[] pieceMoveTypes = getMoveTypesOfPiece(board.getSquare(x,y));
+
         for (int i = 0; i < pieceMoveTypes.length; i++) {
             MoveType moveType = pieceMoveTypes[i];
-            int repeats = 0;
-            int[] destination = new int[]{x,y};
-            do{
-                if (moveType.isNormalMove()){
-                    destination = applyMovementVector(destination, moveType, edgeTopologies);
-                    //initial validity check:
-                    //don't allow move if it results in an invalid location
-                    //don't allow move if it loops back to the piece's original location due to an alternate board topology
-                    //(this is allowed in some implementations of chess but we disable it for simplicity.)
-                    if(destination == null || (destination[0] ==x && destination[1] == y)){
-                        break;
-                    }else{
-                        //allow move if the move captures and square is occupied by an enemy
-                        //also allow move if the move isn't required to capture and square is empty
-                        if(moveType.isCanCapture() && board.isSquareEnemy(destination[0], destination[1])){
-                            moves.add(new Move(new int[]{x,y}, destination));
-                            break;
-                            //can't move past an enemy.
-                        }
-                        else if(moveType.isCanNotCapture() && board.isSquareEmpty(destination[0], destination[1]))
-                        {
-                            moves.add(new Move(new int[]{x,y}, destination));
-
-                            //can keep moving if the square was empty
-                        }else
-                        {
-                            //this case only occurs if the tile is occupied by an ally (move not allowed)
-                            break;
-                        }
-                    }
-                }
-                repeats += 1;
-            }while(repeats <= moveType.getMaxRepeats()) ;
+            moveType.AddPossibleMoves(moves,board,origin);
         }
     }
 
-    //public boolean checkIllegalMove(Board b, Move m){
-        //just use a checkmate method that should maybe exist anyway?
-        //Board b2 = ApplyMove(b, m);
-    //}
-
-    public int[] applyMovementVector(int[] position, MoveType moveType, int[] edgeTopologies){
-        int[] newPosition = new int[]{position[0]  + moveType.getVector()[0], position[1] + moveType.getVector()[1]};
-        //vertical edge type applies to horizontal movement,
+    /**
+     * given an [x,y] position vector, will return null if it's an invalid position on the board,
+     * otherwise will return the equivalent point that's within
+     * the range 0<=x<=7, 0<=y<=7 considering the board's topology
+     * @param position the position vector (can be invalid)
+     * @param b the board (includes topology information)
+     * @return null or a vector within the valid range
+     */
+    public static int[] applyQuotientRelation(int[] position, Board b) {
+        int[] edgeTopologies = new int[]{b.getVerticalEdgeType(), b.getHorizontalEdgeType()};
         for (int i = 0; i < 2; i++) {
-            boolean locationWithinBoard  = (newPosition[i] >= 0 && newPosition[i] <= 7);
+            boolean locationWithinBoard = (position[i] >= 0 && position[i] <= 7);
             if (edgeTopologies[i] == 0 && !locationWithinBoard) {
                 return null;
+            } else if (edgeTopologies[i] == 1 && !locationWithinBoard) {
+                position[i] = Math.floorMod(position[i], 8);//use floorMod to always return a positive value
             }
-            else if (edgeTopologies[i] == 1 && !locationWithinBoard){
-                newPosition[i] = Math.floorMod(newPosition[i], 8);//use floorMod to always return a positive value
-            }
-            //mirrored topology unimplemented
+            //(implementation unfinished - doesn't support mirrored topology)
+            //if more topologies are considered, we should refactor the different topologies
+            //into classes, and have each one overwrite an applyQuotientRelation function
+            //to do their unique behaviour
         }
-        return newPosition;
+        return position;
     }
 
+    /**
+     * Apply the given move to the board.
+     * @param b the board
+     * @param m the move to apply
+     */
     public void ApplyMove(Board b, Move m){
-        //System.out.println( b.toString());
-        //System.out.println(m.toString());
-        if(!b.canPieceMove(m.getOrigin()[0], m.getOrigin()[1])){
+        if(!b.isPiecesTurn(m.getOrigin())){
             throw new IllegalArgumentException();
         }
-        if(m.getIsNormalMove()){
-            int initialPiece =  b.getSquare(m.getOrigin());
-            int finalPiece = Math.abs((initialPiece));
 
-            if ( Math.abs(initialPiece) == 1){//pawn
-                finalPiece = 2;
+        //remove en passant status
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                if (b.isPiecesTurn(x,y)){
+                    if(b.getSquare(x,y) == 3){
+                        b.setSquare(x,y, 2);
+                    }
+                    if(b.getSquare(x,y) == -3){
+                        b.setSquare(x,y, -2);
+                    }
+                }
             }
-            if ( Math.abs(initialPiece) == 4){//rook
-                finalPiece = 5;
-            }
-            if ( Math.abs(initialPiece) == 9){//king
-                finalPiece = 10;
-            }
-            if(initialPiece<0){
-                finalPiece  = -finalPiece;
-            }
-
-
-
-            b.setSquare(m.getDestination(), finalPiece);
-            b.setSquare(m.getOrigin(), 0);
         }
-        //todo add en passant.
 
-        //todo add castle.
+        //apply move
+        m.ApplyMove(b);
+
+        //turn pawns into queens
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                if(b.getSquare(x,y) == 2 && y == 0){
+                    b.setSquare(x,y, 8);
+                }
+                if(b.getSquare(x,y) == -2 && y == 7){
+                    b.setSquare(x,y,-8);
+                }
+            }
+        }
+
+        //advance turn
         b.incrementTurn();
     }
-
 }

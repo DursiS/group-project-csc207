@@ -1,55 +1,116 @@
 package app;
 
+import javax.swing.JFrame;
+import java.awt.BorderLayout;
 
-import entity.Board;
-import entity.BoardStateList;
+import Analysis.AnalyzeController;
+import Analysis.AnalyzeMoveInteractor;
+import Analysis.AnalyzePresenter;
+import Analysis.AnalyzeView;
+import Analysis.AnalyzeViewModel;
+import Analysis.ChessApiAdapter;
 import entity.GameState;
 import entity.MoveValidator;
+import entity.MoveValidatorBuilder;
 import interface_adapter.MoveController;
 import interface_adapter.MovePresenter;
 import interface_adapter.MoveViewModel;
 import use_case.MakeMoveInteractor;
 import view.MoveView;
 
-import javax.swing.*;
+/**
+ * Assembles the application window, wiring each feature's Clean Architecture
+ * stack and adding its view to a region of the frame.
+ */
+public class AppBuilder extends JFrame {
+    private static final int WIDTH = 600;
+    private static final int HEIGHT = 600;
+    private static final String CENTER = "Center";
+    private static final String EAST = "East";
 
-public class AppBuilder {
+    private final GameState gameState;
+
+    // MakeMove feature
     private MoveViewModel moveViewModel;
     private MoveView moveView;
     private MoveController moveController;
     private MakeMoveInteractor makeMoveInteractor;
     private MovePresenter movePresenter;
 
-    //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
-    private GameState gameState;
+    // Analysis feature
+    private AnalyzeViewModel analyzeViewModel;
+    private AnalyzePresenter analyzePresenter;
+    private AnalyzeMoveInteractor analyzeInteractor;
+    private AnalyzeView analyzeView;
+    private AnalyzeController analyzeController;
+    private ChessApiAdapter chessApiAdaptor;
 
+    /**
+     * Configures the application frame around the given game state.
+     * @param gameState the shared game state the features build on
+     */
+    public AppBuilder(GameState gameState) {
+        this.gameState = gameState;
+        changeListeningSetup();
+        setTitle("Chess App");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        setSize(WIDTH, HEIGHT);
+    }
+
+    private void changeListeningSetup() {
+        analyzeViewModel = new AnalyzeViewModel();
+        analyzePresenter = new AnalyzePresenter(analyzeViewModel);
+
+        chessApiAdaptor = new ChessApiAdapter();
+        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter, gameState);
+    }
+
+    /**
+     * Wires the make-move feature and adds its view to the center.
+     * @return this builder, for chaining
+     */
     public AppBuilder addMoveView() {
         moveViewModel = new MoveViewModel();
-
-        gameState = new GameState(new Board(), 0, 0, new BoardStateList(),"idk what this is");
-        MoveValidator moveValidator = new MoveValidator();
+        final MoveValidator moveValidator = new MoveValidatorBuilder()
+                .addNormalMoves()
+                .addEnPassants()
+                .addCastles()
+                .duplicateAndMirrorMoves()
+                .build();
 
         movePresenter = new MovePresenter(moveViewModel);
-
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
+
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
-        makeMoveInteractor.UpdateVisuals();
+        add(moveView, CENTER);
 
+        makeMoveInteractor.updateVisuals();
         return this;
     }
 
-    public JFrame build(){
-        // 1. Create the window frame
-        final JFrame application = new JFrame("Chess");
-        application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        application.setSize(600,600);
+    /**
+     * Wires the analysis feature and adds its view to the east.
+     * @return this builder, for chaining
+     */
+    public AppBuilder addAnalysisView() {
+        analyzeController = new AnalyzeController(analyzeInteractor);
+        analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
+        add(analyzeView, EAST);
+        return this;
+    }
 
-        application.add(moveView);//as a panel
-
-        application.setVisible(true);
-
-        return application;
+    /**
+     * Sizes the frame to its contents and shows it.
+     * @return the assembled application frame
+     */
+    public JFrame build() {
+        pack();
+        setVisible(true);
+        analyzeInteractor.analyzeInitialPosition();
+        return this;
     }
 }

@@ -10,7 +10,7 @@ public class MoveValidatorTest {
     void basicMoveValidatorTest(){
         //start with default board
         Board b = new Board();
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -28,7 +28,8 @@ public class MoveValidatorTest {
         squares[0][0] = 4;
         squares[0][3] = -4;
         Board b = new Board(squares,  0,0,0);
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
+
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -44,7 +45,7 @@ public class MoveValidatorTest {
         squares[0][4] = 4;
         squares[0][3] = 4;
         Board b = new Board(squares, 0,0,0);//default board;
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -64,7 +65,7 @@ public class MoveValidatorTest {
         squares[4][7] = 4;
 
         Board b = new Board(squares, 0,0,0);//default board;
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -86,7 +87,7 @@ public class MoveValidatorTest {
 
 
         Board b = new Board(squares, 0,1,0);
-        MoveValidator v = new MoveValidator();
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
 
         ArrayList<Move> moves = v.getAllValidMoves(b);
         System.out.println(moves.size());
@@ -94,6 +95,41 @@ public class MoveValidatorTest {
             System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
         }
         assertEquals(moves.size(), 5);
+    }
+
+
+    @Test
+    void castleTest(){
+        int[][] squares = new int[8][8];
+        squares[0][4] = -9;
+        squares[0][0] = -4;
+        Board b = new Board(squares, 0,0,0);
+        b.setTurn(1);
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
+
+        ArrayList<Move> moves = v.getAllValidMoves(b);
+        System.out.println(moves.size());
+        for (int i = 0; i < moves.size(); i++) {
+            System.out.println( vectorToString(moves.get(i).getOrigin()) + " -> " + vectorToString(moves.get(i).getDestination()));
+        }
+        assertEquals(moves.size(), 16);
+
+        CastleMove castle = (CastleMove)( moves.get(15));
+        System.out.println(vectorToString(castle.getOrigin()));
+        System.out.println(vectorToString(castle.getDestination()));
+
+    }
+
+    @Test
+    void enPassantTest(){
+        int[][] squares = new int[8][8];
+        squares[4][1] = -3;
+        squares[4][0] = 2;
+        Board b = new Board(squares, 0,0,0);
+        MoveValidator v = new MoveValidatorBuilder().doDefaultSetup().build();
+
+        ArrayList<Move> moves = v.getAllValidMoves(b);
+        assertEquals(moves.size(),  2);
     }
 
 
