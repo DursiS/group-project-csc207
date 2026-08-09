@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AnalyzePresenterTest {
     static AnalyzeOutputData outputData;
@@ -31,5 +32,21 @@ public class AnalyzePresenterTest {
     void testAnalyzePresenterMakeMessage() {
         String message = presenter.makeMessage(outputData);
         assertEquals(formatted_message, message);
+    }
+
+    @Test
+    void testAnalyzePresenterMakeMessageBlackTurn() {
+        AnalyzeOutputData blackData = new AnalyzeOutputData(60.0,
+                0.30,
+                "d2",
+                "d4",
+                false,
+                2
+        );
+        String message = presenter.makeMessage(blackData);
+        assertTrue(message.startsWith("== BLACK'S TURN  (2) =="));
+        assertTrue(message.contains("Black WinChance:"));
+        assertTrue(message.contains("Black Eval:"));
+        assertTrue(message.contains("Best Move: d2 -> d4"));
     }
 }

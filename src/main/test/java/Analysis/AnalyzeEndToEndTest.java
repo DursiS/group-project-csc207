@@ -21,8 +21,8 @@ public class AnalyzeEndToEndTest {
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-        // The interactor reads a fresh board internally (getRecentBoard is a stub),
-        // so each call analyzes the start position and the turn alternates by message count.
+        // The interactor reads a fresh board internally,
+        // so each call analyzes the start position and the turn alternates
         view.executeTurnAnalysis();
         view.executeTurnAnalysis();
         view.executeTurnAnalysis();
