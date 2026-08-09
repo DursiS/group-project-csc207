@@ -77,7 +77,9 @@ public class SaveResumeView {
         JScrollPane scrollPane = new JScrollPane(savedGamesList);
         JPanel centerPanel = new JPanel(new BorderLayout());
 
-        centerPanel.add(new JLabel("Saved Games"), BorderLayout.NORTH);
+        centerPanel.add(new JLabel("Saved Games: " +
+                        resumeGameController.getSaveNames().size()),
+                BorderLayout.NORTH);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         //bottom
