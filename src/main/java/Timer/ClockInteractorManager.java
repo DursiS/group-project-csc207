@@ -10,10 +10,10 @@ import java.beans.PropertyChangeListener;
 
 public class ClockInteractorManager implements ClockInputBoundary, PropertyChangeListener {
     private static final int S_TO_MS = 1000;
-    private ClockInteractor black;
-    private ClockInteractor white;
-    private GameState gameState;
-    private int increment;
+    private final ClockInteractor black;
+    private final ClockInteractor white;
+    private final GameState gameState;
+    private final int increment;
 
     public ClockInteractorManager(ClockInteractor black, ClockInteractor white, GameState gameState){
         this.gameState = gameState;

@@ -5,7 +5,7 @@ public class GameState {
     private Board board;
 
     //increment
-    private int increment;
+    private final int increment;
 
     //remaining time for both players in millisecond
     private int whiteMilliSec;

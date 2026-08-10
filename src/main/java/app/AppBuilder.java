@@ -26,7 +26,6 @@ import Timer.*;
 public class AppBuilder extends JFrame {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
-    private static final String CENTER = "Center";
     private static final String EAST = "East";
     private static final String DEFAULT_TIME_STR = "1:00.0";
 

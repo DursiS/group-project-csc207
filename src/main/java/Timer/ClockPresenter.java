@@ -9,7 +9,7 @@ public class ClockPresenter implements ClockOutputBoundary {
     private static final int MINUTE_MULTIPLIER = 60000;
     private static final int SECOND_MULTIPLIER = 1000;
     private static final int DECIMAL_CUTOFF = 2;
-    private ClockViewModel viewModel;
+    private final ClockViewModel viewModel;
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public ClockPresenter(ClockViewModel viewModel){

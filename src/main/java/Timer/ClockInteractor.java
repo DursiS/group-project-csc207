@@ -52,13 +52,15 @@ public class ClockInteractor extends Thread{
 
                 if (gameState.getBlackMilliSec() <= 0) {
                     gameState.setBlackMilliSec(0);
-                    JOptionPane.showMessageDialog(null, "BLACK RAN OUT OF TIME! WHITE WINS!", "TIME OUT!", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "BLACK RAN OUT OF TIME! WHITE WINS!",
+                            "TIME OUT!", JOptionPane.INFORMATION_MESSAGE);
                     pause();
                 }
 
                 if (gameState.getWhiteMilliSec() <= 0) {
                     gameState.setWhiteMilliSec(0);
-                    JOptionPane.showMessageDialog(null, "WHITE RAN OUT OF TIME! BLACK WINS!", "TIME OUT!", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "WHITE RAN OUT OF TIME! BLACK WINS!",
+                            "TIME OUT!", JOptionPane.INFORMATION_MESSAGE);
                     pause();
                 }
             }
@@ -88,5 +90,9 @@ public class ClockInteractor extends Thread{
 
     public void unpause(){
         running = true;
+    }
+
+    public void stop(){
+        stop = true;
     }
 }
