@@ -18,6 +18,23 @@ import MakeMove.MoveViewModel;
 import MakeMove.MakeMoveInteractor;
 import MakeMove.MoveView;
 
+import SaveResume.GameDataAccess;
+import SaveResume.FileGameDataAccessObject;
+import SaveResume.ResumeGameController;
+import SaveResume.ResumeGameInputBoundary;
+import SaveResume.ResumeGameInteractor;
+import SaveResume.ResumeGamePresenter;
+import SaveResume.ResumeGameViewModel;
+import SaveResume.SaveGameController;
+import SaveResume.SaveGameInputBoundary;
+import SaveResume.SaveGameInteractor;
+import SaveResume.SaveGamePresenter;
+import SaveResume.SaveGameViewModel;
+import SaveResume.SaveResumeView;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
  * stack and adding its view to a region of the frame.
@@ -27,8 +44,9 @@ public class AppBuilder extends JFrame {
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
     private static final String EAST = "East";
+    private static final String WEST = "West";
 
-    private final GameState gameState;
+    private GameState gameState;
 
     // MakeMove feature
     private MoveViewModel moveViewModel;
@@ -36,6 +54,20 @@ public class AppBuilder extends JFrame {
     private MoveController moveController;
     private MakeMoveInteractor makeMoveInteractor;
     private MovePresenter movePresenter;
+
+    //Save feature
+    private GameDataAccess gameDataAccess;
+    private SaveGameViewModel saveGameViewModel;
+    private SaveGamePresenter saveGamePresenter;
+    private SaveGameInputBoundary saveGameInteractor;
+    private SaveGameController saveGameController;
+
+    private ResumeGameViewModel resumeGameViewModel;
+    private ResumeGamePresenter resumeGamePresenter;
+    private ResumeGameInputBoundary resumeGameInteractor;
+    private ResumeGameController resumeGameController;
+
+    private SaveResumeView saveResumeView;
 
     // Analysis feature
     private AnalyzeViewModel analyzeViewModel;
@@ -51,9 +83,10 @@ public class AppBuilder extends JFrame {
      */
     public AppBuilder(GameState gameState) {
         this.gameState = gameState;
+        saveSetup();
         changeListeningSetup();
         setTitle("Chess App");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
         setSize(WIDTH, HEIGHT);
     }
@@ -64,6 +97,21 @@ public class AppBuilder extends JFrame {
 
         chessApiAdaptor = new ChessApiAdapter();
         analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter, gameState);
+    }
+
+    private void saveSetup() {
+
+        gameDataAccess = new FileGameDataAccessObject();
+        saveGameViewModel = new SaveGameViewModel();
+        saveGamePresenter = new SaveGamePresenter(saveGameViewModel);
+        saveGameInteractor = new SaveGameInteractor(gameDataAccess, saveGamePresenter);
+    }
+
+    private void replaceGameState(GameState newGameState) {
+
+        this.gameState = newGameState;
+
+        makeMoveInteractor.setGameState(newGameState);
     }
 
     /**
@@ -80,7 +128,10 @@ public class AppBuilder extends JFrame {
                 .build();
 
         movePresenter = new MovePresenter(moveViewModel);
-        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator,
+                gameState,
+                movePresenter,
+                saveGameInteractor);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
 
         moveController = new MoveController(makeMoveInteractor);
@@ -101,6 +152,40 @@ public class AppBuilder extends JFrame {
         analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
         add(analyzeView, EAST);
         return this;
+    }
+
+    public AppBuilder addSaveResumeView() {
+        saveGameController = new SaveGameController(saveGameInteractor);
+        resumeGameViewModel = new ResumeGameViewModel();
+        resumeGamePresenter = new ResumeGamePresenter(resumeGameViewModel);
+
+        resumeGameInteractor = new ResumeGameInteractor(
+                        gameDataAccess,
+                        resumeGamePresenter,
+                        saveGameInteractor);
+        resumeGameController =
+                new ResumeGameController(
+                        resumeGameInteractor
+                );
+        saveResumeView = new SaveResumeView(
+                        saveGameController,
+                        saveGameViewModel,
+                        resumeGameController,
+                        resumeGameViewModel,
+                        gameState,
+                        this::replaceGameState);
+        add(saveResumeView, WEST);
+        closeButtonListener();
+        return this;
+    }
+
+    private void closeButtonListener() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                saveResumeView.exitGame(AppBuilder.this);
+            }
+        });
     }
 
     /**

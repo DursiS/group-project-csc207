@@ -1,4 +1,4 @@
-package entity;
+package MakeMove;
 
 import MakeMove.*;
 import org.junit.jupiter.api.Test;

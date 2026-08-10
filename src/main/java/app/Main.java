@@ -66,6 +66,7 @@ public class Main {
         new AppBuilder(gameState)
                 .addAnalysisView()
                 .addMoveView()
+                .addSaveResumeView()
                 .build();
     }
 
