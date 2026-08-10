@@ -76,6 +76,6 @@ public class Main {
      */
     private static GameState getGameState(int topology) {
         final Board board = new Board(topology, 0);
-        return new GameState(board, 0, 0, new BoardStateList(), "Main Board Result");
+        return new GameState(board, 60000, 60000, new BoardStateList(), "Main Board Result", 5);
     }
 }

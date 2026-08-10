@@ -9,22 +9,34 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class ClockInteractorManager implements ClockInputBoundary, PropertyChangeListener {
+    private static final int S_TO_MS = 1000;
     private ClockInteractor black;
     private ClockInteractor white;
     private GameState gameState;
+    private int increment;
 
     public ClockInteractorManager(ClockInteractor black, ClockInteractor white, GameState gameState){
         this.gameState = gameState;
+        this.increment = gameState.getIncrement();
         this.black = black;
         this.white = white;
     }
 
     public void start(){
-        start();
+        white.start();
+        black.start();
+
+        if(gameState.getBoard().getTurn() % 2 == 0) { // White Turn
+            white.unpause();
+        }
+        else{
+            black.unpause();
+        }
     }
 
     public void stop(){
-
+        black.pause();
+        white.pause();
     }
 
     /**
@@ -34,13 +46,21 @@ public class ClockInteractorManager implements ClockInputBoundary, PropertyChang
      */
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if (UPDATE_CHANNEL.equals(propertyChangeEvent.getPropertyName())) {
-            this.gameState = (GameState) propertyChangeEvent.getNewValue();
-            runAnalysisAsync();
+        if ("update-analysis".equals(propertyChangeEvent.getPropertyName())) {
+            changeTurn();
         }
     }
 
     public void changeTurn(){
-
+        if (gameState.getBoard().getTurn() % 2 == 0){ // White Turn
+            black.pause();
+            white.unpause();
+            gameState.setBlackMilliSec(gameState.getBlackMilliSec() + increment * S_TO_MS);
+        }
+        else {
+            white.pause();
+            black.unpause();
+            gameState.setWhiteMilliSec(gameState.getWhiteMilliSec() + increment * S_TO_MS);
+        }
     }
 }

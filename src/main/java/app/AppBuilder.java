@@ -1,7 +1,7 @@
 package app;
 
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 import Analysis.AnalyzeController;
 import Analysis.AnalyzeMoveInteractor;
@@ -17,8 +17,7 @@ import MakeMove.MovePresenter;
 import MakeMove.MoveViewModel;
 import MakeMove.MakeMoveInteractor;
 import MakeMove.MoveView;
-import Timer.ClockInteractor;
-import Timer.ClockInteractorManager;
+import Timer.*;
 
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
@@ -29,6 +28,7 @@ public class AppBuilder extends JFrame {
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
     private static final String EAST = "East";
+    private static final String DEFAULT_TIME_STR = "1:00.0";
 
     private final GameState gameState;
 
@@ -89,12 +89,21 @@ public class AppBuilder extends JFrame {
         movePresenter = new MovePresenter(moveViewModel);
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
-        makeMoveInteractor.addPropertyChangeListener(clockInteractorManager);
 
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
-        add(moveView, CENTER);
+
+        JPanel game = new JPanel();
+        game.setLayout(new BoxLayout(game, BoxLayout.Y_AXIS));
+        addTimer(false, game);
+        game.add(moveView);
+        addTimer(true, game);
+
+        add(game);
+
+        clockInteractorManager = new ClockInteractorManager(blackClockInteractor, whiteClockInteractor, gameState);
+        makeMoveInteractor.addPropertyChangeListener(clockInteractorManager);
 
         makeMoveInteractor.updateVisuals();
         return this;
@@ -111,6 +120,22 @@ public class AppBuilder extends JFrame {
         return this;
     }
 
+    public void addTimer(boolean white, JPanel parent){
+        ClockViewModel clockViewModel = new ClockViewModel(DEFAULT_TIME_STR);
+        ClockPresenter clockPresenter = new ClockPresenter(clockViewModel);
+
+        if (white) {
+            whiteClockInteractor = new ClockInteractor(gameState, true, clockPresenter);
+        }
+        else {
+            blackClockInteractor = new ClockInteractor(gameState, false, clockPresenter);
+        }
+
+        ClockView clockView = new ClockView(clockViewModel);
+        clockPresenter.addPropertyChangeListener(clockView);
+        parent.add(clockView);
+    }
+
     /**
      * Sizes the frame to its contents and shows it.
      * @return the assembled application frame
@@ -119,6 +144,7 @@ public class AppBuilder extends JFrame {
         pack();
         setVisible(true);
         analyzeInteractor.analyzeInitialPosition();
+        clockInteractorManager.start();
         return this;
     }
 }

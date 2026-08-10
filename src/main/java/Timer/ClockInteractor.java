@@ -5,60 +5,88 @@ package Timer;
 
 import MakeMove.GameState;
 
-import java.beans.PropertyChangeListener;
+import javax.swing.*;
 
-public class ClockInteractor extends Thread implements PropertyChangeListener {
+public class ClockInteractor extends Thread{
+    private static final int UPDATE_INTERVAL = 10;
     private final GameState gameState;
-    private final int increment;
     private boolean running = false;
+    private boolean stop = false;
     private final boolean white;
+    private final ClockOutputBoundary output;
 
-    public ClockInteractor(GameState gameState, boolean white){
+    public ClockInteractor(GameState gameState, boolean white, ClockOutputBoundary output){
         this.gameState = gameState;
-        this.increment = gameState.getIncrement();
         this.white = white;
+        this.output = output;
     }
 
     public void run(){
-        long lastTime = System.currentTimeMillis();
+        long lastTime;
         long thisTime;
-        running = true;
         int count = 0;
-        while(running){
-            try {
-                wait(1);
-            }
-            catch (InterruptedException exception){
-                throw new RuntimeException(exception);
-            }
+        while (!stop) {
+            lastTime = System.currentTimeMillis();
+            while (running) {
+                try {
+                    sleep(1);
+                } catch (InterruptedException exception) {
+                    throw new RuntimeException(exception);
+                }
 
-            thisTime = System.currentTimeMillis();
+                thisTime = System.currentTimeMillis();
 
-            if(white) { //White Turn
-                gameState.setWhiteMilliSec(gameState.getWhiteMilliSec() - (int)(thisTime - lastTime));
+                if (white) { //White Turn
+                    gameState.setWhiteMilliSec(gameState.getWhiteMilliSec() - (int) (thisTime - lastTime));
+                } else {
+                    gameState.setBlackMilliSec(gameState.getBlackMilliSec() - (int) (thisTime - lastTime));
+                }
+
+                lastTime = thisTime;
+
+                count++;
+                if (count >= UPDATE_INTERVAL) {
+                    updateOutput();
+                    count = 0;
+                }
+
+                if (gameState.getBlackMilliSec() <= 0) {
+                    gameState.setBlackMilliSec(0);
+                    JOptionPane.showMessageDialog(null, "BLACK RAN OUT OF TIME! WHITE WINS!", "TIME OUT!", JOptionPane.INFORMATION_MESSAGE);
+                    pause();
+                }
+
+                if (gameState.getWhiteMilliSec() <= 0) {
+                    gameState.setWhiteMilliSec(0);
+                    JOptionPane.showMessageDialog(null, "WHITE RAN OUT OF TIME! BLACK WINS!", "TIME OUT!", JOptionPane.INFORMATION_MESSAGE);
+                    pause();
+                }
+            }
+            updateOutput();
+            while (!running){
+                try {
+                    sleep(1);
+                } catch (InterruptedException exception) {
+                    throw new RuntimeException(exception);
+                }
+            }
+        }
+    }
+
+    private void updateOutput(){
+            if(white) {
+                output.updateTime(gameState.getWhiteMilliSec());
             }
             else{
-                gameState.setBlackMilliSec(gameState.getBlackMilliSec() - (int)(thisTime - lastTime));
+                output.updateTime(gameState.getBlackMilliSec());
             }
-
-            lastTime = thisTime;
-
-            count ++;
-            if(count >= 100){
-                //TODO Shout that value has changed
-                count = 0;
-            }
-        }
-        if(white) { //White Turn
-            gameState.setWhiteMilliSec(gameState.getWhiteMilliSec() + increment);
-        }
-        else{
-            gameState.setBlackMilliSec(gameState.getBlackMilliSec() + increment);
-        }
-        //TODO Shout that the value has changed
     }
 
     public void pause(){
         running = false;
+    }
+
+    public void unpause(){
+        running = true;
     }
 }

@@ -20,7 +20,7 @@ public class GameState {
     //create a game state with infos to save the game
     public GameState(Board board, int whiteMilliSec, int blackMilliSec,
                      BoardStateList boardStateList,
-                     String gameResult){
+                     String gameResult, int increment){
         if (board == null){
             throw new IllegalArgumentException("Board can't be null");
         }
@@ -35,6 +35,7 @@ public class GameState {
         this.blackMilliSec = blackMilliSec;
         this.boardStateList = boardStateList.Copy();
         this.gameResult = gameResult;
+        this.increment = increment;
     }
     public Board getBoardCopy(){return this.board.Copy();}
     public BoardStateList getBoardStateListCopy(){return this.boardStateList.Copy();}
