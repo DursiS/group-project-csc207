@@ -1,1 +1,1 @@
-No AI Usage
+Generative AI was used for the repository readme, and the creation of sequence diagrams used in the presentation. No AI was used for the project's code.
