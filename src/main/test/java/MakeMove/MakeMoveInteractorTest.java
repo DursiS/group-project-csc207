@@ -6,6 +6,12 @@ import MakeMove.MoveViewModel;
 import org.junit.jupiter.api.Test;
 import MakeMove.MakeMoveInteractor;
 import MakeMove.MoveView;
+import SaveResume.GameDataAccess;
+import SaveResume.InMemoryGameDataAccessObject;
+import SaveResume.SaveGameInputBoundary;
+import SaveResume.SaveGameInteractor;
+import SaveResume.SaveGamePresenter;
+import SaveResume.SaveGameViewModel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,7 +30,16 @@ public class MakeMoveInteractorTest {
         gameState = new GameState(new Board(0,0), 0, 0, new BoardStateList(),"idk what this is");
         MoveValidator moveValidator = new MoveValidatorBuilder().doDefaultSetup().build();
         movePresenter = new MovePresenter(moveViewModel);
-        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        GameDataAccess gameDataAccess = new InMemoryGameDataAccessObject();
+
+        SaveGameViewModel saveGameViewModel = new SaveGameViewModel();
+
+        SaveGamePresenter saveGamePresenter = new SaveGamePresenter(saveGameViewModel);
+
+        SaveGameInputBoundary saveGameInteractor = new SaveGameInteractor(
+                        gameDataAccess,
+                        saveGamePresenter);
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter, saveGameInteractor);
         moveController = new MoveController(makeMoveInteractor);
         moveView = new MoveView(moveViewModel, moveController);
         makeMoveInteractor.updateVisuals();
