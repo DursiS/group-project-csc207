@@ -36,7 +36,7 @@ import SaveResume.SaveResumeView;
  * stack and adding its view to a region of the frame.
  */
 public class GameBuilder extends JPanel {
-    private static final int WIDTH = 600;
+    private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
     private static final String EAST = "East";
