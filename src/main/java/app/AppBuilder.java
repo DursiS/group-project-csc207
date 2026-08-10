@@ -17,6 +17,8 @@ import MakeMove.MovePresenter;
 import MakeMove.MoveViewModel;
 import MakeMove.MakeMoveInteractor;
 import MakeMove.MoveView;
+import Timer.ClockInteractor;
+import Timer.ClockInteractorManager;
 
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
@@ -44,6 +46,11 @@ public class AppBuilder extends JFrame {
     private AnalyzeView analyzeView;
     private AnalyzeController analyzeController;
     private ChessApiAdapter chessApiAdaptor;
+
+    //Timer feature
+    private ClockInteractor blackClockInteractor;
+    private ClockInteractor whiteClockInteractor;
+    private ClockInteractorManager clockInteractorManager;
 
     /**
      * Configures the application frame around the given game state.
@@ -82,6 +89,7 @@ public class AppBuilder extends JFrame {
         movePresenter = new MovePresenter(moveViewModel);
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
+        makeMoveInteractor.addPropertyChangeListener(clockInteractorManager);
 
         moveController = new MoveController(makeMoveInteractor);
 

@@ -4,6 +4,9 @@ public class GameState {
     //current chess board
     private Board board;
 
+    //increment
+    private int increment;
+
     //remaining time for both players in millisecond
     private int whiteMilliSec;
     private int blackMilliSec;
@@ -35,8 +38,11 @@ public class GameState {
     }
     public Board getBoardCopy(){return this.board.Copy();}
     public BoardStateList getBoardStateListCopy(){return this.boardStateList.Copy();}
+    public int getIncrement(){return this.increment;}
     public int getWhiteMilliSec(){return this.whiteMilliSec;}
     public int getBlackMilliSec(){return this.blackMilliSec;}
+    public void setWhiteMilliSec(int whiteMilliSec){this.whiteMilliSec = whiteMilliSec;}
+    public void setBlackMilliSec(int blackMilliSec){this.blackMilliSec = blackMilliSec;}
     public String getGameResult(){return this.gameResult;}
 
     public Board getBoard(){
