@@ -12,7 +12,7 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
     private static final String UPDATE_CHANNEL = "update-analysis";
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
-    private final BoardToFenAdapter fenTranslator = new BoardToFenAdapter();
+    private final FenConverter fenTranslator = new BoardToFenAdapter();
     private GameState gameState;
 
     /**

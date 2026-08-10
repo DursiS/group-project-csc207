@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Translates a Board into its FEN string representation.
  */
-public class BoardToFenAdapter {
+public class BoardToFenAdapter implements FenConverter {
 
     private static final String WHITE_FEN_BY_CODE = "0PPPRRNBQKK";
     private static final Map<Integer, Character> PIECE_TO_FEN = buildPieceToFen();
@@ -25,6 +25,7 @@ public class BoardToFenAdapter {
      * @param isWhiteTurn is the turn white's
      * @return the FEN string
      */
+    @Override
     public String convertToFen(Board board, boolean isWhiteTurn) {
         this.isWhiteTurn = isWhiteTurn;
         return buildFenGrid(board)
