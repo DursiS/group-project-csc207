@@ -110,7 +110,7 @@ public class AppBuilder extends JFrame {
                 .build();
 
         movePresenter = new MovePresenter(moveViewModel);
-        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameRecord,
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameDataAccessObject, gameRecord,
                 gameRecord.getHistory().get(0), movePresenter);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
 
@@ -153,6 +153,7 @@ public class AppBuilder extends JFrame {
         gameDetailViewModel = new GameDetailViewModel();
         gameDetailPresenter = new GameDetailPresenter(gameDetailViewModel, viewManagerModel);
         gameDetailInteractor = new GameDetailInteractor(gameDetailPresenter);
+        gameDetailInteractor.addPropertyChangeListener(archiveAnalyzeInteractor);
         gameDetailController = new GameDetailController(gameDetailInteractor);
         gameDetailView = new GameDetailView(gameDetailController, gameDetailViewModel);
         gameDetailCard.add(gameDetailView, CENTER);
@@ -189,8 +190,8 @@ public class AppBuilder extends JFrame {
         add(views, BorderLayout.CENTER);
         pack();
         setVisible(true);
-//        analyzeInteractor.analyzeInitialPosition();
-        gameListController.getGameList();
+        analyzeInteractor.analyzeInitialPosition();
+//        gameListController.getGameList();
         return this;
     }
 }

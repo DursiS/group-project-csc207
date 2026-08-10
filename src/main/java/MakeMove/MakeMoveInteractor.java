@@ -1,6 +1,5 @@
 package MakeMove;
 
-import archive.GameDataAccessObject;
 import archive.GameRecord;
 
 import javax.swing.*;
@@ -33,9 +32,11 @@ public class MakeMoveInteractor implements MoveInputBoundary {
      * @param gameState reference to the gamestate to retrieve the board from
      * @param moveOutputBoundary after making a move, the raw information to present is passed here
      */
-    public MakeMoveInteractor(MoveValidator validator, GameRecord gameRecord, GameState gameState,
+    public MakeMoveInteractor(MoveValidator validator, EndGameDataAccess gameDataAccessObject,
+                              GameRecord gameRecord, GameState gameState,
                               MoveOutputBoundary moveOutputBoundary) {
         this.validator = validator;
+        this.gameDataAccessObject = gameDataAccessObject;
         this.gameRecord = gameRecord;
         this.gameState = gameState;
         this.moveOutputBoundary = moveOutputBoundary;

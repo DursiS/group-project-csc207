@@ -1,11 +1,13 @@
-package entity;
+package MakeMove;
 
-import interface_adapter.MoveController;
-import interface_adapter.MovePresenter;
-import interface_adapter.MoveViewModel;
+import MakeMove.MoveController;
+import MakeMove.MovePresenter;
+import MakeMove.MoveViewModel;
+import archive.GameDataAccessObject;
+import archive.GameRecord;
 import org.junit.jupiter.api.Test;
-import use_case.MakeMoveInteractor;
-import view.MoveView;
+import MakeMove.MakeMoveInteractor;
+import MakeMove.MoveView;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,13 +22,15 @@ public class MakeMoveInteractorTest {
         GameState gameState;
         GameRecord gameRecord;
 
+        GameDataAccessObject gameDataAccessObject = new GameDataAccessObject();
         moveViewModel = new MoveViewModel();
         //this should not be stored here, rather it should be created and passed to the MakeMoveInteractor when starting a game...
         gameState = new GameState(new Board(0,0), 0, 0, new BoardStateList(),"idk what this is");
         gameRecord = new GameRecord(gameState);
         MoveValidator moveValidator = new MoveValidatorBuilder().doDefaultSetup().build();
         movePresenter = new MovePresenter(moveViewModel);
-        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameRecord, gameState, movePresenter);
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameDataAccessObject, gameRecord,
+                gameState, movePresenter);
         moveController = new MoveController(makeMoveInteractor);
         moveView = new MoveView(moveViewModel, moveController);
         makeMoveInteractor.updateVisuals();
