@@ -1,7 +1,7 @@
 package app;
 
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
 import Analysis.AnalyzeController;
 import Analysis.AnalyzeMoveInteractor;
@@ -17,6 +17,7 @@ import MakeMove.MovePresenter;
 import MakeMove.MoveViewModel;
 import MakeMove.MakeMoveInteractor;
 import MakeMove.MoveView;
+import archive.*;
 
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
@@ -29,6 +30,17 @@ public class AppBuilder extends JFrame {
     private static final String EAST = "East";
 
     private final GameState gameState;
+
+    private final GameDataAccessObject gameDataAccessObject =  new GameDataAccessObject();
+
+    // Wrap views in a card and use view manager to switch
+    CardLayout cardLayout = new CardLayout();
+    JPanel views = new JPanel(cardLayout);
+    JPanel playCard = new JPanel(new BorderLayout());
+    JPanel gameDetailCard = new JPanel(new BorderLayout());
+    JPanel gameListCard = new JPanel(new BorderLayout());
+    private final ViewManagerModel viewManagerModel = new ViewManagerModel();
+    final ViewManager viewManager = new ViewManager(views, cardLayout, viewManagerModel);
 
     // MakeMove feature
     private MoveViewModel moveViewModel;
@@ -44,6 +56,19 @@ public class AppBuilder extends JFrame {
     private AnalyzeView analyzeView;
     private AnalyzeController analyzeController;
     private ChessApiAdapter chessApiAdaptor;
+
+    // Game archive feature
+    private GameDetailViewModel gameDetailViewModel;
+    private GameDetailPresenter gameDetailPresenter;
+    private GameDetailInteractor gameDetailInteractor;
+    private GameDetailController gameDetailController;
+    private GameDetailView gameDetailView;
+    private SelectGameInteractor selectGameInteractor;
+    private GameListViewModel gameListViewModel;
+    private GameListPresenter gameListPresenter;
+    private GameListInteractor gameListInteractor;
+    private GameListController gameListController;
+    private GameListView gameListView;
 
     /**
      * Configures the application frame around the given game state.
@@ -86,20 +111,60 @@ public class AppBuilder extends JFrame {
         moveController = new MoveController(makeMoveInteractor);
 
         moveView = new MoveView(moveViewModel, moveController);
-        add(moveView, CENTER);
+        playCard.add(moveView, CENTER);
 
         makeMoveInteractor.updateVisuals();
         return this;
     }
 
     /**
-     * Wires the analysis feature and adds its view to the east.
+     * Wires the analysis feature and adds its view on the playCard.
      * @return this builder, for chaining
      */
     public AppBuilder addAnalysisView() {
         analyzeController = new AnalyzeController(analyzeInteractor);
         analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
-        add(analyzeView, EAST);
+        playCard.add(analyzeView, EAST);
+        return this;
+    }
+
+    /**
+     * Wires the analysis feature and adds its view on the gameDetailCard
+     * @return this builder, for chaining
+     */
+    public AppBuilder addArchiveAnalysisView() {
+        analyzeController = new AnalyzeController(analyzeInteractor);
+        analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
+        gameDetailCard.add(analyzeView, EAST);
+        return this;
+    }
+
+    /**
+     * Wires the game detail view for the archive feature.
+     * @return this builder, for chaining
+     */
+    public AppBuilder addGameDetailView() {
+        gameDetailViewModel = new GameDetailViewModel();
+        gameDetailPresenter = new GameDetailPresenter(gameDetailViewModel, viewManagerModel);
+        gameDetailInteractor = new GameDetailInteractor(gameDetailPresenter);
+        gameDetailController = new GameDetailController(gameDetailInteractor);
+        gameDetailView = new GameDetailView(gameDetailController, gameDetailViewModel);
+        gameDetailCard.add(gameDetailView, CENTER);
+        return this;
+    }
+
+    /**
+     * Wires the game list view for the archive feature.
+     * @return this builder, for chaining
+     */
+    public AppBuilder addGameListView() {
+        selectGameInteractor = new SelectGameInteractor(gameDataAccessObject, gameDetailPresenter);
+        gameListViewModel = new GameListViewModel();
+        gameListPresenter = new GameListPresenter(gameListViewModel, viewManagerModel);
+        gameListInteractor = new GameListInteractor(gameDataAccessObject, gameListPresenter);
+        gameListController = new GameListController(gameListInteractor, selectGameInteractor);
+        gameListView = new GameListView(gameListController, gameListViewModel);
+        gameListCard.add(gameListView, CENTER);
         return this;
     }
 
@@ -108,6 +173,14 @@ public class AppBuilder extends JFrame {
      * @return the assembled application frame
      */
     public JFrame build() {
+        playCard.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        gameDetailCard.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        gameListCard.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+
+        views.add(playCard, "Play");
+        views.add(gameDetailCard, GameDetailViewModel.VIEW_NAME);
+        views.add(gameListCard, GameListViewModel.VIEW_NAME);
+        add(views, BorderLayout.CENTER);
         pack();
         setVisible(true);
         analyzeInteractor.analyzeInitialPosition();

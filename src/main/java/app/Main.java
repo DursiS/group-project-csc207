@@ -65,7 +65,10 @@ public class Main {
         final GameState gameState = getGameState(topology);
         new AppBuilder(gameState)
                 .addAnalysisView()
+                .addAnalysisView()
                 .addMoveView()
+                .addGameDetailView()
+                .addGameListView()
                 .build();
     }
 
