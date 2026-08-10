@@ -96,11 +96,13 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                             m.getDestination()[0] == data.getX()&&
                             m.getDestination()[1] == data.getY()){
 
-                        //Move is applied, make board state copy before changing board
-                        gameState.getBoardStateList().addBoardCopy(nextBoard);
+                        //Move is applied on the next board,
+                        //make board state copy before changing board
+                        BoardStateList nextBoardStateList = gameState.getBoardStateList().Copy();
+                        nextBoardStateList.addBoardCopy(nextBoard);
                         validator.ApplyMove(nextBoard, m);
 
-                        //updates gameState
+                        //updates gameState and gameRecord
                         gameState = new GameState(
                                 nextBoard,
                                 gameState.getWhiteMilliSec(),

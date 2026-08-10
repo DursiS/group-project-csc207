@@ -166,6 +166,7 @@ public class AppBuilder extends JFrame {
      */
     public AppBuilder addGameListView() {
         selectGameInteractor = new SelectGameInteractor(gameDataAccessObject, gameDetailPresenter);
+        selectGameInteractor.addPropertyChangeListener(archiveAnalyzeInteractor);
         gameListViewModel = new GameListViewModel();
         gameListPresenter = new GameListPresenter(gameListViewModel, viewManagerModel);
         gameListInteractor = new GameListInteractor(gameDataAccessObject, gameListPresenter);
@@ -190,8 +191,8 @@ public class AppBuilder extends JFrame {
         add(views, BorderLayout.CENTER);
         pack();
         setVisible(true);
-        analyzeInteractor.analyzeInitialPosition();
-//        gameListController.getGameList();
+//        analyzeInteractor.analyzeInitialPosition();
+        gameListController.getGameList();
         return this;
     }
 }

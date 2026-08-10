@@ -45,9 +45,7 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
                 GameState gameState = gameRecord.getHistory().get(current);
                 GameDetailOutputData gameDetailOutputData = new GameDetailOutputData(current,
                         gameState, true,  current < gameRecord.getHistory().size() - 1);
-                if (current != gameRecord.getHistory().size() - 1) {
-                    updateAnalyzeMoveInteractor(gameState);
-                }
+                updateAnalyzeMoveInteractor(gameState);
                 gameDetailPresenter.prepareGameDetailView(gameDetailOutputData);
             }
         } catch (RuntimeException e) {
@@ -66,7 +64,7 @@ public class GameDetailInteractor implements GameDetailInputBoundary{
     }
 
     /**
-     * Add a change listener
+     * Add a property change listener
      * @param listener a property change listener
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
