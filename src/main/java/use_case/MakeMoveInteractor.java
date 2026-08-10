@@ -67,6 +67,17 @@ public class MakeMoveInteractor implements MoveInputBoundary {
         updateAnalyzeMoveInteractor();
     }
 
+    public void setGameState(GameState gameState) {
+
+        this.gameState = gameState;
+
+        selectedSquare = null;
+
+        initializeTurn();
+
+        updateVisuals();
+    }
+
     /**
      * this takes the player input for making a selection or move, and
      * either changes the selection if they were trying to select something

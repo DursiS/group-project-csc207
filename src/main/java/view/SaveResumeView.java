@@ -12,9 +12,11 @@ import java.awt.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import java.util.function.Consumer;
+
 import java.util.ArrayList;
 
-public class SaveResumeView {
+public class SaveResumeView extends JPanel{
     private SaveGameController saveGameController;
     private SaveGameViewModel saveGameViewModel;
     private ResumeGameController resumeGameController;
@@ -23,29 +25,26 @@ public class SaveResumeView {
     private GameState gameState;
     private String currentSaveName;
 
-    private JFrame frame;
     private JTextField saveNameField;
     private JLabel messageLabel;
     private DefaultListModel<String> saveNameList;
     private JList<String> savedGamesList;
 
+    private Consumer<GameState> gameStateChangeHandler;
+
     public SaveResumeView(SaveGameController saveGameController,
                           SaveGameViewModel saveGameViewModel,
                           ResumeGameController resumeGameController,
                           ResumeGameViewModel resumeGameViewModel,
-                          GameState gameState) {
+                          GameState gameState,
+                          Consumer<GameState> gameStateChangeHandler) {
         this.saveGameController = saveGameController;
         this.saveGameViewModel = saveGameViewModel;
         this.resumeGameController = resumeGameController;
         this.resumeGameViewModel = resumeGameViewModel;
         this.gameState = gameState;
         this.currentSaveName = null;
-
-        frame = new JFrame();
-
-        frame.setTitle("Save / Resume Game");
-        frame.setSize(500,350);
-        frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
+        this.gameStateChangeHandler = gameStateChangeHandler;
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -92,23 +91,16 @@ public class SaveResumeView {
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        frame.add(mainPanel);
+        this.setLayout(new BorderLayout());
+        this.add(mainPanel, BorderLayout.CENTER);
 
-        saveGame(saveGameController, saveGameViewModel, saveButton, saveNameField, null);
+        saveGame(saveGameController, saveGameViewModel, saveButton, saveNameField, null,
+                null);
 
         resumeGame(resumeGameController, resumeGameViewModel, resumeButton);
 
         //closing
-
-        frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent event) {
-                exitGame();
-            }
-        });
-
         refreshSaveList();
-        frame.setVisible(true);
 
     }
 
@@ -125,6 +117,7 @@ public class SaveResumeView {
             else {
                 this.gameState = loadedGame;
                 this.currentSaveName = saveName;
+                gameStateChangeHandler.accept(loadedGame);
                 messageLabel.setText(resumeGameViewModel.getMessage());
             }
         });
@@ -134,7 +127,8 @@ public class SaveResumeView {
                           SaveGameViewModel saveGameViewModel,
                           JButton saveButton,
                           JTextField textField,
-                          JFrame frameToClose) {
+                          JFrame frameToClose,
+                          JFrame mainFrameToClose) {
         saveButton.addActionListener(event -> {
 
             String saveName = textField.getText();
@@ -142,7 +136,9 @@ public class SaveResumeView {
             saveGameController.execute(saveName, this.gameState);
 
             if(!saveGameViewModel.getOverwriteMessage().equals("")) {
-                overwrite(saveGameController, saveGameViewModel, textField);
+                overwrite(saveGameController, saveGameViewModel, textField,
+                        frameToClose,
+                        mainFrameToClose);
             }
 
             else if (!saveGameViewModel.getError().equals("")) {
@@ -155,7 +151,11 @@ public class SaveResumeView {
 
                 if (frameToClose != null) {
                     frameToClose.dispose();
-                    frame.dispose();
+                    mainFrameToClose.dispose();
+                }
+
+                if (mainFrameToClose != null) {
+                    mainFrameToClose.dispose();
                 }
             }
         });
@@ -163,11 +163,13 @@ public class SaveResumeView {
 
     private void overwrite(SaveGameController saveGameController,
                            SaveGameViewModel saveGameViewModel,
-                           JTextField textField) {
+                           JTextField textField,
+                           JFrame frameToClose,
+                           JFrame mainFrameToClose) {
         JFrame overwriteFrame = new JFrame();
         overwriteFrame.setTitle("Overwrite");
         overwriteFrame.setSize(250,100);
-        overwriteFrame.setDefaultCloseOperation(overwriteFrame.EXIT_ON_CLOSE);
+        overwriteFrame.setDefaultCloseOperation(overwriteFrame.DISPOSE_ON_CLOSE);
 
         JPanel overwritePanel = new JPanel();
         JLabel overwriteLabel = new JLabel(saveGameViewModel.getOverwriteMessage());
@@ -213,10 +215,10 @@ public class SaveResumeView {
         }
     }
 
-    private void exitGame() {
+    public void exitGame(JFrame mainFrame) {
 
         if (currentSaveName != null) {
-            frame.dispose();
+            mainFrame.dispose();
             return;
         }
         JFrame closePrompt = new JFrame();
@@ -255,14 +257,15 @@ public class SaveResumeView {
                     saveGameViewModel,
                     anotherSaveButton,
                     anotherSaveTextField,
-                    anotherSaveFrame);
+                    anotherSaveFrame,
+                    mainFrame);
 
             anotherSaveFrame.setVisible(true);
         });
 
         closeNo.addActionListener(event -> {
             closePrompt.dispose();
-            frame.dispose();
+            mainFrame.dispose();
         });
 
         closePrompt.setVisible(true);

@@ -21,9 +21,20 @@ import view.MoveView;
 import data_access.InMemoryGameDataAccessObject;
 import interface_adapter.SaveGamePresenter;
 import interface_adapter.SaveGameViewModel;
+import interface_adapter.SaveGameController;
+import interface_adapter.ResumeGameController;
+import interface_adapter.ResumeGamePresenter;
+import interface_adapter.ResumeGameViewModel;
 import use_case.GameDataAccess;
 import use_case.SaveGameInputBoundary;
 import use_case.SaveGameInteractor;
+import use_case.ResumeGameInputBoundary;
+import use_case.ResumeGameInteractor;
+
+import view.SaveResumeView;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
@@ -34,8 +45,9 @@ public class AppBuilder extends JFrame {
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
     private static final String EAST = "East";
+    private static final String WEST = "West";
 
-    private final GameState gameState;
+    private GameState gameState;
 
     // MakeMove feature
     private MoveViewModel moveViewModel;
@@ -49,6 +61,14 @@ public class AppBuilder extends JFrame {
     private SaveGameViewModel saveGameViewModel;
     private SaveGamePresenter saveGamePresenter;
     private SaveGameInputBoundary saveGameInteractor;
+    private SaveGameController saveGameController;
+
+    private ResumeGameViewModel resumeGameViewModel;
+    private ResumeGamePresenter resumeGamePresenter;
+    private ResumeGameInputBoundary resumeGameInteractor;
+    private ResumeGameController resumeGameController;
+
+    private SaveResumeView saveResumeView;
 
     // Analysis feature
     private AnalyzeViewModel analyzeViewModel;
@@ -69,7 +89,7 @@ public class AppBuilder extends JFrame {
         saveSetup();
 
         setTitle("Chess App");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
         setSize(WIDTH, HEIGHT);
     }
@@ -88,6 +108,13 @@ public class AppBuilder extends JFrame {
         saveGameViewModel = new SaveGameViewModel();
         saveGamePresenter = new SaveGamePresenter(saveGameViewModel);
         saveGameInteractor = new SaveGameInteractor(gameDataAccess, saveGamePresenter);
+    }
+
+    private void replaceGameState(GameState newGameState) {
+
+        this.gameState = newGameState;
+
+        makeMoveInteractor.setGameState(newGameState);
     }
 
     /**
@@ -128,6 +155,40 @@ public class AppBuilder extends JFrame {
         analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
         add(analyzeView, EAST);
         return this;
+    }
+
+    public AppBuilder addSaveResumeView() {
+        saveGameController = new SaveGameController(saveGameInteractor);
+        resumeGameViewModel = new ResumeGameViewModel();
+        resumeGamePresenter = new ResumeGamePresenter(resumeGameViewModel);
+
+        resumeGameInteractor = new ResumeGameInteractor(
+                        gameDataAccess,
+                        resumeGamePresenter,
+                        saveGameInteractor);
+        resumeGameController =
+                new ResumeGameController(
+                        resumeGameInteractor
+                );
+        saveResumeView = new SaveResumeView(
+                        saveGameController,
+                        saveGameViewModel,
+                        resumeGameController,
+                        resumeGameViewModel,
+                        gameState,
+                        this::replaceGameState);
+        add(saveResumeView, WEST);
+        closeButtonListener();
+        return this;
+    }
+
+    private void closeButtonListener() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                saveResumeView.exitGame(AppBuilder.this);
+            }
+        });
     }
 
     /**
