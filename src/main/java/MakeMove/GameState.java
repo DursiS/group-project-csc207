@@ -1,5 +1,7 @@
 package MakeMove;
 
+import java.util.List;
+
 public class GameState {
     // current chess board
     private Board board;
@@ -14,12 +16,16 @@ public class GameState {
     // current result for the game
     private String gameResult;
 
+    private List<String> analysisHistory;
+
     // create a game state with infos to save the game
     public GameState(Board board,
                      int whiteMilliSec,
                      int blackMilliSec,
                      BoardStateList boardStateList,
-                     String gameResult) {
+                     String gameResult,
+                     List<String> analysisHistory,
+                     ) {
 
         if (board == null) {
             throw new IllegalArgumentException("Board can't be null");
@@ -48,6 +54,7 @@ public class GameState {
         this.blackMilliSec = blackMilliSec;
         this.boardStateList = boardStateList.Copy();
         this.gameResult = gameResult;
+        this.analysisHistory = analysisHistory;
     }
 
     public Board getBoardCopy() {
@@ -56,6 +63,10 @@ public class GameState {
 
     public BoardStateList getBoardStateListCopy() {
         return this.boardStateList.Copy();
+    }
+
+    public List<String> getAnalysisHistory() {
+        return analysisHistory;
     }
 
     public int getWhiteMilliSec() {
