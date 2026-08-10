@@ -1,28 +1,29 @@
 package app;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Swaps the visible card in a CardLayout whenever the ViewManagerModel's
+ * current view changes. This is the only place that knows about card switching.
+ */
 public class ViewManager implements PropertyChangeListener {
 
     private final JPanel views;
     private final CardLayout cardLayout;
-    private final ViewManagerModel viewManagerModel;
 
     public ViewManager(JPanel views, CardLayout cardLayout, ViewManagerModel viewManagerModel) {
         this.views = views;
         this.cardLayout = cardLayout;
-        this.viewManagerModel = viewManagerModel;
-        this.viewManagerModel.addPropertyChangeListener(this);
+        viewManagerModel.addPropertyChangeListener(this);
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("view")) {
-            String viewName = evt.getNewValue().toString();
-            cardLayout.show(views, viewName);
+        if ("view".equals(evt.getPropertyName())) {
+            this.cardLayout.show(this.views, (String) evt.getNewValue());
         }
     }
 }
