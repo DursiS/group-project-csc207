@@ -7,9 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
+import MakeMove.Board;
+import MakeMove.BoardStateList;
+import MakeMove.GameState;
 
 /**
  * Application entry point: shows a topology menu, then launches the game.

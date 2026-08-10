@@ -9,29 +9,29 @@ import Analysis.AnalyzePresenter;
 import Analysis.AnalyzeView;
 import Analysis.AnalyzeViewModel;
 import Analysis.ChessApiAdapter;
-import entity.GameState;
-import entity.MoveValidator;
-import entity.MoveValidatorBuilder;
-import interface_adapter.MoveController;
-import interface_adapter.MovePresenter;
-import interface_adapter.MoveViewModel;
-import use_case.MakeMoveInteractor;
-import view.MoveView;
+import MakeMove.GameState;
+import MakeMove.MoveValidator;
+import MakeMove.MoveValidatorBuilder;
+import MakeMove.MoveController;
+import MakeMove.MovePresenter;
+import MakeMove.MoveViewModel;
+import MakeMove.MakeMoveInteractor;
+import MakeMove.MoveView;
 
 import data_access.InMemoryGameDataAccessObject;
-import interface_adapter.SaveGamePresenter;
-import interface_adapter.SaveGameViewModel;
-import interface_adapter.SaveGameController;
-import interface_adapter.ResumeGameController;
-import interface_adapter.ResumeGamePresenter;
-import interface_adapter.ResumeGameViewModel;
-import use_case.GameDataAccess;
-import use_case.SaveGameInputBoundary;
-import use_case.SaveGameInteractor;
-import use_case.ResumeGameInputBoundary;
-import use_case.ResumeGameInteractor;
+import MakeMove.SaveGamePresenter;
+import MakeMove.SaveGameViewModel;
+import MakeMove.SaveGameController;
+import MakeMove.ResumeGameController;
+import MakeMove.ResumeGamePresenter;
+import MakeMove.ResumeGameViewModel;
+import MakeMove.GameDataAccess;
+import MakeMove.SaveGameInputBoundary;
+import MakeMove.SaveGameInteractor;
+import MakeMove.ResumeGameInputBoundary;
+import MakeMove.ResumeGameInteractor;
 
-import view.SaveResumeView;
+import MakeMove.SaveResumeView;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -83,11 +83,9 @@ public class AppBuilder extends JFrame {
      * @param gameState the shared game state the features build on
      */
     public AppBuilder(GameState gameState) {
-        changeListeningSetup();
         this.gameState = gameState;
-
         saveSetup();
-
+        changeListeningSetup();
         setTitle("Chess App");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -99,7 +97,7 @@ public class AppBuilder extends JFrame {
         analyzePresenter = new AnalyzePresenter(analyzeViewModel);
 
         chessApiAdaptor = new ChessApiAdapter();
-        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter);
+        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter, gameState);
     }
 
     private void saveSetup() {
@@ -198,6 +196,7 @@ public class AppBuilder extends JFrame {
     public JFrame build() {
         pack();
         setVisible(true);
+        analyzeInteractor.analyzeInitialPosition();
         return this;
     }
 }

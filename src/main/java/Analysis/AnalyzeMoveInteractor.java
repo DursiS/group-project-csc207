@@ -3,22 +3,16 @@ package Analysis;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 import com.google.gson.JsonObject;
-import entity.Board;
-import entity.BoardStateList;
-import entity.GameState;
-
-import javax.swing.*;
+import MakeMove.Board;
+import MakeMove.GameState;
 
 public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChangeListener {
     private static final String UPDATE_CHANNEL = "update-analysis";
-    private Integer messageCount = 1;
     private final ChessApiInterface apiInterface;
     private final AnalyzeOutputBoundary analyzeOutputBoundary;
-    private final BoardToFenTranslator fenTranslator = new BoardToFenTranslator();
+    private final BoardToFenAdapter fenTranslator = new BoardToFenAdapter();
     private GameState gameState;
 
     /**
@@ -26,11 +20,14 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
      * Uses dependencies injecting instead of hard dependencies.
      * @param apiInterface the chess API to use
      * @param analyzeOutputBoundary the output boundary to present results
+     * @param gameState the initial game state to analyze
      */
     public AnalyzeMoveInteractor(ChessApiInterface apiInterface,
-                                 AnalyzeOutputBoundary analyzeOutputBoundary) {
+                                 AnalyzeOutputBoundary analyzeOutputBoundary,
+                                 GameState gameState) {
         this.apiInterface = apiInterface;
         this.analyzeOutputBoundary = analyzeOutputBoundary;
+        this.gameState = gameState;
     }
 
     /**
@@ -42,22 +39,42 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (UPDATE_CHANNEL.equals(propertyChangeEvent.getPropertyName())) {
             this.gameState = (GameState) propertyChangeEvent.getNewValue();
-            new Thread(() -> {
-                try {
-                    executeTurnAnalysis();
-                }
-                catch (IOException event) {
-                    throw new RuntimeException(event);
-                }
-            }).start();
+            runAnalysisAsync();
         }
     }
 
+    /**
+     * Runs one analysis of the starting position at app startup.
+     * The observer signal from MakeMove fires before this listener is
+     * subscribed, so the opening position is kicked off here instead.
+     */
+    public void analyzeInitialPosition() {
+        runAnalysisAsync();
+    }
+
+    /**
+     * Runs the analysis on a background thread to keep the UI responsive.
+     */
+    private void runAnalysisAsync() {
+        new Thread(() -> {
+            try {
+                executeTurnAnalysis();
+            }
+            catch (IOException event) {
+                throw new RuntimeException(event);
+            }
+        }).start();
+    }
+
+    /**
+     * Analyzes the most recent board and pushes the result to the presenter.
+     * @throws IOException if the API request fails
+     */
     @Override
     public void executeTurnAnalysis() throws IOException {
         final Board board = getRecentBoard();
         final String fen = this.fenTranslator.convertToFen(board,
-                isWhiteTurn()
+                (board.getTurn() % 2 == 0)
         );
         final JsonObject response = requestOrThrow(fen);
         final AnalyzeOutputData outputData = new AnalyzeOutputData(
@@ -65,31 +82,31 @@ public class AnalyzeMoveInteractor implements AnalyzeInputBoundary, PropertyChan
                 response.get("eval").getAsDouble(),
                 response.get("from").getAsString(),
                 response.get("to").getAsString(),
-                isWhiteTurn(),
-                messageCount
+                (board.getTurn() % 2 == 0),
+                board.getTurn() +1//by convention, turns in chess are indexed starting at 0.
         );
         this.analyzeOutputBoundary.addMessage(outputData);
-        messageCount += 1;
     }
 
-    private boolean isWhiteTurn() {
-        return messageCount % 2 == 0;
-    }
-
+    /**
+     * Returns the latest board to analyze.
+     * @return the last board in the state list, or the opening board if empty
+     */
     private Board getRecentBoard() {
-        final BoardStateList boardList = gameState.getBoardStateListCopy();
-        final List<Board> boardStates = Collections
-                .singletonList(boardList
-                        .getBoardCopy(boardList.size() - 1));
-        return boardStates.get(boardStates.size() - 1);
-
+        return gameState.getBoard();
     }
 
+    /**
+     * Shows only the most recent analysis message in the view.
+     */
     @Override
     public void executeSingleMessageDisplay() {
         this.analyzeOutputBoundary.setRecentMessage();
     }
 
+    /**
+     * Shows the full analysis message history in the view.
+     */
     @Override
     public void executeMessageHistoryDisplay() {
         this.analyzeOutputBoundary.setHistoryMessage();

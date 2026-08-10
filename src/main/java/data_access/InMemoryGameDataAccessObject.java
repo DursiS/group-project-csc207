@@ -1,7 +1,7 @@
 package data_access;
 
-import entity.GameState;
-import use_case.GameDataAccess;
+import MakeMove.GameState;
+import MakeMove.GameDataAccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
