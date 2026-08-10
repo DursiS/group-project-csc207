@@ -48,11 +48,12 @@ Clean Architecture + Observer-pattern Java application, this project is for you.
 
 ## Authors and Contributors
 
-| Contributor | Primary area |
-| --- | --- |
-| **Sean Dursi** | Analysis feature (engine integration, FEN translation, presentation) |
-| **Yucheng Shi** | Move-making and game logic |
-| **Roan Reynolds** | Move-making and game logic |
+| Contributor       | Primary area                                                         |
+|-------------------|----------------------------------------------------------------------|
+| **Sean Dursi**    | Analysis feature (engine integration, FEN translation, presentation) |
+| **Yucheng Shi**   | Move-making and game logic                                           |
+| **Roan Reynolds** | Move-making and game logic                                           |
+| **Zhibo Sheng**   | Archive feature (persistence, past games replay)                     |
 
 Contributions are visible in the project's Git history.
 
@@ -99,6 +100,17 @@ When a move is made, the move feature fires an update signal that the analysis f
 observes (via `java.beans.PropertyChangeListener`) and re-analyzes the new position —
 with **no direct dependency** from one feature's inner logic on the other.
 
+### 5. Replay past games
+Games are **automatically saved** to the game archive (a remote **PostgreSQL** database) upon 
+finishing. The game archive shows a list of creation times and final results for the completed games
+the user have played, and the user can select the game to replay.
+
+In the replay page, there are **interactive forward and back arrow keys** to step through the moves.
+ **Position analysis** will also be available during replay.
+
+As in the move feature, the replay feature also fires an update signal to the analysis feature via
+`java.beans.PropertyChangeListener` to analyze the new position. 
+
 ---
 
 ## Requirements
@@ -111,13 +123,14 @@ with **no direct dependency** from one feature's inner logic on the other.
 
 **Dependencies** (downloaded automatically by Maven — no manual install needed):
 
-| Dependency | Version | Purpose | Link |
-| --- | --- | --- | --- |
-| Gson | 2.11.0 | Parse the JSON returned by the analysis API | [gson](https://github.com/google/gson) |
-| JUnit 4 | 4.13.1 | Legacy unit tests | [junit4](https://junit.org/junit4/) |
-| JUnit Jupiter (JUnit 5) | 5.14.0 | Unit tests | [junit5](https://junit.org/junit5/) |
-| Mockito | 5.13.0 | Mocking in tests | [mockito](https://site.mockito.org/) |
-| JaCoCo (plugin) | 0.8.12 | Test coverage reports | [jacoco](https://www.jacoco.org/jacoco/) |
+| Dependency | Version  | Purpose                       | Link |
+| --- |----------|-------------------------------| --- |
+| Gson | 2.11.0   | Parse the JSON returned by the analysis API | [gson](https://github.com/google/gson) |
+| JUnit 4 | 4.13.1   | Legacy unit tests             | [junit4](https://junit.org/junit4/) |
+| JUnit Jupiter (JUnit 5) | 5.14.0   | Unit tests                    | [junit5](https://junit.org/junit5/) |
+| Mockito | 5.13.0   | Mocking in tests              | [mockito](https://site.mockito.org/) |
+| JaCoCo (plugin) | 0.8.12   | Test coverage reports         | [jacoco](https://www.jacoco.org/jacoco/) |
+| PostgreSQL JDBC Driver| 42.7.13  | PostgreSQL database Connection| [posgresql](https://jdbc.postgresql.org)|
 
 **Operating system:** Cross-platform. The game runs anywhere a Java 16 JVM with a
 graphical display is available (Windows, macOS, and Linux). It requires a desktop
@@ -178,6 +191,13 @@ The app starts with a topology menu:
 - The panel always shows the latest analysis by default.
 - Click **Message History** to see the full running list of analyses.
 - Click **Return** to go back to only the most recent message.
+
+### Rewatch a game
+
+1. Select **Archive** on the main menu to go to the archive page
+2. On the archive page, select the game to rewatch
+3. Use the **Forward** and **Backward** buttons to navigate through moves
+4. Read **analysis** on the side panel
 
 ---
 

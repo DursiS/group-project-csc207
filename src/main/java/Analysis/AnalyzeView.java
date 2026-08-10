@@ -19,7 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 public class AnalyzeView extends JPanel implements PropertyChangeListener {
-    private static final int WIDTH = 300;
+    private static final int WIDTH = 250;
     private static final int HEIGHT = 600;
     private static final int TITLE_SIZE = 24;
     private static final int TEXT_SIZE = 16;

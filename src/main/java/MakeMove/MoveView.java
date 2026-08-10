@@ -85,7 +85,6 @@ public class MoveView extends JPanel implements PropertyChangeListener  {
                 buttons[y][x].setText(vm.getSquareText(x,y));
 
                 int size = Math.min(width, height);
-
                 int sideLength = (size - 7*INNER_MARGIN - 2*OUTER_MARGIN)/8;
                 int totalLength = 7*INNER_MARGIN + 2*OUTER_MARGIN + 8*sideLength;
 

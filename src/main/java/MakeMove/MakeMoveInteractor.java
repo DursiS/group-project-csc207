@@ -1,5 +1,7 @@
 package MakeMove;
 
+import archive.GameRecord;
+
 import SaveResume.SaveGameInputBoundary;
 
 import javax.swing.*;
@@ -14,8 +16,10 @@ import java.util.ArrayList;
 public class MakeMoveInteractor implements MoveInputBoundary {
     private static final String UPDATE_CHANNEL = "update-analysis";
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private EndGameDataAccess gameDataAccessObject;
 
     private MoveValidator validator;
+    private GameRecord gameRecord;
     private GameState gameState;
     private MoveOutputBoundary moveOutputBoundary;
     private SaveGameInputBoundary saveGameInputBoundary;
@@ -27,14 +31,17 @@ public class MakeMoveInteractor implements MoveInputBoundary {
     /**
      * create make move interactor
      * @param validator the move validator it's assigned to
+     * @param gameRecord reference to the gameRecord to retrieve the game from
      * @param gameState reference to the gamestate to retrieve the board from
      * @param moveOutputBoundary after making a move, the raw information to present is passed here
      */
-    public MakeMoveInteractor(MoveValidator validator,
-                              GameState gameState,
+    public MakeMoveInteractor(MoveValidator validator, EndGameDataAccess gameDataAccessObject,
+                              GameRecord gameRecord, GameState gameState,
                               MoveOutputBoundary moveOutputBoundary,
                               SaveGameInputBoundary saveGameInputBoundary) {
         this.validator = validator;
+        this.gameDataAccessObject = gameDataAccessObject;
+        this.gameRecord = gameRecord;
         this.gameState = gameState;
         this.moveOutputBoundary = moveOutputBoundary;
         this.saveGameInputBoundary = saveGameInputBoundary;
@@ -55,9 +62,12 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             int turn = gameState.getBoard().getTurn();
             if(turn%2 ==0){
                 winner = "black";
+                gameRecord.endGame("Black Wins (Checkmate)");
             }else{
                 winner = "white";
+                gameRecord.endGame("White Wins (Checkmate)");
             }
+            gameDataAccessObject.save(gameRecord);
             JOptionPane.showMessageDialog(null, "CHECKMATE! " + winner + " WINS!", "CHECKMATE!", JOptionPane.INFORMATION_MESSAGE);
             //checkmate, game is over, return to menu or something?
         }
@@ -83,7 +93,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
      */
     @Override
     public void receiveInput(MoveInputData data) {
-        Board b = gameState.getBoard();
+        Board nextBoard = gameState.getBoardCopy();
         boolean moved = false;
 
         //if nothing is selected, select the clicked square
@@ -102,9 +112,21 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                             m.getDestination()[0] == data.getX()&&
                             m.getDestination()[1] == data.getY()){
 
-                        //Move is applied, make board state copy before changing board
-                        gameState.getBoardStateList().addBoardCopy(b);
-                        validator.ApplyMove(b, m);
+                        //Move is applied on the next board,
+                        //make board state copy before changing board
+                        BoardStateList nextBoardStateList = gameState.getBoardStateList().Copy();
+                        nextBoardStateList.addBoardCopy(nextBoard);
+                        validator.ApplyMove(nextBoard, m);
+
+                        //updates gameState and gameRecord
+                        gameState = new GameState(
+                                nextBoard,
+                                gameState.getWhiteMilliSec(),
+                                gameState.getBlackMilliSec(),
+                                gameState.getBoardStateList().Copy(),
+                                "In progress");
+                        gameRecord.updateGameRecord(gameState);
+
                         initializeTurn();
 
                         saveGameInputBoundary.autosave(gameState);
