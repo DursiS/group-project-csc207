@@ -11,6 +11,7 @@ import Analysis.AnalyzeViewModel;
 import Analysis.ChessApiAdapter;
 import MakeMove.*;
 import archive.*;
+import SaveResume.*;
 
 /**
  * Assembles the application window, wiring each feature's Clean Architecture
@@ -21,10 +22,12 @@ public class GameBuilder extends JPanel {
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
     private static final String EAST = "East";
+    private static final String WEST = "West";
 
     private final GameRecord gameRecord;
 
     private final GameDataAccessObject gameDataAccessObject =  new GameDataAccessObject();
+    private GameState gameState;
 
     // MakeMove feature
     private MoveViewModel moveViewModel;
@@ -32,6 +35,18 @@ public class GameBuilder extends JPanel {
     private MoveController moveController;
     private MakeMoveInteractor makeMoveInteractor;
     private MovePresenter movePresenter;
+
+    // Save/Resume feature
+    private GameDataAccess gameDataAccess;
+    private SaveGameViewModel saveGameViewModel;
+    private SaveGamePresenter saveGamePresenter;
+    private SaveGameInputBoundary saveGameInteractor;
+    private SaveGameController saveGameController;
+    private ResumeGameViewModel resumeGameViewModel;
+    private ResumeGamePresenter resumeGamePresenter;
+    private ResumeGameInputBoundary resumeGameInteractor;
+    private ResumeGameController resumeGameController;
+    private SaveResumeView saveResumeView;
 
     // Analysis feature
     private AnalyzeViewModel analyzeViewModel;
@@ -64,11 +79,25 @@ public class GameBuilder extends JPanel {
      * Configures the application frame around the given game state.
      * @param gameRecord the shared game state the features build on
      */
-    public AppBuilder(GameRecord gameRecord) {
+    public GameBuilder(GameRecord gameRecord) {
         this.gameRecord = gameRecord;
+        this.gameState = gameState;
+        saveSetup();
         changeListeningSetup();
         setLayout(new BorderLayout());
         setSize(WIDTH, HEIGHT);
+    }
+
+    private void saveSetup() {
+        gameDataAccess = new FileGameDataAccessObject();
+        saveGameViewModel = new SaveGameViewModel();
+        saveGamePresenter = new SaveGamePresenter(saveGameViewModel);
+        saveGameInteractor = new SaveGameInteractor(gameDataAccess, saveGamePresenter);
+    }
+
+    private void replaceGameState(GameState newGameState) {
+        gameState = newGameState;
+        makeMoveInteractor.setGameState(newGameState);
     }
 
     private void changeListeningSetup() {
@@ -101,6 +130,11 @@ public class GameBuilder extends JPanel {
         movePresenter = new MovePresenter(moveViewModel);
         makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameDataAccessObject, gameRecord,
                 gameRecord.getHistory().get(0), movePresenter);
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator,
+                gameRecord
+                gameState,
+                movePresenter,
+                saveGameInteractor);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
 
         moveController = new MoveController(makeMoveInteractor);
@@ -159,6 +193,38 @@ public class GameBuilder extends JPanel {
         gameListController = new GameListController(gameListInteractor, selectGameInteractor);
         gameListView = new GameListView(gameListController, gameListViewModel);
         return this;
+    }
+
+    /**
+     * Wires the save/resume feature and adds its view to the west.
+     * @return this builder, for chaining
+     */
+    public GameBuilder addSaveResumeView() {
+        saveGameController = new SaveGameController(saveGameInteractor);
+        resumeGameViewModel = new ResumeGameViewModel();
+        resumeGamePresenter = new ResumeGamePresenter(resumeGameViewModel);
+        resumeGameInteractor = new ResumeGameInteractor(
+                gameDataAccess,
+                resumeGamePresenter,
+                saveGameInteractor);
+        resumeGameController = new ResumeGameController(resumeGameInteractor);
+        saveResumeView = new SaveResumeView(
+                saveGameController,
+                saveGameViewModel,
+                resumeGameController,
+                resumeGameViewModel,
+                gameState,
+                this::replaceGameState);
+        add(saveResumeView, WEST);
+        return this;
+    }
+
+    /**
+     * Runs the save prompt before closing the shared application frame.
+     * @param mainFrame the application frame to close
+     */
+    public void exitGame(JFrame mainFrame) {
+        saveResumeView.exitGame(mainFrame);
     }
 
     /**
