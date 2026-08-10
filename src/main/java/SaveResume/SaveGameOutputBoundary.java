@@ -1,4 +1,4 @@
-package MakeMove;
+package SaveResume;
 
 public interface SaveGameOutputBoundary {
 

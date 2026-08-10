@@ -1,4 +1,4 @@
-package MakeMove;
+package SaveResume;
 public class ResumeGameOutputData {
     private String saveName;
     public ResumeGameOutputData(String saveName) {

@@ -1,4 +1,4 @@
-package MakeMove;
+package SaveResume;
 
 import MakeMove.GameState;
 import java.util.ArrayList;

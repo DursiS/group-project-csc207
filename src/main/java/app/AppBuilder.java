@@ -18,20 +18,19 @@ import MakeMove.MoveViewModel;
 import MakeMove.MakeMoveInteractor;
 import MakeMove.MoveView;
 
-import data_access.InMemoryGameDataAccessObject;
-import MakeMove.SaveGamePresenter;
-import MakeMove.SaveGameViewModel;
-import MakeMove.SaveGameController;
-import MakeMove.ResumeGameController;
-import MakeMove.ResumeGamePresenter;
-import MakeMove.ResumeGameViewModel;
-import MakeMove.GameDataAccess;
-import MakeMove.SaveGameInputBoundary;
-import MakeMove.SaveGameInteractor;
-import MakeMove.ResumeGameInputBoundary;
-import MakeMove.ResumeGameInteractor;
-
-import MakeMove.SaveResumeView;
+import SaveResume.GameDataAccess;
+import SaveResume.FileGameDataAccessObject;
+import SaveResume.ResumeGameController;
+import SaveResume.ResumeGameInputBoundary;
+import SaveResume.ResumeGameInteractor;
+import SaveResume.ResumeGamePresenter;
+import SaveResume.ResumeGameViewModel;
+import SaveResume.SaveGameController;
+import SaveResume.SaveGameInputBoundary;
+import SaveResume.SaveGameInteractor;
+import SaveResume.SaveGamePresenter;
+import SaveResume.SaveGameViewModel;
+import SaveResume.SaveResumeView;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -102,7 +101,7 @@ public class AppBuilder extends JFrame {
 
     private void saveSetup() {
 
-        gameDataAccess = new InMemoryGameDataAccessObject();
+        gameDataAccess = new FileGameDataAccessObject();
         saveGameViewModel = new SaveGameViewModel();
         saveGamePresenter = new SaveGamePresenter(saveGameViewModel);
         saveGameInteractor = new SaveGameInteractor(gameDataAccess, saveGamePresenter);

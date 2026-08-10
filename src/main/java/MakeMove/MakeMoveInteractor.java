@@ -1,5 +1,7 @@
 package MakeMove;
 
+import SaveResume.SaveGameInputBoundary;
+
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

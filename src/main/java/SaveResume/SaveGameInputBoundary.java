@@ -1,4 +1,6 @@
-package MakeMove;
+package SaveResume;
+
+import MakeMove.GameState;
 
 public interface SaveGameInputBoundary {
 

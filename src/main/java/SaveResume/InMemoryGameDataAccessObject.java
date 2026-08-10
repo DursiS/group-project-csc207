@@ -1,7 +1,6 @@
-package data_access;
+package SaveResume;
 
 import MakeMove.GameState;
-import MakeMove.GameDataAccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
