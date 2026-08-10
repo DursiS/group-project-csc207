@@ -137,6 +137,8 @@ public class GameBuilder extends JPanel {
         moveView = new MoveView(moveViewModel, moveController);
         add(moveView, CENTER);
 
+
+
         makeMoveInteractor.updateVisuals();
         return this;
     }
@@ -148,6 +150,8 @@ public class GameBuilder extends JPanel {
     public GameBuilder addAnalysisView() {
         analyzeController = new AnalyzeController(analyzeInteractor);
         analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
+
+        add(analyzeView, EAST);
         return this;
     }
 
