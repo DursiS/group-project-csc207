@@ -5,10 +5,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.awt.CardLayout;
 
-import MakeMove.Board;
-import MakeMove.BoardStateList;
-import MakeMove.GameState;
-
 import archive.GameDataAccessObject;
 import archive.GameDetailController;
 import archive.GameDetailInteractor;
@@ -30,14 +26,13 @@ public class Main {
 
     private static final int WIDTH = 900;
     private static final int HEIGHT = 640;
-    private static final String GAME_VIEW = "Game";
 
     /**
      * Launches the app on the Swing event thread.
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::buildAndShow);
+        SwingUtilities.invokeLater(() -> buildAndShow());
     }
 
     /** Wires every card into one CardLayout window and shows the menu. */
@@ -48,16 +43,16 @@ public class Main {
         final ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
 
-        addArchiveFeature(views, viewManagerModel, cardLayout);
+        addArchiveFeature(views, viewManagerModel);
 
-        cardLayout.show(views, MainMenu.VIEW_NAME);
+        viewManagerModel.setCurrentView(MainMenu.VIEW_NAME);
+        viewManagerModel.firePropertyChanged();
         showFrame(views);
     }
 
     /** Wires the archive (saved-game browser) stack and registers its cards. */
     private static void addArchiveFeature(JPanel views,
-                                          ViewManagerModel viewManagerModel,
-                                          CardLayout cardLayout) {
+                                          ViewManagerModel viewManagerModel) {
         final GameDataAccessObject dataAccess = new GameDataAccessObject();
 
         final GameListViewModel gameListViewModel = new GameListViewModel();
@@ -85,38 +80,12 @@ public class Main {
         final GameDetailView gameDetailView =
                 new GameDetailView(gameDetailController, gameDetailViewModel);
 
-        addMainMenu(views, viewManagerModel, cardLayout, gameListController);
-        views.add(gameListView, GameListViewModel.VIEW_NAME);
-        views.add(gameDetailView, GameDetailViewModel.VIEW_NAME);
-    }
-
-    private static void addMainMenu(JPanel views, ViewManagerModel viewManagerModel, CardLayout cardLayout, GameListController gameListController) {
-        final MainMenu mainMenu = new MainMenu(
-                topology -> startGame(topology, views, cardLayout),
-                () -> browseSavedGames(gameListController, viewManagerModel));
+        final MainMenu mainMenu =
+                new MainMenu(views, viewManagerModel, gameListController);
 
         views.add(mainMenu, MainMenu.VIEW_NAME);
-    }
-
-    /** Builds a fresh game for the chosen topology and shows it as a card. */
-    private static void startGame(int topology, JPanel views, CardLayout cardLayout) {
-        final Board board = new Board(topology, 0);
-        final GameState gameState =
-                new GameState(board, 0, 0, new BoardStateList(), "Main Board Result");
-        final JPanel gamePanel = new GameBuilder(gameState)
-                .addAnalysisView()
-                .addMoveView()
-                .build();
-        views.add(gamePanel, GAME_VIEW);
-        cardLayout.show(views, GAME_VIEW);
-    }
-
-    /** Loads the saved-game list and switches to the browser card. */
-    private static void browseSavedGames(GameListController gameListController,
-                                         ViewManagerModel viewManagerModel) {
-        gameListController.getGameList();
-        viewManagerModel.setCurrentView(GameListViewModel.VIEW_NAME);
-        viewManagerModel.firePropertyChanged();
+        views.add(gameListView, GameListViewModel.VIEW_NAME);
+        views.add(gameDetailView, GameDetailViewModel.VIEW_NAME);
     }
 
     /** Puts the card panel into a frame and shows it. */
