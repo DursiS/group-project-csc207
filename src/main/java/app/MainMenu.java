@@ -3,6 +3,7 @@ package app;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.Component;
@@ -22,11 +23,12 @@ public class MainMenu extends JPanel {
 
     private static final int STANDARD_TOPOLOGY = 0;
     private static final int WRAP_TOPOLOGY = 1;
-    private static final String GAME_VIEW = "Game";
+    static final String GAME_VIEW = "Game";
 
     private final JPanel views;
     private final ViewManagerModel viewManagerModel;
     private final GameListController gameListController;
+    private GameBuilder currentGame;
 
     public MainMenu(JPanel views,
                     ViewManagerModel viewManagerModel,
@@ -56,12 +58,26 @@ public class MainMenu extends JPanel {
         final Board board = new Board(topology, 0);
         final GameState gameState =
                 new GameState(board, 0, 0, new BoardStateList(), "Main Board Result");
-        final JPanel gamePanel = new GameBuilder(gameState)
+        currentGame = new GameBuilder(gameState)
                 .addAnalysisView()
                 .addMoveView()
-                .build();
-        views.add(gamePanel, GAME_VIEW);
+                .addSaveResumeView();
+        currentGame.build();
+        views.add(currentGame, GAME_VIEW);
         switchTo(GAME_VIEW);
+    }
+
+    /**
+     * Gives the current game a chance to save before the application closes.
+     * @param mainFrame the shared application frame
+     */
+    void exitCurrentGame(JFrame mainFrame) {
+        if (currentGame == null) {
+            mainFrame.dispose();
+        }
+        else {
+            currentGame.exitGame(mainFrame);
+        }
     }
 
     /** Loads the saved-game list and switches to the browser card. */

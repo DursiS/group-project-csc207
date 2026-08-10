@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import java.awt.CardLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import archive.GameDataAccessObject;
 import archive.GameDetailController;
@@ -43,16 +45,16 @@ public class Main {
         final ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
 
-        addArchiveFeature(views, viewManagerModel);
+        final MainMenu mainMenu = addArchiveFeature(views, viewManagerModel);
 
         viewManagerModel.setCurrentView(MainMenu.VIEW_NAME);
         viewManagerModel.firePropertyChanged();
-        showFrame(views);
+        showFrame(views, viewManagerModel, mainMenu);
     }
 
     /** Wires the archive (saved-game browser) stack and registers its cards. */
-    private static void addArchiveFeature(JPanel views,
-                                          ViewManagerModel viewManagerModel) {
+    private static MainMenu addArchiveFeature(JPanel views,
+                                              ViewManagerModel viewManagerModel) {
         final GameDataAccessObject dataAccess = new GameDataAccessObject();
 
         final GameListViewModel gameListViewModel = new GameListViewModel();
@@ -86,12 +88,26 @@ public class Main {
         views.add(mainMenu, MainMenu.VIEW_NAME);
         views.add(gameListView, GameListViewModel.VIEW_NAME);
         views.add(gameDetailView, GameDetailViewModel.VIEW_NAME);
+        return mainMenu;
     }
 
     /** Puts the card panel into a frame and shows it. */
-    private static void showFrame(JPanel views) {
+    private static void showFrame(JPanel views,
+                                  ViewManagerModel viewManagerModel,
+                                  MainMenu mainMenu) {
         final JFrame frame = new JFrame("Chess");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                if (MainMenu.GAME_VIEW.equals(viewManagerModel.getCurrentView())) {
+                    mainMenu.exitCurrentGame(frame);
+                }
+                else {
+                    frame.dispose();
+                }
+            }
+        });
         frame.setContentPane(views);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocationRelativeTo(null);
