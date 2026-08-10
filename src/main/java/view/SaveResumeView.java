@@ -151,7 +151,6 @@ public class SaveResumeView extends JPanel{
 
                 if (frameToClose != null) {
                     frameToClose.dispose();
-                    mainFrameToClose.dispose();
                 }
 
                 if (mainFrameToClose != null) {
@@ -194,7 +193,7 @@ public class SaveResumeView extends JPanel{
 
         overwriteNo.addActionListener(event -> {
             messageLabel.setText("Please Enter Another Name");
-            saveNameField.setText("");
+            textField.setText("");
 
             overwriteFrame.dispose();
         });
