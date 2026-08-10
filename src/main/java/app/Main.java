@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 import MakeMove.Board;
 import MakeMove.BoardStateList;
 import MakeMove.GameState;
+import archive.GameRecord;
 
 /**
  * Application entry point: shows a topology menu, then launches the game.
@@ -63,9 +64,10 @@ public class Main {
      */
     private static void startGame(int topology) {
         final GameState gameState = getGameState(topology);
-        new AppBuilder(gameState)
+        final GameRecord gameRecord = new GameRecord(gameState);
+        new AppBuilder(gameRecord)
                 .addAnalysisView()
-                .addAnalysisView()
+                .addArchiveAnalysisView()
                 .addMoveView()
                 .addGameDetailView()
                 .addGameListView()

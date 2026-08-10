@@ -1,4 +1,6 @@
-package archive;
+package MakeMove;
+
+import archive.GameRecord;
 
 public interface EndGameDataAccess {
 

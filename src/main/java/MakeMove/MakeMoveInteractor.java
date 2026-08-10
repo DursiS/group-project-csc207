@@ -1,5 +1,8 @@
 package MakeMove;
 
+import archive.GameDataAccessObject;
+import archive.GameRecord;
+
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -12,8 +15,10 @@ import java.util.ArrayList;
 public class MakeMoveInteractor implements MoveInputBoundary {
     private static final String UPDATE_CHANNEL = "update-analysis";
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private EndGameDataAccess gameDataAccessObject;
 
     private MoveValidator validator;
+    private GameRecord gameRecord;
     private GameState gameState;
     private MoveOutputBoundary moveOutputBoundary;
 
@@ -24,11 +29,14 @@ public class MakeMoveInteractor implements MoveInputBoundary {
     /**
      * create make move interactor
      * @param validator the move validator it's assigned to
+     * @param gameRecord reference to the gameRecord to retrieve the game from
      * @param gameState reference to the gamestate to retrieve the board from
      * @param moveOutputBoundary after making a move, the raw information to present is passed here
      */
-    public MakeMoveInteractor(MoveValidator validator, GameState gameState, MoveOutputBoundary moveOutputBoundary) {
+    public MakeMoveInteractor(MoveValidator validator, GameRecord gameRecord, GameState gameState,
+                              MoveOutputBoundary moveOutputBoundary) {
         this.validator = validator;
+        this.gameRecord = gameRecord;
         this.gameState = gameState;
         this.moveOutputBoundary = moveOutputBoundary;
         selectedSquare = null;
@@ -48,9 +56,12 @@ public class MakeMoveInteractor implements MoveInputBoundary {
             int turn = gameState.getBoard().getTurn();
             if(turn%2 ==0){
                 winner = "black";
+                gameRecord.endGame("Black Wins (Checkmate)");
             }else{
                 winner = "white";
+                gameRecord.endGame("White Wins (Checkmate)");
             }
+            gameDataAccessObject.save(gameRecord);
             JOptionPane.showMessageDialog(null, "CHECKMATE! " + winner + " WINS!", "CHECKMATE!", JOptionPane.INFORMATION_MESSAGE);
             //checkmate, game is over, return to menu or something?
         }
@@ -65,7 +76,7 @@ public class MakeMoveInteractor implements MoveInputBoundary {
      */
     @Override
     public void receiveInput(MoveInputData data) {
-        Board b = gameState.getBoard();
+        Board nextBoard = gameState.getBoardCopy();
         boolean moved = false;
 
         //if nothing is selected, select the clicked square
@@ -85,8 +96,18 @@ public class MakeMoveInteractor implements MoveInputBoundary {
                             m.getDestination()[1] == data.getY()){
 
                         //Move is applied, make board state copy before changing board
-                        gameState.getBoardStateList().addBoardCopy(b);
-                        validator.ApplyMove(b, m);
+                        gameState.getBoardStateList().addBoardCopy(nextBoard);
+                        validator.ApplyMove(nextBoard, m);
+
+                        //updates gameState
+                        gameState = new GameState(
+                                nextBoard,
+                                gameState.getWhiteMilliSec(),
+                                gameState.getBlackMilliSec(),
+                                gameState.getBoardStateList().Copy(),
+                                "In progress");
+                        gameRecord.updateGameRecord(gameState);
+
                         initializeTurn();
                         selectedSquare=null;
                         moved = true;

@@ -9,14 +9,7 @@ import Analysis.AnalyzePresenter;
 import Analysis.AnalyzeView;
 import Analysis.AnalyzeViewModel;
 import Analysis.ChessApiAdapter;
-import MakeMove.GameState;
-import MakeMove.MoveValidator;
-import MakeMove.MoveValidatorBuilder;
-import MakeMove.MoveController;
-import MakeMove.MovePresenter;
-import MakeMove.MoveViewModel;
-import MakeMove.MakeMoveInteractor;
-import MakeMove.MoveView;
+import MakeMove.*;
 import archive.*;
 
 /**
@@ -29,7 +22,7 @@ public class AppBuilder extends JFrame {
     private static final String CENTER = "Center";
     private static final String EAST = "East";
 
-    private final GameState gameState;
+    private final GameRecord gameRecord;
 
     private final GameDataAccessObject gameDataAccessObject =  new GameDataAccessObject();
 
@@ -69,13 +62,19 @@ public class AppBuilder extends JFrame {
     private GameListInteractor gameListInteractor;
     private GameListController gameListController;
     private GameListView gameListView;
+    // Game archive analysis
+    private AnalyzeViewModel archiveAnalyzeViewModel;
+    private AnalyzePresenter archiveAnalyzePresenter;
+    private AnalyzeMoveInteractor archiveAnalyzeInteractor;
+    private AnalyzeView archiveAnalyzeView;
+    private AnalyzeController archiveAnalyzeController;
 
     /**
      * Configures the application frame around the given game state.
-     * @param gameState the shared game state the features build on
+     * @param gameRecord the shared game state the features build on
      */
-    public AppBuilder(GameState gameState) {
-        this.gameState = gameState;
+    public AppBuilder(GameRecord gameRecord) {
+        this.gameRecord = gameRecord;
         changeListeningSetup();
         setTitle("Chess App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,7 +87,13 @@ public class AppBuilder extends JFrame {
         analyzePresenter = new AnalyzePresenter(analyzeViewModel);
 
         chessApiAdaptor = new ChessApiAdapter();
-        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor, analyzePresenter, gameState);
+        analyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor,
+                analyzePresenter, gameRecord.getHistory().get(0));
+
+        archiveAnalyzeViewModel = new AnalyzeViewModel();
+        archiveAnalyzePresenter = new AnalyzePresenter(archiveAnalyzeViewModel);
+        archiveAnalyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor,
+                archiveAnalyzePresenter, gameRecord.getHistory().get(0));
     }
 
     /**
@@ -105,7 +110,8 @@ public class AppBuilder extends JFrame {
                 .build();
 
         movePresenter = new MovePresenter(moveViewModel);
-        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameState, movePresenter);
+        makeMoveInteractor = new MakeMoveInteractor(moveValidator, gameRecord,
+                gameRecord.getHistory().get(0), movePresenter);
         makeMoveInteractor.addPropertyChangeListener(analyzeInteractor);
 
         moveController = new MoveController(makeMoveInteractor);
@@ -133,9 +139,9 @@ public class AppBuilder extends JFrame {
      * @return this builder, for chaining
      */
     public AppBuilder addArchiveAnalysisView() {
-        analyzeController = new AnalyzeController(analyzeInteractor);
-        analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
-        gameDetailCard.add(analyzeView, EAST);
+        archiveAnalyzeController = new AnalyzeController(archiveAnalyzeInteractor);
+        archiveAnalyzeView = new AnalyzeView(archiveAnalyzeViewModel, archiveAnalyzeController);
+        gameDetailCard.add(archiveAnalyzeView, EAST);
         return this;
     }
 
@@ -183,7 +189,8 @@ public class AppBuilder extends JFrame {
         add(views, BorderLayout.CENTER);
         pack();
         setVisible(true);
-        analyzeInteractor.analyzeInitialPosition();
+//        analyzeInteractor.analyzeInitialPosition();
+        gameListController.getGameList();
         return this;
     }
 }

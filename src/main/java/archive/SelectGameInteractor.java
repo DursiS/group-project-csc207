@@ -4,10 +4,10 @@ import MakeMove.GameState;
 
 public class SelectGameInteractor implements SelectGameInputBoundary{
 
-    private final GameDataAccessObject gameDataAccessObject;
+    private final ViewGameDataAccess gameDataAccessObject;
     private final SelectGameOutputBoundary gameDetailPresenter;
 
-    public SelectGameInteractor(GameDataAccessObject gameDataAccessObject,
+    public SelectGameInteractor(ViewGameDataAccess gameDataAccessObject,
                                 SelectGameOutputBoundary gameDetailPresenter) {
         this.gameDataAccessObject = gameDataAccessObject;
         this.gameDetailPresenter = gameDetailPresenter;
