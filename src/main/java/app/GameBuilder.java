@@ -22,7 +22,7 @@ import MakeMove.MoveView;
  * Assembles the application window, wiring each feature's Clean Architecture
  * stack and adding its view to a region of the frame.
  */
-public class AppBuilder extends JPanel {
+public class GameBuilder extends JPanel {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
     private static final String CENTER = "Center";
@@ -49,7 +49,7 @@ public class AppBuilder extends JPanel {
      * Configures the application frame around the given game state.
      * @param gameState the shared game state the features build on
      */
-    public AppBuilder(GameState gameState) {
+    public GameBuilder(GameState gameState) {
         this.gameState = gameState;
         changeListeningSetup();
         setLayout(new BorderLayout());
@@ -68,7 +68,7 @@ public class AppBuilder extends JPanel {
      * Wires the make-move feature and adds its view to the center.
      * @return this builder, for chaining
      */
-    public AppBuilder addMoveView() {
+    public GameBuilder addMoveView() {
         moveViewModel = new MoveViewModel();
         final MoveValidator moveValidator = new MoveValidatorBuilder()
                 .addNormalMoves()
@@ -94,7 +94,7 @@ public class AppBuilder extends JPanel {
      * Wires the analysis feature and adds its view to the east.
      * @return this builder, for chaining
      */
-    public AppBuilder addAnalysisView() {
+    public GameBuilder addAnalysisView() {
         analyzeController = new AnalyzeController(analyzeInteractor);
         analyzeView = new AnalyzeView(analyzeViewModel, analyzeController);
         add(analyzeView, EAST);
