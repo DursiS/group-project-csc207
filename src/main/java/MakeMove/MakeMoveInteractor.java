@@ -37,9 +37,6 @@ public class MakeMoveInteractor implements MoveInputBoundary {
      */
     public MakeMoveInteractor(MoveValidator validator, EndGameDataAccess gameDataAccessObject,
                               GameRecord gameRecord, GameState gameState,
-                              MoveOutputBoundary moveOutputBoundary) {
-    public MakeMoveInteractor(MoveValidator validator,
-                              GameState gameState,
                               MoveOutputBoundary moveOutputBoundary,
                               SaveGameInputBoundary saveGameInputBoundary) {
         this.validator = validator;

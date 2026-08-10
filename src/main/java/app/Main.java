@@ -1,12 +1,14 @@
 package app;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import java.awt.CardLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import Analysis.*;
+import MakeMove.Board;
+import MakeMove.BoardStateList;
+import MakeMove.GameState;
 import archive.GameDataAccessObject;
 import archive.GameDetailController;
 import archive.GameDetailInteractor;
@@ -55,39 +57,52 @@ public class Main {
     /** Wires the archive (saved-game browser) stack and registers its cards. */
     private static MainMenu addArchiveFeature(JPanel views,
                                               ViewManagerModel viewManagerModel) {
-        final GameDataAccessObject dataAccess = new GameDataAccessObject();
+        final GameDataAccessObject gameDataAccessObject = new GameDataAccessObject();
 
-        final GameListViewModel gameListViewModel = new GameListViewModel();
-        final GameDetailViewModel gameDetailViewModel = new GameDetailViewModel();
+        JPanel gameReplayView = new JPanel(new BorderLayout());
 
-        final GameListPresenter gameListPresenter =
-                new GameListPresenter(gameListViewModel, viewManagerModel);
-        final GameDetailPresenter gameDetailPresenter =
-                new GameDetailPresenter(gameDetailViewModel, viewManagerModel);
+        ChessApiAdapter chessApiAdaptor = new ChessApiAdapter();
+        AnalyzeViewModel archiveAnalyzeViewModel = new AnalyzeViewModel();
+        AnalyzePresenter archiveAnalyzePresenter = new AnalyzePresenter(archiveAnalyzeViewModel);
+        AnalyzeMoveInteractor archiveAnalyzeInteractor = new AnalyzeMoveInteractor(chessApiAdaptor,
+                archiveAnalyzePresenter, new GameState(new Board(), 0, 0,
+                new BoardStateList(), "In progress"));
+        AnalyzeController archiveAnalyzeController = new
+                AnalyzeController(archiveAnalyzeInteractor);
+        AnalyzeView archiveAnalyzeView = new AnalyzeView(archiveAnalyzeViewModel,
+                archiveAnalyzeController);
+        gameReplayView.add(archiveAnalyzeView, BorderLayout.EAST);
 
-        final GameListInteractor gameListInteractor =
-                new GameListInteractor(dataAccess, gameListPresenter);
-        final SelectGameInteractor selectGameInteractor =
-                new SelectGameInteractor(dataAccess, gameDetailPresenter);
-        final GameDetailInteractor gameDetailInteractor =
-                new GameDetailInteractor(gameDetailPresenter);
+        GameDetailViewModel gameDetailViewModel = new GameDetailViewModel();
+        GameDetailPresenter gameDetailPresenter = new
+                GameDetailPresenter(gameDetailViewModel, viewManagerModel);
+        GameDetailInteractor gameDetailInteractor = new GameDetailInteractor(gameDetailPresenter);
+        gameDetailInteractor.addPropertyChangeListener(archiveAnalyzeInteractor);
+        GameDetailController gameDetailController = new GameDetailController(gameDetailInteractor);
+        GameDetailView gameDetailView = new
+                GameDetailView(gameDetailController, gameDetailViewModel);
+        gameReplayView.add(gameDetailView, BorderLayout.CENTER);
 
-        final GameListController gameListController =
-                new GameListController(gameListInteractor, selectGameInteractor);
-        final GameDetailController gameDetailController =
-                new GameDetailController(gameDetailInteractor);
 
-        final GameListView gameListView =
-                new GameListView(gameListController, gameListViewModel);
-        final GameDetailView gameDetailView =
-                new GameDetailView(gameDetailController, gameDetailViewModel);
+        SelectGameInteractor selectGameInteractor = new
+                SelectGameInteractor(gameDataAccessObject, gameDetailPresenter);
+        selectGameInteractor.addPropertyChangeListener(archiveAnalyzeInteractor);
+        GameListViewModel gameListViewModel = new GameListViewModel();
+        GameListPresenter gameListPresenter = new
+                GameListPresenter(gameListViewModel, viewManagerModel);
+        GameListInteractor gameListInteractor = new
+                GameListInteractor(gameDataAccessObject, gameListPresenter);
+        GameListController gameListController = new
+                GameListController(gameListInteractor, selectGameInteractor);
+        GameListView gameListView = new GameListView(gameListController, gameListViewModel);
+
 
         final MainMenu mainMenu =
                 new MainMenu(views, viewManagerModel, gameListController);
 
         views.add(mainMenu, MainMenu.VIEW_NAME);
         views.add(gameListView, GameListViewModel.VIEW_NAME);
-        views.add(gameDetailView, GameDetailViewModel.VIEW_NAME);
+        views.add(gameReplayView, GameDetailViewModel.VIEW_NAME);
         return mainMenu;
     }
 
