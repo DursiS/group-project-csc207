@@ -15,9 +15,7 @@ import archive.GameListViewModel;
 
 /**
  * The landing screen (a CardLayout card): pick a board topology to start a new
- * game, or browse previously saved games. It is given the pieces it needs and
- * drives navigation through the ViewManagerModel, so there are no callback
- * objects to wire up.
+ * game, or browse previously saved games.
  */
 public class MainMenu extends JPanel {
     public static final String VIEW_NAME = "Main Menu";
